@@ -11,6 +11,7 @@ const envConfig = registerAs('env', () => ({
   smtpUser: process.env.SMTP_USER,
   smtpPass: process.env.SMTP_PASS,
   resendKey: process.env.RESEND_KEY,
+  uploadsPath: process.cwd() + process.env.UPLOADS_PATH,
 }));
 
 export default envConfig;
