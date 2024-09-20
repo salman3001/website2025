@@ -1,0 +1,167 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  Admin
+  User
+}
+
+model User {
+  id            Int          @id @default(autoincrement())
+  fullName      String
+  email         String       @unique
+  password      String
+  phone         String?
+  userType      UserType
+  isActive      Boolean      @default(false)
+  emailVerified Boolean
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  profile       Profile?
+  blogs         Blog[]
+  Discussion    Discussion[]
+}
+
+model Profile {
+  id     Int     @id @default(autoincrement())
+  avatar String?
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int     @unique
+}
+
+model Blog {
+  slug             String        @id
+  title            String
+  shortDesc        String
+  longDesc         String
+  views            Int           @default(0)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  blogCategory     blogCategory? @relation(fields: [blogCategorySlug], references: [slug])
+  blogCategorySlug String?
+  tags             Tag[]
+  seo              Seo?          @relation(fields: [seoId], references: [id])
+  seoId            Int?
+  User             User?         @relation(fields: [userId], references: [id])
+  userId           Int?
+  Comment          BlogComment[]
+
+  @@index([slug])
+}
+
+model Seo {
+  id         Int          @id @default(autoincrement())
+  title      String?
+  keyword    String?
+  desc       String?
+  Blog       Blog[]
+  Discussion Discussion[]
+}
+
+model blogCategory {
+  slug       String       @id
+  title      String
+  desc       String?
+  blogs      Blog[]
+  Subscriber Subscriber[]
+
+  @@index([slug])
+}
+
+model Tag {
+  slug        String       @id
+  title       String
+  desc        String?
+  blogs       Blog[]
+  discussions Discussion[]
+  Subscriber  Subscriber[]
+  proejct     Project[]
+
+  @@index([slug])
+}
+
+model BlogComment {
+  id         Int      @id @default(autoincrement())
+  message    String
+  isApproved Boolean
+  createdAt  DateTime @default(now())
+  blog       Blog     @relation(fields: [blogSlug], references: [slug])
+  blogSlug   String
+
+  // Self-referencing relation for replies
+  parentId Int? // Nullable parentId field (top-level comments will have null)
+  parent   BlogComment?  @relation("replies", fields: [parentId], references: [id])
+  replies  BlogComment[] @relation("replies")
+}
+
+model Discussion {
+  slug      String              @id
+  title     String
+  desc      String?
+  views     Int                 @default(0)
+  createdAt DateTime            @default(now())
+  user      User                @relation(fields: [userId], references: [id])
+  userId    Int
+  comment   DiscussionComment[]
+  seo       Seo?                @relation(fields: [seoId], references: [id])
+  seoId     Int?
+  Tag       Tag[]
+
+  @@index([slug])
+}
+
+model DiscussionComment {
+  id            Int        @id @default(autoincrement())
+  message       String
+  isApproved    Boolean
+  createdAt     DateTime   @default(now())
+  discussion    Discussion @relation(fields: [discussionlug], references: [slug])
+  discussionlug String
+
+  // Self-referencing relation for replies
+  parentId Int? // Nullable parentId field (top-level comments will have null)
+  parent   DiscussionComment?  @relation("replies", fields: [parentId], references: [id])
+  replies  DiscussionComment[] @relation("replies")
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  email     String
+  phone     String?
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Subscriber {
+  id         Int            @id @default(autoincrement())
+  email      String
+  categories blogCategory[]
+  tags       Tag[]
+}
+
+model Project {
+  id        Int      @id @default(autoincrement())
+  title     String
+  shortDesc String
+  desc      String?
+  images    String[]
+  video     String
+  tags      Tag[]
+}
+
+model Portfolio {
+  id   Int   @id @default(autoincrement())
+  data Json?
+}
