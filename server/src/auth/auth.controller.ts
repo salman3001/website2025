@@ -38,7 +38,10 @@ export class AuthController {
         this.config.get<IEnvConfig>('env').nodeEnv !== 'prod' ? false : true,
     });
 
-    res.cookie('user', JSON.stringify(user), {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userPayload } = user;
+
+    res.cookie('user', JSON.stringify(userPayload), {
       sameSite: true,
       secure:
         this.config.get<IEnvConfig>('env')?.nodeEnv !== 'prod' ? false : true,

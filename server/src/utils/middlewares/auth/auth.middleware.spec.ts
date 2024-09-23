@@ -1,7 +1,7 @@
 import { TestBed } from '@automock/jest';
 import { AuthMiddleware } from './auth.middleware';
-import { ConfigService } from '@salman3001/nest-config-module';
 import * as jwt from 'jsonwebtoken';
+import { ConfigService } from '@nestjs/config';
 
 describe('AuthMiddleware', () => {
   let authMiddleware: AuthMiddleware;
@@ -10,9 +10,7 @@ describe('AuthMiddleware', () => {
     const { unit } = TestBed.create(AuthMiddleware)
       .mock(ConfigService)
       .using({
-        get: () => ({
-          envs: () => ({ APP_SECRETE: 'salman' }),
-        }),
+        get: () => ({ APP_SECRETE: 'salman' }),
       })
       .compile();
     authMiddleware = unit;

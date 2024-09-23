@@ -16,10 +16,17 @@ export class MediaService {
   ) {}
 
   async create(dto: CreateMediaDto, file: Express.Multer.File) {
+    console.log(dto);
+
     const url = await this.uploadMedia(file, dto.type);
 
     const media = await this.prisma.media.create({
-      data: { ...dto, url, type: dto.type },
+      data: {
+        ...dto,
+        url,
+        type: dto.type,
+        mediaCategoryId: dto.mediaCategoryId ?? null,
+      },
     });
 
     return media;

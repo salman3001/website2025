@@ -9,6 +9,7 @@ import {
 import { join, dirname, extname } from 'path';
 import { ConfigService } from '@nestjs/config';
 import { IEnvConfig } from 'src/config/env.config';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class FilesUploadService {
@@ -24,7 +25,6 @@ export class FilesUploadService {
 
   async deleteFile(fileUrl: string): Promise<void> {
     const filePath = join(
-      process.cwd(),
       this.configService.get<IEnvConfig>('env')!.uploadsPath,
       fileUrl,
     );
@@ -40,10 +40,8 @@ export class FilesUploadService {
   ): Promise<string> {
     const fileName = Date.now() + uuidv4() + `.${extName}`;
     const url = join(folder, fileName);
-    const uploadPath = join(
-      process.cwd(),
-      this.configService.get<IEnvConfig>('env')!.uploadsPath,
-    );
+    const uploadPath = this.configService.get<IEnvConfig>('env')!.uploadsPath;
+
     const outputPath = join(uploadPath, folder, fileName);
 
     if (!existsSync(dirname(outputPath))) {

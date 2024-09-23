@@ -12,7 +12,6 @@ import {
 import VerifyYourEmail from 'src/mails/templates/VerifyYourEmaill';
 import { UserForgotPasswordEvent } from './events/user-forgotPassword-event';
 import ForgotPasswordEmail from 'src/mails/templates/ForgotPasswordEmail';
-import { UserEmailVerifiedEvent } from './events/user-email-verified-event';
 
 @Injectable()
 export class EventsService {

@@ -1,6 +1,12 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
+import { CustomHttpException } from 'src/utils/Exceptions/CustomHttpException';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -13,6 +19,10 @@ export class AuthGuard implements CanActivate {
     if ((req as any)?.user) {
       return true;
     }
-    return false;
+    throw new CustomHttpException({
+      code: HttpStatus.UNAUTHORIZED,
+      message: 'Unauthorized',
+      success: false,
+    });
   }
 }

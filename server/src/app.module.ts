@@ -1,12 +1,17 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { MyConfigModule } from './config/myConfig.module';
-import { PrismaService } from './prisma/prisma.service';
 import { EventsModule } from './events/events.module';
 import { MediaModule } from './media/media.module';
+import { AuthModule } from './auth/auth.module';
+import { AuthMiddleware } from './utils/middlewares/auth/auth.middleware';
 
 @Module({
-  imports: [MyConfigModule, EventsModule, MediaModule],
+  imports: [MyConfigModule, EventsModule, MediaModule, AuthModule],
   controllers: [],
-  providers: [PrismaService],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes('*');
+  }
+}

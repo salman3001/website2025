@@ -15,10 +15,10 @@ export class AuthMiddleware implements NestMiddleware {
       req['user'] = null;
     } else {
       const payload = this.varifyToken(auth_token) as JwtUserPayload;
-      if (!payload || payload.tokenType !== 'auth') {
-        req['user'] = null;
-      } else {
+      if (payload && payload.tokenType === 'auth') {
         req['user'] = payload;
+      } else {
+        req['user'] = null;
       }
     }
 

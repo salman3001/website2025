@@ -9,22 +9,33 @@ import {
   UseInterceptors,
   UploadedFile,
   Query,
+  Inject,
+  UseGuards,
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from './helpers/fileFIlter';
-import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, IntersectionType } from '@nestjs/swagger';
 import { UpladFileDto } from './dto/upload-file.dto';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
 import CustomRes from 'src/utils/CustomRes';
+import { PolicyService } from '@salman3001/nest-policy-module';
+import { MediaPolicy } from './media.policy';
+import { AuthGuard } from 'src/utils/guards/auth/auth.guard';
+import { CustomHttpException } from 'src/utils/Exceptions/CustomHttpException';
 
+@UseGuards(AuthGuard)
 @Controller('media')
 export class MediaController {
-  constructor(private readonly mediaService: MediaService) {}
+  constructor(
+    private readonly mediaService: MediaService,
+    @Inject('MediaPolicy')
+    private readonly policyService: PolicyService<MediaPolicy>,
+  ) {}
 
   @Post()
   @UseInterceptors(
@@ -36,23 +47,30 @@ export class MediaController {
       }),
     ),
   )
-  @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'File image',
-    type: UpladFileDto,
+    type: IntersectionType(UpladFileDto, CreateMediaDto),
   })
-  create(
+  @ApiConsumes('multipart/form-data')
+  async create(
     @Body() dto: CreateMediaDto,
     @AuthUser() authUser: AuthUserType,
     @UploadedFile()
     file?: Express.Multer.File,
   ) {
-    const media = this.mediaService.create(dto, file);
-    return CustomRes({ code: 200, success: true, data: media });
+    await this.policyService.authorize('create', authUser);
+
+    const media = await this.mediaService.create(dto, file);
+    return CustomRes({ code: 201, success: true, data: media });
   }
 
   @Get()
-  async findAll(@Query() query: Record<string, any>) {
+  async findAll(
+    @Query() query: Record<string, any>,
+    @AuthUser() authUser: AuthUserType,
+  ) {
+    await this.policyService.authorize('findAll', authUser);
+
     const { skip, take, orderBy, search, mediaCategoryId } = query;
     const searchQuery = search ? { name: { contains: search } } : {};
     const categoryQuery = mediaCategoryId
@@ -73,7 +91,10 @@ export class MediaController {
   async findAllByCategory(
     @Param('id') id: string,
     @Query() query: Record<string, any>,
+    @AuthUser() authUser: AuthUserType,
   ) {
+    await this.policyService.authorize('findAllByCategory', authUser);
+
     const { skip, take, orderBy, search } = query;
     const searchQuery = search ? { name: { contains: search } } : {};
 
@@ -88,12 +109,14 @@ export class MediaController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string, @AuthUser() authUser: AuthUserType) {
+    await this.policyService.authorize('findOne', authUser);
+
     const media = await this.mediaService.findOne({ id: +id });
     return CustomRes({ code: 200, success: true, data: media });
   }
 
-  @Post()
+  @Patch(':id')
   @UseInterceptors(
     FileInterceptor(
       'file',
@@ -106,9 +129,8 @@ export class MediaController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'File image',
-    type: UpladFileDto,
+    type: IntersectionType(UpladFileDto, UpdateMediaDto),
   })
-  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateMediaDto,
@@ -116,6 +138,8 @@ export class MediaController {
     @UploadedFile()
     file?: Express.Multer.File,
   ) {
+    await this.policyService.authorize('update', authUser);
+
     const media = await this.mediaService.update(+id, dto, file);
     return CustomRes({
       code: 200,
@@ -126,7 +150,9 @@ export class MediaController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string, @AuthUser() authUser: AuthUserType) {
+    await this.policyService.authorize('delete', authUser);
+
     const media = await this.mediaService.remove(+id);
     return CustomRes({
       code: 200,

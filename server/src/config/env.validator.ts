@@ -17,6 +17,9 @@ export class EnvironmentVariables {
   APP_NAME: string;
 
   @IsString()
+  APP_URL: string;
+
+  @IsString()
   APP_SECRETE: string;
 
   @IsString()

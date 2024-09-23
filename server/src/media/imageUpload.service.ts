@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import sharp from 'sharp';
+import * as sharp from 'sharp';
 import { ConfigService } from '@nestjs/config';
 import { IEnvConfig } from 'src/config/env.config';
 
@@ -20,7 +20,6 @@ export class ImageUploadService {
 
   async deleteImage(fileUrl: string): Promise<void> {
     const filePath = join(
-      process.cwd(),
       this.configService.get<IEnvConfig>('env').uploadsPath,
       fileUrl,
     );
@@ -35,7 +34,7 @@ export class ImageUploadService {
     width?: number,
     height?: number,
   ): Promise<string> {
-    const resizedBuffer = await sharp(file.buffer)
+    const resizedBuffer = await sharp(file.path)
       .resize(width, height, { fit: 'cover' })
       .toFormat('webp')
       .toBuffer();
@@ -50,10 +49,8 @@ export class ImageUploadService {
   ): Promise<string> {
     const fileName = Date.now() + uuidv4() + `.${extName}`;
     const url = join(folder, fileName);
-    const uploadPath = join(
-      process.cwd(),
-      this.configService.get<IEnvConfig>('env').uploadsPath,
-    );
+    const uploadPath = this.configService.get<IEnvConfig>('env').uploadsPath;
+
     const outputPath = join(uploadPath, folder, fileName);
 
     if (!existsSync(dirname(outputPath))) {

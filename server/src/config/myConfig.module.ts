@@ -10,6 +10,7 @@ import { envValidator } from './env.validator';
       load: [envConfig],
       cache: true,
       validate: envValidator,
+      isGlobal: true,
     }),
   ],
 })
