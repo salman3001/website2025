@@ -12,6 +12,8 @@ import {
 import VerifyYourEmail from 'src/mails/templates/VerifyYourEmaill';
 import { UserForgotPasswordEvent } from './events/user-forgotPassword-event';
 import ForgotPasswordEmail from 'src/mails/templates/ForgotPasswordEmail';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { UserCreatedEvent } from './events/user-created-event';
 
 @Injectable()
 export class EventsService {
@@ -19,11 +21,19 @@ export class EventsService {
   constructor(
     @Inject(IMailService) private mailService: IMailService,
     config: ConfigService,
+    private prisma: PrismaService,
   ) {
     this.envConfig = config.get<IEnvConfig>('env');
   }
+
   @OnEvent('user:signedup')
   async handleUserSignedupEvent(payload: UserSignedupEvent) {
+    await this.prisma.profile.create({
+      data: {
+        userId: payload.user.id,
+      },
+    });
+
     const token = jwt.sign(
       { tokenType: 'confirm-email', email: payload.user.email },
       this.envConfig.appSecrete,
@@ -58,6 +68,15 @@ export class EventsService {
           resetUrl: link,
           userName: payload.user.fullName,
         }),
+    });
+  }
+
+  @OnEvent('user:created')
+  async handleUserCreatedEvent(payload: UserCreatedEvent) {
+    await this.prisma.profile.create({
+      data: {
+        userId: payload.user.id,
+      },
     });
   }
 

@@ -53,8 +53,8 @@ export class MediaService {
     return { count, media };
   }
 
-  findOne(where: Prisma.UserWhereUniqueInput) {
-    return this.prisma.user.findUnique({
+  findOne(where: Prisma.MediaWhereUniqueInput) {
+    return this.prisma.media.findUnique({
       where,
     });
   }

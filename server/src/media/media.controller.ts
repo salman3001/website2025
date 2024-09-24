@@ -18,7 +18,6 @@ import { UpdateMediaDto } from './dto/update-media.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from './helpers/fileFIlter';
 import { ApiBody, ApiConsumes, IntersectionType } from '@nestjs/swagger';
-import { UpladFileDto } from './dto/upload-file.dto';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
@@ -26,7 +25,7 @@ import CustomRes from 'src/utils/CustomRes';
 import { PolicyService } from '@salman3001/nest-policy-module';
 import { MediaPolicy } from './media.policy';
 import { AuthGuard } from 'src/utils/guards/auth/auth.guard';
-import { CustomHttpException } from 'src/utils/Exceptions/CustomHttpException';
+import { UploadFileDto } from './dto/upload-file.dto';
 
 @UseGuards(AuthGuard)
 @Controller('media')
@@ -49,7 +48,7 @@ export class MediaController {
   )
   @ApiBody({
     description: 'File image',
-    type: IntersectionType(UpladFileDto, CreateMediaDto),
+    type: IntersectionType(UploadFileDto, CreateMediaDto),
   })
   @ApiConsumes('multipart/form-data')
   async create(
@@ -129,7 +128,7 @@ export class MediaController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'File image',
-    type: IntersectionType(UpladFileDto, UpdateMediaDto),
+    type: IntersectionType(UploadFileDto, UpdateMediaDto),
   })
   async update(
     @Param('id') id: string,
