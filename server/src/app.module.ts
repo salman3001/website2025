@@ -7,6 +7,10 @@ import { AuthMiddleware } from './utils/middlewares/auth/auth.middleware';
 import { UserModule } from './user/user.module';
 import { ProfileModule } from './profile/profile.module';
 import { BlogsModule } from './blogs/blogs.module';
+import { SeoService } from './seo/seo.service';
+import { BlogCategoriesModule } from './blog-categories/blog-categories.module';
+import { TagsModule } from './tags/tags.module';
+import { BlogCommentsModule } from './blog-comments/blog-comments.module';
 
 @Module({
   imports: [
@@ -17,9 +21,12 @@ import { BlogsModule } from './blogs/blogs.module';
     UserModule,
     ProfileModule,
     BlogsModule,
+    BlogCategoriesModule,
+    TagsModule,
+    BlogCommentsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [SeoService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

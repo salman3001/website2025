@@ -43,18 +43,20 @@ model Profile {
 }
 
 model Blog {
-  slug             String        @id
+  slug             String        @id @unique
   title            String
   shortDesc        String
-  longDesc         String
+  longDesc         String?
+  isPublished      Boolean       @default(false)
   views            Int           @default(0)
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
-  blogCategory     blogCategory? @relation(fields: [blogCategorySlug], references: [slug])
+  blogCategory     BlogCategory? @relation(fields: [blogCategorySlug], references: [slug])
   blogCategorySlug String?
+  image            Media?        @relation(fields: [mediaId], references: [id])
+  mediaId          Int?          @unique
   tags             Tag[]
-  seo              Seo?          @relation(fields: [seoId], references: [id])
-  seoId            Int?
+  seo              Seo?
   User             User?         @relation(fields: [userId], references: [id])
   userId           Int?
   Comment          BlogComment[]
@@ -63,16 +65,18 @@ model Blog {
 }
 
 model Seo {
-  id         Int          @id @default(autoincrement())
-  title      String?
-  keyword    String?
-  desc       String?
-  Blog       Blog[]
-  Discussion Discussion[]
+  id             Int         @id @default(autoincrement())
+  title          String?
+  keyword        String?
+  desc           String?
+  Blog           Blog?       @relation(fields: [blogSlug], references: [slug])
+  blogSlug       String?     @unique
+  Discussion     Discussion? @relation(fields: [discussionSlug], references: [slug])
+  discussionSlug String?     @unique
 }
 
-model blogCategory {
-  slug       String       @id
+model BlogCategory {
+  slug       String       @id @unique
   title      String
   desc       String?
   blogs      Blog[]
@@ -116,8 +120,7 @@ model Discussion {
   user      User                @relation(fields: [userId], references: [id])
   userId    Int
   comment   DiscussionComment[]
-  seo       Seo?                @relation(fields: [seoId], references: [id])
-  seoId     Int?
+  seo       Seo?
   Tag       Tag[]
 
   @@index([slug])
@@ -148,7 +151,7 @@ model ContactMessage {
 model Subscriber {
   id         Int            @id @default(autoincrement())
   email      String
-  categories blogCategory[]
+  categories BlogCategory[]
   tags       Tag[]
 }
 
@@ -181,6 +184,7 @@ model Media {
   url             String
   MediaCategory   MediaCategory? @relation(fields: [mediaCategoryId], references: [id])
   mediaCategoryId Int?
+  Blog            Blog?
 }
 
 model MediaCategory {
