@@ -17,7 +17,12 @@ import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from 'src/media/helpers/fileFIlter';
-import { ApiBody, ApiConsumes, IntersectionType } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiTags,
+  IntersectionType,
+} from '@nestjs/swagger';
 import { UploadFileDto } from 'src/media/dto/upload-file.dto';
 import { AuthUserType } from 'src/utils/types/common';
 import { BlogPolicy } from './blogs.policy';
@@ -25,6 +30,7 @@ import { PolicyService } from '@salman3001/nest-policy-module';
 import CustomRes from 'src/utils/CustomRes';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 
+@ApiTags('blogs')
 @Controller('blogs')
 export class BlogsController {
   constructor(
@@ -53,7 +59,8 @@ export class BlogsController {
     @UploadedFile() image?: Express.Multer.File,
   ) {
     await this.policy.authorize('create', authUser);
-    const blog = this.blogsService.create(createBlogDto, image);
+    const userId = authUser.id;
+    const blog = this.blogsService.create(createBlogDto, userId, image);
 
     return CustomRes({
       code: HttpStatus.CREATED,

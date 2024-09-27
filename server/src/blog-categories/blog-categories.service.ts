@@ -57,8 +57,8 @@ export class BlogCategoriesService {
     return { count, blogCategories };
   }
 
-  findOne(where: Prisma.BlogWhereUniqueInput) {
-    return this.prisma.blog.findUnique({
+  findOne(where: Prisma.BlogCategoryWhereUniqueInput) {
+    return this.prisma.blogCategory.findUnique({
       where,
     });
   }

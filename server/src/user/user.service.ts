@@ -14,7 +14,11 @@ export class UserService {
 
   async create(dto: CreateUserDto) {
     const user = await this.prisma.user.create({
-      data: dto,
+      data: {
+        ...dto,
+        profile: { create: {} },
+        subscription: { create: { email: dto.email } },
+      },
     });
 
     this.eventEmitter.emit('user:created');

@@ -18,7 +18,9 @@ import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { PolicyService } from '@salman3001/nest-policy-module';
 import { BlogCommentPolicy } from './blog-comment.policy';
 import CustomRes from 'src/utils/CustomRes';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('blog-comments')
 @Controller('blog-comments')
 export class BlogCommentsController {
   constructor(
@@ -29,11 +31,11 @@ export class BlogCommentsController {
 
   @Post()
   async create(
-    @Body() createBlogDto: CreateBlogCommentDto,
+    @Body() dto: CreateBlogCommentDto,
     @AuthUser() authUser: AuthUserType,
   ) {
     await this.policy.authorize('create', authUser);
-    const tag = this.blogCommentsService.create(createBlogDto);
+    const tag = this.blogCommentsService.create(dto);
 
     return CustomRes({
       code: HttpStatus.CREATED,
@@ -67,11 +69,11 @@ export class BlogCommentsController {
   @Patch(':id')
   async update(
     @Param('id') id: number,
-    @Body() updateBlogDto: UpdateBlogCommentDto,
+    @Body() dto: UpdateBlogCommentDto,
     @AuthUser() authUser: AuthUserType,
   ) {
     await this.policy.authorize('update', authUser);
-    const comment = await this.blogCommentsService.update(id, updateBlogDto);
+    const comment = await this.blogCommentsService.update(id, dto);
 
     return CustomRes({
       success: true,
@@ -84,12 +86,12 @@ export class BlogCommentsController {
   @Delete(':id')
   async remove(@Param('id') id: number, @AuthUser() authUser: AuthUserType) {
     await this.policy.authorize('delete', authUser);
-    const tag = await this.blogCommentsService.remove(id);
+    const comments = await this.blogCommentsService.remove(id);
 
     return CustomRes({
       success: true,
       code: HttpStatus.OK,
-      data: { tag },
+      data: { comments },
       message: 'Comment deleted',
     });
   }

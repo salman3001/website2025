@@ -1,0 +1,45 @@
+---
+import { NavMenus } from "../utils/nav-menus";
+---
+
+<div class="drawer">
+  <input id="nav-drawer" type="checkbox" class="drawer-toggle" />
+  <div class="drawer-content">
+    <!-- Page content here -->
+    <slot />
+  </div>
+  <div class="drawer-side">
+    <label for="nav-drawer" aria-label="close sidebar" class="drawer-overlay"
+    ></label>
+    <ul
+      class="menu bg-base-200 text-base-content min-h-full w-80 p-4"
+      data-nav-menu-container
+    >
+      <!-- Sidebar content here -->
+      {
+        NavMenus.map((link) => {
+          if (!link.child) {
+            return (
+              <li>
+                <a href={link.href}>{link.name}</a>
+              </li>
+            );
+          }
+          return (
+            <div class="collapse collapse-arrow bg-base-200" data-accordian>
+              <input type="radio" name="my-accordion-2" checked="checked" />
+              <div class="collapse-title  font-medium">{link.name}</div>
+              <div class="collapse-content">
+                {link.child.map((link) => (
+                  <li>
+                    <a href={link.href}>{link.name}</a>
+                  </li>
+                ))}
+              </div>
+            </div>
+          );
+        })
+      }
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,27 @@
+@tailwind utilities;
+
+html {
+  font-size: 16px;
+}
+
+@layer utilities {
+  .scrollBar {
+    @apply scrollbar-thin  scrollbar-thumb-rounded-full scrollbar-track-rounded-full scrollbar-thumb-gray-400 scrollbar-track-base-100  h-32 overflow-y-scroll;
+  }
+
+  .text-title {
+    @apply text-black;
+  }
+
+  .text-p {
+    @apply text-gray-500;
+  }
+
+  .text-disabled {
+    @apply text-gray-400;
+  }
+
+  .input {
+    @apply focus-within:outline-offset-0 focus-within:outline-primary focus-within:outline-1;
+  }
+}

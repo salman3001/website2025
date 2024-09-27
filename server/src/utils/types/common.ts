@@ -8,6 +8,7 @@ export interface JwtUserPayload extends BaseJWTPayload {
   tokenType: 'auth';
   id: number;
   userType: UserType;
+  email: string;
 }
 
 export interface JWTConfirmEmailPayload extends BaseJWTPayload {

@@ -1,0 +1,65 @@
+---
+import { NavMenus, type INavMenu } from "../utils/nav-menus";
+import Logo from "./logo.astro";
+import NavAuthMenu from "./vue/nav-auth-menu.vue";
+import NavSearch from "./vue/nav-search.vue";
+import { Bars3Icon } from "@heroicons/vue/24/solid";
+---
+
+<div class="navbar bg-base-100 shadow-md p-0 m-0">
+  <div class="navbar container py-0 my-0 mx-auto">
+    <div class="navbar-start">
+      <label for="nav-drawer" class="btn btn-ghost btn-square flex md:hidden">
+        <Bars3Icon class="size-6 text-primary block md:hidden" />
+      </label>
+
+      <div class="hidden md:block">
+        <Logo />
+      </div>
+    </div>
+    <div class="navbar-center hidden lg:flex">
+      <ul
+        tabindex="0"
+        class="menu menu-horizontal px-1 font-semibold uppercase text-primary"
+        data-nav-menu-container
+      >
+        {
+          NavMenus.map((link) => {
+            if (!link.child) {
+              return (
+                <li>
+                  <a href={link.href}>{link.name}</a>
+                </li>
+              );
+            }
+            return (
+              <div class="dropdown p-0 m-0">
+                <div
+                  tabindex="0"
+                  role="button"
+                  class="btn btn-sm btn-outline m-1 btn-primary text-base-100 text-xs"
+                >
+                  {link.name}
+                </div>
+                <ul
+                  tabindex="0"
+                  class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                >
+                  {link.child.map((link) => (
+                    <li>
+                      <a href={link.href}>{link.name}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })
+        }
+      </ul>
+    </div>
+    <div class="navbar-end">
+      <NavSearch />
+      <NavAuthMenu />
+    </div>
+  </div>
+</div>

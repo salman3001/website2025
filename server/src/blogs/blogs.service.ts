@@ -14,7 +14,11 @@ export class BlogsService {
     private imageUploadService: ImageUploadService,
   ) {}
 
-  async create(dto: CreateBlogDto, image?: Express.Multer.File) {
+  async create(
+    dto: CreateBlogDto,
+    userId: number,
+    image?: Express.Multer.File,
+  ) {
     const { seo, blogCategorySlug, tagSlugs, ...blogDto } = dto;
     let imageUrl: string | undefined = undefined;
 
@@ -37,6 +41,7 @@ export class BlogsService {
       data: {
         ...blogDto,
         slug,
+        author: { connect: { id: userId } },
         blogCategory: blogCategorySlug
           ? {
               connect: { slug: blogCategorySlug },
@@ -91,7 +96,7 @@ export class BlogsService {
   }
 
   async update(slug: string, dto: UpdateBlogDto, image: Express.Multer.File) {
-    const { seo, blogCategorySlug, ...blogDto } = dto;
+    const { seo, blogCategorySlug, tagSlugs, ...blogDto } = dto;
     let imageUrl: string | undefined = undefined;
 
     const existBlog = await this.prisma.blog.findFirstOrThrow({
@@ -132,6 +137,9 @@ export class BlogsService {
             }
           : {},
         seo: { update: seo },
+        tags: {
+          set: tagSlugs ? tagSlugs.map((slug) => ({ slug })) : [],
+        },
         image: imageUrl
           ? {
               update: {

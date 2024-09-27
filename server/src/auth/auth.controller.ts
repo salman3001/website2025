@@ -3,14 +3,15 @@ import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import ValidatorPipe from 'src/utils/pipes/ValidatorPipe';
 import CustomRes from 'src/utils/CustomRes';
 import { confirmEmailDto } from './dto/confirmEmail.dto';
 import { forgotPasswordOtpDto } from './dto/forgotPasswordOtp.dto';
 import { resetPasswordDto } from './dto/resetPassword.dto';
 import { ConfigService } from '@nestjs/config';
 import { IEnvConfig } from 'src/config/env.config';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -20,7 +21,7 @@ export class AuthController {
 
   @Post('login')
   async login(
-    @Body(new ValidatorPipe()) dto: LoginDto,
+    @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     const user = await this.authService.login(dto);
@@ -29,6 +30,7 @@ export class AuthController {
       tokenType: 'auth',
       id: user.id,
       userType: user.userType,
+      email: user.email,
     });
 
     res.cookie('auth_token', token, {
@@ -69,7 +71,7 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body(new ValidatorPipe()) dto: RegisterDto) {
+  async register(@Body() dto: RegisterDto) {
     await this.authService.register(dto);
 
     return CustomRes({
@@ -82,7 +84,7 @@ export class AuthController {
 
   @Post('confirm-email')
   async confirmEmail(
-    @Body(new ValidatorPipe()) dto: confirmEmailDto,
+    @Body() dto: confirmEmailDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     const user = await this.authService.confirmEmail(dto);
@@ -91,6 +93,7 @@ export class AuthController {
       tokenType: 'auth',
       id: user.id,
       userType: user.userType,
+      email: user.email,
     });
 
     res.cookie('auth_token', token, {
@@ -115,9 +118,7 @@ export class AuthController {
   }
 
   @Post('forgot-password')
-  async forgotPasswordOtp(
-    @Body(new ValidatorPipe()) dto: forgotPasswordOtpDto,
-  ) {
+  async forgotPasswordOtp(@Body() dto: forgotPasswordOtpDto) {
     await this.authService.forgotPasswordOtp(dto);
 
     return CustomRes({
@@ -128,7 +129,7 @@ export class AuthController {
   }
 
   @Post('reset-password')
-  async resetPassword(@Body(new ValidatorPipe()) dto: resetPasswordDto) {
+  async resetPassword(@Body() dto: resetPasswordDto) {
     const user = await this.authService.resetPassword(dto);
 
     return CustomRes({

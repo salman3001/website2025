@@ -18,7 +18,9 @@ import { AuthUserType } from 'src/utils/types/common';
 import { PolicyService } from '@salman3001/nest-policy-module';
 import { BlogCategoryPolicy } from './blog-category.policy';
 import CustomRes from 'src/utils/CustomRes';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('blog-categories')
 @Controller('blog-categories')
 export class BlogCategoriesController {
   constructor(
@@ -29,11 +31,11 @@ export class BlogCategoriesController {
 
   @Post()
   async create(
-    @Body() createBlogDto: CreateBlogCategoryDto,
+    @Body() dto: CreateBlogCategoryDto,
     @AuthUser() authUser: AuthUserType,
   ) {
     await this.policy.authorize('create', authUser);
-    const blogCategory = this.blogCategoriesService.create(createBlogDto);
+    const blogCategory = this.blogCategoriesService.create(dto);
 
     return CustomRes({
       code: HttpStatus.CREATED,
@@ -68,14 +70,11 @@ export class BlogCategoriesController {
   @Patch(':slug')
   async update(
     @Param('slug') slug: string,
-    @Body() updateBlogDto: UpdateBlogCategoryDto,
+    @Body() dto: UpdateBlogCategoryDto,
     @AuthUser() authUser: AuthUserType,
   ) {
     await this.policy.authorize('update', authUser);
-    const blogCategory = await this.blogCategoriesService.update(
-      slug,
-      updateBlogDto,
-    );
+    const blogCategory = await this.blogCategoriesService.update(slug, dto);
     return CustomRes({
       success: true,
       code: HttpStatus.CREATED,

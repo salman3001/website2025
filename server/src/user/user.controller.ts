@@ -18,7 +18,9 @@ import { UserPolicy } from './user.policy';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
 import CustomRes from 'src/utils/CustomRes';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('user')
 export class UserController {
   constructor(

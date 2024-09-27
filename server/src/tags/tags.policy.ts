@@ -3,7 +3,8 @@ import { AuthUserType } from 'src/utils/types/common';
 
 export const tagPolicy = {
   create: (user: AuthUserType) => {
-    if (user && user.userType === UserType.Admin) return true;
+    if (user && user.tokenType === 'auth' && user.userType === UserType.Admin)
+      return true;
     return false;
   },
 
@@ -16,12 +17,14 @@ export const tagPolicy = {
   },
 
   update: (user: AuthUserType) => {
-    if (user && user.userType === UserType.Admin) return true;
+    if (user && user.tokenType === 'auth' && user.userType === UserType.Admin)
+      return true;
     return false;
   },
 
   delete: (user: AuthUserType) => {
-    if (user && user.userType === UserType.Admin) return true;
+    if (user && user.tokenType === 'auth' && user.userType === UserType.Admin)
+      return true;
     return false;
   },
 };

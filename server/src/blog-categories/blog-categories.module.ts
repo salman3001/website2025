@@ -3,6 +3,7 @@ import { BlogCategoriesService } from './blog-categories.service';
 import { BlogCategoriesController } from './blog-categories.controller';
 import { PolicyModule } from '@salman3001/nest-policy-module';
 import { blogCategoryPolicy } from './blog-category.policy';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
   imports: [
@@ -11,6 +12,6 @@ import { blogCategoryPolicy } from './blog-category.policy';
     ]),
   ],
   controllers: [BlogCategoriesController],
-  providers: [BlogCategoriesService],
+  providers: [BlogCategoriesService, PrismaService],
 })
 export class BlogCategoriesModule {}

@@ -17,17 +17,21 @@ import { MediaService } from './media.service';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from './helpers/fileFIlter';
-import { ApiBody, ApiConsumes, IntersectionType } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiTags,
+  IntersectionType,
+} from '@nestjs/swagger';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
 import CustomRes from 'src/utils/CustomRes';
 import { PolicyService } from '@salman3001/nest-policy-module';
 import { MediaPolicy } from './media.policy';
-import { AuthGuard } from 'src/utils/guards/auth/auth.guard';
 import { UploadFileDto } from './dto/upload-file.dto';
 
-@UseGuards(AuthGuard)
+@ApiTags('Media')
 @Controller('media')
 export class MediaController {
   constructor(

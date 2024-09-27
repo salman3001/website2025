@@ -3,7 +3,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UseInterceptors,
   UploadedFile,
   HttpStatus,
@@ -12,10 +11,11 @@ import { ProfileService } from './profile.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from 'src/media/helpers/fileFIlter';
-import { ApiBody, IntersectionType } from '@nestjs/swagger';
+import { ApiBody, ApiTags, IntersectionType } from '@nestjs/swagger';
 import { UploadFileDto } from 'src/media/dto/upload-file.dto';
 import CustomRes from 'src/utils/CustomRes';
 
+@ApiTags('Profile')
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}

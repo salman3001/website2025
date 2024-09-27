@@ -23,5 +23,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
     FilesUploadService,
     PrismaService,
   ],
+  exports: [ImageUploadService, FilesUploadService],
 })
 export class MediaModule {}

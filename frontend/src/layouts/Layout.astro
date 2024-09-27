@@ -1,0 +1,35 @@
+---
+import Navbar from "../components/navbar.astro";
+import "../assets/styles.css";
+import { ViewTransitions } from "astro:transitions";
+import SideBar from "../components/side-bar.astro";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-theme="cupcake">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <ViewTransitions />
+  </head>
+  <body>
+    <SideBar>
+      <Navbar />
+      <main>
+        <slot />
+      </main>
+    </SideBar>
+  </body><script>
+    import "../scripts/main";
+  </script>
+</html>
