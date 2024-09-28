@@ -1,6 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { $authUser, setAuthUser } from "../../scripts/stores/authUser";
+import { routes } from "../../utils/routes";
+import { useStore } from "@nanostores/vue";
+
+const authUser = useStore($authUser);
+</script>
+
 <template>
-  <div class="dropdown dropdown-end">
+  <div v-show="authUser" class="dropdown dropdown-end">
     <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
       <div class="w-10 rounded-full">
         <img
@@ -20,7 +27,10 @@
         </a>
       </li>
       <li><a>Settings</a></li>
-      <li><a>Logout</a></li>
+      <li><a @click.prevent="() => setAuthUser(null)">Logout</a></li>
     </ul>
   </div>
+  <a :href="routes.auth.signin()" v-show="!authUser">
+    <button data-guest class="btn btn-sm btn-primary">Login</button>
+  </a>
 </template>

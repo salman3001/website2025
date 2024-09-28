@@ -1,9 +1,9 @@
 ---
-import { NavMenus, type INavMenu } from "../utils/nav-menus";
+import { NavMenus } from "../../utils/nav-menus";
 import Logo from "./logo.astro";
-import NavAuthMenu from "./vue/nav-auth-menu.vue";
-import NavSearch from "./vue/nav-search.vue";
 import { Bars3Icon } from "@heroicons/vue/24/solid";
+import Navsearch from "./navsearch.astro";
+import NavAuthMenu from "../vue/nav-auth-menu.vue";
 ---
 
 <div class="navbar bg-base-100 shadow-md p-0 m-0">
@@ -57,9 +57,9 @@ import { Bars3Icon } from "@heroicons/vue/24/solid";
         }
       </ul>
     </div>
-    <div class="navbar-end">
-      <NavSearch />
-      <NavAuthMenu />
+    <div class="navbar-end gap-2">
+      <Navsearch />
+      <NavAuthMenu client:visible />
     </div>
   </div>
 </div>
