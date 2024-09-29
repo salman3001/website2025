@@ -13,7 +13,6 @@ import {
 import { MediaCategoriesService } from './media-categories.service';
 import { CreateMediaCategoryDto } from './dto/create-media-category.dto';
 import { UpdateMediaCategoryDto } from './dto/update-media-category.dto';
-import { PolicyService } from '@salman3001/nest-policy-module';
 import { MediaCategoryPolicy } from './media-category.policy';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
@@ -25,8 +24,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class MediaCategoriesController {
   constructor(
     private readonly mediaCategoriesService: MediaCategoriesService,
-    @Inject('MediaCategoryPolicy')
-    private readonly policy: PolicyService<MediaCategoryPolicy>,
+    private readonly policy: MediaCategoryPolicy,
   ) {}
 
   @Post()
@@ -34,7 +32,7 @@ export class MediaCategoriesController {
     @Body() dto: CreateMediaCategoryDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('create', authUser);
+    this.policy.canCreate(authUser);
     const mediaCategory = this.mediaCategoriesService.create(dto);
 
     return CustomRes({
@@ -50,7 +48,7 @@ export class MediaCategoriesController {
     @Query() qs: Record<string, any>,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('findAll', authUser);
+    this.policy.canFindAll();
 
     const { mediaCategories, count } =
       await this.mediaCategoriesService.findAll(qs);
@@ -64,7 +62,7 @@ export class MediaCategoriesController {
 
   @Get(':id')
   async findOne(@Param('id') id: number, @AuthUser() authUser: AuthUserType) {
-    await this.policy.authorize('findOne', authUser);
+    this.policy.canFindOne();
 
     const mediaCategory = await this.mediaCategoriesService.findOne({ id });
     return CustomRes({
@@ -80,7 +78,8 @@ export class MediaCategoriesController {
     @Body() dto: UpdateMediaCategoryDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('update', authUser);
+    this.policy.canUpdate(authUser);
+
     const mediaCategory = await this.mediaCategoriesService.update(id, dto);
     return CustomRes({
       success: true,
@@ -92,7 +91,7 @@ export class MediaCategoriesController {
 
   @Delete(':id')
   async remove(@Param('id') id: number, @AuthUser() authUser: AuthUserType) {
-    await this.policy.authorize('delete', authUser);
+    this.policy.canDelete(authUser);
 
     const mediaCategory = await this.mediaCategoriesService.remove(id);
 

@@ -13,11 +13,10 @@ import {
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { PolicyService } from '@salman3001/nest-policy-module';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
 import CustomRes from 'src/utils/CustomRes';
-import { ProjectPolicy } from './project-policy.dto';
+import { ProjectPolicy } from './project.policy';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Projects')
@@ -25,8 +24,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class ProjectsController {
   constructor(
     private readonly projectsService: ProjectsService,
-    @Inject('ProjectPolicy')
-    private readonly policy: PolicyService<ProjectPolicy>,
+    private readonly policy: ProjectPolicy,
   ) {}
 
   @Post()
@@ -34,7 +32,7 @@ export class ProjectsController {
     @Body() dto: CreateProjectDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('create', authUser);
+    this.policy.canCreate(authUser);
     const project = this.projectsService.create(dto);
 
     return CustomRes({
@@ -47,7 +45,7 @@ export class ProjectsController {
 
   @Get()
   async findAll(@Query() qs: Record<string, any>) {
-    await this.policy.authorize('findAll');
+    this.policy.canFindAll();
 
     const { projects, count } = await this.projectsService.findAll(qs);
 
@@ -60,7 +58,7 @@ export class ProjectsController {
 
   @Get(':id')
   async findOne(@Param('slug') id: number) {
-    await this.policy.authorize('findOne');
+    this.policy.canFindOne();
 
     const project = await this.projectsService.findOne({ id });
     return CustomRes({ code: HttpStatus.OK, success: true, data: { project } });
@@ -72,7 +70,7 @@ export class ProjectsController {
     dto: UpdateProjectDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('update', authUser);
+    this.policy.canUpdate(authUser);
     const project = await this.projectsService.update(id, dto);
 
     return CustomRes({
@@ -85,7 +83,7 @@ export class ProjectsController {
 
   @Delete(':id')
   async remove(@Param('id') id: number, @AuthUser() authUser: AuthUserType) {
-    await this.policy.authorize('delete', authUser);
+    this.policy.canCreate(authUser);
     const project = await this.projectsService.remove(id);
 
     return CustomRes({

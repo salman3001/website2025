@@ -15,7 +15,6 @@ import { CreateBlogCategoryDto } from './dto/create-blog-category.dto';
 import { UpdateBlogCategoryDto } from './dto/update-blog-category.dto';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
-import { PolicyService } from '@salman3001/nest-policy-module';
 import { BlogCategoryPolicy } from './blog-category.policy';
 import CustomRes from 'src/utils/CustomRes';
 import { ApiTags } from '@nestjs/swagger';
@@ -25,8 +24,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class BlogCategoriesController {
   constructor(
     private readonly blogCategoriesService: BlogCategoriesService,
-    @Inject('BlogCategoryPolicy')
-    private readonly policy: PolicyService<BlogCategoryPolicy>,
+    private readonly policy: BlogCategoryPolicy,
   ) {}
 
   @Post()
@@ -34,7 +32,7 @@ export class BlogCategoriesController {
     @Body() dto: CreateBlogCategoryDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('create', authUser);
+    this.policy.canCreate(authUser);
     const blogCategory = this.blogCategoriesService.create(dto);
 
     return CustomRes({
@@ -47,7 +45,7 @@ export class BlogCategoriesController {
 
   @Get()
   async findAll(@Query() qs: Record<string, any>) {
-    await this.policy.authorize('findAll');
+    this.policy.canFindAll();
 
     const { blogCategories, count } =
       await this.blogCategoriesService.findAll(qs);
@@ -61,7 +59,7 @@ export class BlogCategoriesController {
 
   @Get(':slug')
   async findOne(@Param('slug') slug: string) {
-    await this.policy.authorize('findOne');
+    this.policy.canFindOne();
 
     const blog = await this.blogCategoriesService.findOne({ slug });
     return CustomRes({ code: HttpStatus.OK, success: true, data: { blog } });
@@ -73,7 +71,8 @@ export class BlogCategoriesController {
     @Body() dto: UpdateBlogCategoryDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('update', authUser);
+    this.policy.canUpdate(authUser);
+
     const blogCategory = await this.blogCategoriesService.update(slug, dto);
     return CustomRes({
       success: true,
@@ -88,7 +87,8 @@ export class BlogCategoriesController {
     @Param('slug') slug: string,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('delete', authUser);
+    this.policy.canDelete(authUser);
+
     const blogCategory = await this.blogCategoriesService.remove(slug);
 
     return CustomRes({

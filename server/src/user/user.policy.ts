@@ -1,41 +1,32 @@
+import { Injectable } from '@nestjs/common';
 import { UserType } from '@prisma/client';
+import { AuthenticatedOnly } from 'src/utils/decorators';
 import { AuthUserType } from 'src/utils/types/common';
 
-export const userPolicy = {
-  create: (user: AuthUserType) => {
-    if (user && user.tokenType === 'auth' && user.userType === UserType.Admin)
-      return true;
-    return false;
-  },
-  findAll: (user: AuthUserType) => {
-    if (user && user.tokenType === 'auth' && user.userType === UserType.Admin)
-      return true;
-    return false;
-  },
+@Injectable()
+export class UserPolicy {
+  @AuthenticatedOnly({ allowedUserTypes: [UserType.Admin] })
+  canCreate(user: AuthUserType) {
+    return true;
+  }
 
-  findAllByCategory: (user: AuthUserType) => {
-    if (user && user.tokenType === 'auth' && user.userType === UserType.Admin)
-      return true;
-    return false;
-  },
+  @AuthenticatedOnly({ allowedUserTypes: [UserType.Admin] })
+  canFindAll(user: AuthUserType) {
+    return true;
+  }
 
-  findOne: (user: AuthUserType) => {
-    if (user && user.tokenType === 'auth' && user.userType === UserType.Admin)
-      return true;
-    return false;
-  },
+  @AuthenticatedOnly({ allowedUserTypes: [UserType.Admin] })
+  canFindOne(user: AuthUserType) {
+    return true;
+  }
 
-  update: (user: AuthUserType) => {
-    if (user && user.tokenType === 'auth' && user.userType === UserType.Admin)
-      return true;
-    return false;
-  },
+  @AuthenticatedOnly({ allowedUserTypes: [UserType.Admin] })
+  canUpdate(user: AuthUserType) {
+    return true;
+  }
 
-  delete: (user: AuthUserType) => {
-    if (user && user.tokenType === 'auth' && user.userType === UserType.Admin)
-      return true;
-    return false;
-  },
-};
-
-export type UserPolicy = typeof userPolicy;
+  @AuthenticatedOnly({ allowedUserTypes: [UserType.Admin] })
+  canDelete(user: AuthUserType) {
+    return true;
+  }
+}

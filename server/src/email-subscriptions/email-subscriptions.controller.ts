@@ -14,7 +14,6 @@ import { EmailSubscriptionsService } from './email-subscriptions.service';
 import { CreateEmailSubscriptionDto } from './dto/create-email-subscription.dto';
 import { UpdateEmailSubscriptionDto } from './dto/update-email-subscription.dto';
 import { EmailSubscriptionPolicy } from './email-subscriptions.policy';
-import { PolicyService } from '@salman3001/nest-policy-module';
 import { AuthUserType } from 'src/utils/types/common';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import CustomRes from 'src/utils/CustomRes';
@@ -25,13 +24,12 @@ import { ApiTags } from '@nestjs/swagger';
 export class EmailSubscriptionsController {
   constructor(
     private readonly emailSubscriptionsService: EmailSubscriptionsService,
-    @Inject('EmailSubscriptionPolicy')
-    private readonly policy: PolicyService<EmailSubscriptionPolicy>,
+    private readonly policy: EmailSubscriptionPolicy,
   ) {}
 
   @Post()
   async create(@Body() dto: CreateEmailSubscriptionDto) {
-    await this.policy.authorize('create');
+    this.policy.canCreate();
     const subscription = this.emailSubscriptionsService.create(dto);
 
     return CustomRes({
@@ -47,7 +45,7 @@ export class EmailSubscriptionsController {
     @Query() qs: Record<string, any>,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('findAll', authUser);
+    this.policy.canFindAll(authUser);
 
     const { subscriptions, count } =
       await this.emailSubscriptionsService.findAll(qs);
@@ -67,7 +65,7 @@ export class EmailSubscriptionsController {
     const subscription = await this.emailSubscriptionsService.findOne({
       email,
     });
-    await this.policy.authorize('findOne', authUser, subscription.email);
+    this.policy.canFindOne(authUser, subscription.email);
 
     return CustomRes({
       code: HttpStatus.OK,
@@ -87,7 +85,7 @@ export class EmailSubscriptionsController {
       dto,
     );
 
-    await this.policy.authorize('update', authUser, subscription.email);
+    this.policy.canUpdate(authUser, subscription.email);
 
     return CustomRes({
       success: true,
@@ -102,7 +100,7 @@ export class EmailSubscriptionsController {
     @Param('email') email: string,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('delete', authUser);
+    this.policy.canDelete(authUser);
     const subscription = await this.emailSubscriptionsService.remove(email);
 
     return CustomRes({

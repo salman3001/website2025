@@ -1,29 +1,31 @@
+import { Injectable } from '@nestjs/common';
 import { UserType } from '@prisma/client';
+import { AuthenticatedOnly } from 'src/utils/decorators';
 import { AuthUserType } from 'src/utils/types/common';
 
-export const contactMessagesPolicy = {
-  create: (user: AuthUserType) => {
-    if (user) return true;
-    return false;
-  },
+@Injectable()
+export class ContactMessagesPolicy {
+  canCreate() {
+    return true;
+  }
 
-  findAll: (user: AuthUserType) => {
-    if (user && user.tokenType === 'auth' && user.userType === UserType.Admin)
-      return true;
-    return false;
-  },
+  @AuthenticatedOnly({ allowedUserTypes: [UserType.Admin] })
+  canFindAll(user: AuthUserType) {
+    return true;
+  }
 
-  findOne: (user: AuthUserType) => {
-    if (user && user.tokenType === 'auth' && user.userType === UserType.Admin)
-      return true;
-    return false;
-  },
+  @AuthenticatedOnly({ allowedUserTypes: [UserType.Admin] })
+  canFindOne(user: AuthUserType) {
+    return true;
+  }
 
-  delete: (user: AuthUserType) => {
-    if (user && user.tokenType === 'auth' && user.userType === UserType.Admin)
-      return true;
-    return false;
-  },
-};
+  @AuthenticatedOnly({ allowedUserTypes: [UserType.Admin] })
+  canUpdate(user: AuthUserType) {
+    return true;
+  }
 
-export type ContactMessagesPolicy = typeof contactMessagesPolicy;
+  @AuthenticatedOnly({ allowedUserTypes: [UserType.Admin] })
+  canDelete(user: AuthUserType) {
+    return true;
+  }
+}

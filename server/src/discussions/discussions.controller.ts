@@ -13,7 +13,6 @@ import {
 import { DiscussionsService } from './discussions.service';
 import { CreateDiscussionDto } from './dto/create-discussion.dto';
 import { UpdateDiscussionDto } from './dto/update-discussion.dto';
-import { PolicyService } from '@salman3001/nest-policy-module';
 import { DiscussionPolicy } from './disicussion.policy';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
@@ -25,8 +24,8 @@ import { ApiTags } from '@nestjs/swagger';
 export class DiscussionsController {
   constructor(
     private readonly discussionsService: DiscussionsService,
-    @Inject('DiscussionPolicy')
-    private readonly policy: PolicyService<DiscussionPolicy>,
+
+    private readonly policy: DiscussionPolicy,
   ) {}
 
   @Post()
@@ -34,7 +33,7 @@ export class DiscussionsController {
     @Body() dto: CreateDiscussionDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('create', authUser);
+    this.policy.canCreate(authUser);
     const userId = authUser.id;
     const discussion = this.discussionsService.create(dto, userId);
 
@@ -48,7 +47,7 @@ export class DiscussionsController {
 
   @Get()
   async findAll(@Query() qs: Record<string, any>) {
-    await this.policy.authorize('findAll');
+    this.policy.canFindAll();
 
     const { discussions, count } = await this.discussionsService.findAll(qs);
 
@@ -61,7 +60,7 @@ export class DiscussionsController {
 
   @Get(':slug')
   async findOne(@Param('slug') slug: string) {
-    await this.policy.authorize('findOne');
+    this.policy.canFindOne();
 
     const discussion = await this.discussionsService.findOne({ slug });
     return CustomRes({
@@ -77,7 +76,8 @@ export class DiscussionsController {
     @Body() dto: UpdateDiscussionDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('update', authUser);
+    this.policy.canUpdate(authUser);
+
     const discussion = await this.discussionsService.update(slug, dto);
     return CustomRes({
       success: true,
@@ -92,7 +92,8 @@ export class DiscussionsController {
     @Param('slug') slug: string,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('delete', authUser);
+    this.policy.canDelete(authUser);
+
     const discussion = await this.discussionsService.remove(slug);
 
     return CustomRes({

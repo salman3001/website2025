@@ -6,14 +6,13 @@ import {
   Patch,
   Param,
   Delete,
-  Inject,
   Query,
   HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PolicyService } from '@salman3001/nest-policy-module';
+
 import { UserPolicy } from './user.policy';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
@@ -25,12 +24,16 @@ import { ApiTags } from '@nestjs/swagger';
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    @Inject('UserPolicy')
-    private readonly policyService: PolicyService<UserPolicy>,
+    private readonly policyService: UserPolicy,
   ) {}
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @AuthUser() authUser: AuthUserType,
+  ) {
+    this.policyService.canCreate(authUser);
+
     const user = await this.userService.create(createUserDto);
     return CustomRes({
       code: HttpStatus.CREATED,
@@ -43,9 +46,9 @@ export class UserController {
   @Get()
   async findAll(
     @Query() qs: Record<string, any>,
-    @AuthUser() user: AuthUserType,
+    @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policyService.authorize('findAll', user);
+    this.policyService.canFindAll(authUser);
     const { count, users } = await this.userService.findAll(qs);
     return CustomRes({
       code: HttpStatus.CREATED,
@@ -58,9 +61,9 @@ export class UserController {
   async findOne(
     @Param('id') id: string,
     @Query() qs: Record<string, any>,
-    @AuthUser() auhUser: AuthUserType,
+    @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policyService.authorize('findOne', auhUser);
+    this.policyService.canFindOne(authUser);
 
     const user = await this.userService.findOne({ id: +id, ...qs });
     return CustomRes({
@@ -76,7 +79,7 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policyService.authorize('update', authUser);
+    this.policyService.canUpdate(authUser);
 
     const user = await this.userService.update(+id, updateUserDto);
 
@@ -90,7 +93,7 @@ export class UserController {
 
   @Delete(':id')
   async remove(@Param('id') id: string, @AuthUser() authUser: AuthUserType) {
-    await this.policyService.authorize('update', authUser);
+    this.policyService.canDelete(authUser);
     const user = await this.userService.remove(+id);
 
     return CustomRes({

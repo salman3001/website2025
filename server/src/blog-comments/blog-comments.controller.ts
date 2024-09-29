@@ -15,7 +15,6 @@ import { CreateBlogCommentDto } from './dto/create-blog-comment.dto';
 import { UpdateBlogCommentDto } from './dto/update-blog-comment.dto';
 import { AuthUserType } from 'src/utils/types/common';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
-import { PolicyService } from '@salman3001/nest-policy-module';
 import { BlogCommentPolicy } from './blog-comment.policy';
 import CustomRes from 'src/utils/CustomRes';
 import { ApiTags } from '@nestjs/swagger';
@@ -25,8 +24,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class BlogCommentsController {
   constructor(
     private readonly blogCommentsService: BlogCommentsService,
-    @Inject('BlogCommentPolicy')
-    private readonly policy: PolicyService<BlogCommentPolicy>,
+    private readonly policy: BlogCommentPolicy,
   ) {}
 
   @Post()
@@ -34,7 +32,7 @@ export class BlogCommentsController {
     @Body() dto: CreateBlogCommentDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('create', authUser);
+    this.policy.canCreate(authUser);
     const tag = this.blogCommentsService.create(dto);
 
     return CustomRes({
@@ -47,7 +45,7 @@ export class BlogCommentsController {
 
   @Get()
   async findAll(@Query() qs: Record<string, any>) {
-    await this.policy.authorize('findAll');
+    this.policy.canFindAll();
 
     const { comments, count } = await this.blogCommentsService.findAll(qs);
 
@@ -60,7 +58,7 @@ export class BlogCommentsController {
 
   @Get(':id')
   async findOne(@Param('slug') id: number) {
-    await this.policy.authorize('findOne');
+    this.policy.canFindOne();
 
     const comment = await this.blogCommentsService.findOne({ id });
     return CustomRes({ code: HttpStatus.OK, success: true, data: { comment } });
@@ -72,7 +70,8 @@ export class BlogCommentsController {
     @Body() dto: UpdateBlogCommentDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('update', authUser);
+    this.policy.canUpdate(authUser);
+
     const comment = await this.blogCommentsService.update(id, dto);
 
     return CustomRes({
@@ -85,7 +84,8 @@ export class BlogCommentsController {
 
   @Delete(':id')
   async remove(@Param('id') id: number, @AuthUser() authUser: AuthUserType) {
-    await this.policy.authorize('delete', authUser);
+    this.policy.canDelete(authUser);
+
     const comments = await this.blogCommentsService.remove(id);
 
     return CustomRes({

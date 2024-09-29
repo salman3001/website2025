@@ -13,7 +13,6 @@ import {
 import { DiscussionCommentsService } from './discussion-comments.service';
 import { CreateDiscussionCommentDto } from './dto/create-discussion-comment.dto';
 import { UpdateDiscussionCommentDto } from './dto/update-discussion-comment.dto';
-import { PolicyService } from '@salman3001/nest-policy-module';
 import { AuthUserType } from 'src/utils/types/common';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import CustomRes from 'src/utils/CustomRes';
@@ -25,8 +24,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class DiscussionCommentsController {
   constructor(
     private readonly discussionCommentsService: DiscussionCommentsService,
-    @Inject('DiscussionCommentsPolicy')
-    private readonly policy: PolicyService<DiscussionCommentsPolicy>,
+    private readonly policy: DiscussionCommentsPolicy,
   ) {}
 
   @Post()
@@ -34,7 +32,7 @@ export class DiscussionCommentsController {
     @Body() dto: CreateDiscussionCommentDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('create', authUser);
+    this.policy.canCreate(authUser);
     const tag = this.discussionCommentsService.create(dto);
 
     return CustomRes({
@@ -47,7 +45,7 @@ export class DiscussionCommentsController {
 
   @Get()
   async findAll(@Query() qs: Record<string, any>) {
-    await this.policy.authorize('findAll');
+    this.policy.canFindAll();
 
     const { comments, count } =
       await this.discussionCommentsService.findAll(qs);
@@ -61,7 +59,7 @@ export class DiscussionCommentsController {
 
   @Get(':id')
   async findOne(@Param('slug') id: number) {
-    await this.policy.authorize('findOne');
+    this.policy.canFindAll();
 
     const comment = await this.discussionCommentsService.findOne({ id });
     return CustomRes({ code: HttpStatus.OK, success: true, data: { comment } });
@@ -73,7 +71,8 @@ export class DiscussionCommentsController {
     @Body() dto: UpdateDiscussionCommentDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('update', authUser);
+    this.policy.canUpdate(authUser);
+
     const comment = await this.discussionCommentsService.update(id, dto);
 
     return CustomRes({
@@ -86,7 +85,7 @@ export class DiscussionCommentsController {
 
   @Delete(':id')
   async remove(@Param('id') id: number, @AuthUser() authUser: AuthUserType) {
-    await this.policy.authorize('delete', authUser);
+    this.policy.canDelete(authUser);
     const tag = await this.discussionCommentsService.remove(id);
 
     return CustomRes({

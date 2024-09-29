@@ -14,4 +14,17 @@ export async function seedUser(prisma: PrismaClient) {
       isActive: true,
     },
   });
+
+  await prisma.user.upsert({
+    where: { email: 'user@gmail.com' },
+    update: {},
+    create: {
+      fullName: 'User',
+      email: 'user@gmail.com',
+      password: hashSync('123456789', 10),
+      emailVerified: true,
+      userType: UserType.User,
+      isActive: true,
+    },
+  });
 }

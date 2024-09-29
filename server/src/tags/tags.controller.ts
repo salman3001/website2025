@@ -8,12 +8,11 @@ import {
   Delete,
   HttpStatus,
   Query,
-  Inject,
 } from '@nestjs/common';
 import { TagsService } from './tags.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
-import { PolicyService } from '@salman3001/nest-policy-module';
+
 import { TagPolicy } from './tags.policy';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
@@ -25,7 +24,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class TagsController {
   constructor(
     private readonly tagsService: TagsService,
-    @Inject('TagPolicy') private readonly policy: PolicyService<TagPolicy>,
+    private readonly policy: TagPolicy,
   ) {}
 
   @Post()
@@ -33,7 +32,7 @@ export class TagsController {
     @Body() createBlogDto: CreateTagDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('create', authUser);
+    this.policy.canCreate(authUser);
     const tag = this.tagsService.create(createBlogDto);
 
     return CustomRes({
@@ -46,7 +45,7 @@ export class TagsController {
 
   @Get()
   async findAll(@Query() qs: Record<string, any>) {
-    await this.policy.authorize('findAll');
+    this.policy.canFindAll();
 
     const { tags, count } = await this.tagsService.findAll(qs);
 
@@ -59,7 +58,7 @@ export class TagsController {
 
   @Get(':slug')
   async findOne(@Param('slug') slug: string) {
-    await this.policy.authorize('findOne');
+    this.policy.canFindOne();
 
     const tag = await this.tagsService.findOne({ slug });
     return CustomRes({ code: HttpStatus.OK, success: true, data: { tag } });
@@ -71,7 +70,8 @@ export class TagsController {
     @Body() updateBlogDto: UpdateTagDto,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('update', authUser);
+    this.policy.canUpdate(authUser);
+
     const blogCategory = await this.tagsService.update(slug, updateBlogDto);
 
     return CustomRes({
@@ -87,7 +87,8 @@ export class TagsController {
     @Param('slug') slug: string,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('delete', authUser);
+    this.policy.canDelete(authUser);
+
     const tag = await this.tagsService.remove(slug);
 
     return CustomRes({

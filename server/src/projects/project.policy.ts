@@ -4,8 +4,8 @@ import { AuthenticatedOnly } from 'src/utils/decorators';
 import { AuthUserType } from 'src/utils/types/common';
 
 @Injectable()
-export class BlogCommentPolicy {
-  @AuthenticatedOnly()
+export class ProjectPolicy {
+  @AuthenticatedOnly({ allowedUserTypes: [UserType.Admin] })
   canCreate(user: AuthUserType) {
     return true;
   }

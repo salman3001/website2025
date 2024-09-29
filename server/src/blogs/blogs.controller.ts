@@ -26,7 +26,6 @@ import {
 import { UploadFileDto } from 'src/media/dto/upload-file.dto';
 import { AuthUserType } from 'src/utils/types/common';
 import { BlogPolicy } from './blogs.policy';
-import { PolicyService } from '@salman3001/nest-policy-module';
 import CustomRes from 'src/utils/CustomRes';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 
@@ -35,7 +34,7 @@ import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
-    @Inject('BlogPolicy') private readonly policy: PolicyService<BlogPolicy>,
+    private readonly blogPolicy: BlogPolicy,
   ) {}
 
   @Post()
@@ -58,7 +57,8 @@ export class BlogsController {
     @AuthUser() authUser: AuthUserType,
     @UploadedFile() image?: Express.Multer.File,
   ) {
-    await this.policy.authorize('create', authUser);
+    this.blogPolicy.canCreate(authUser);
+
     const userId = authUser.id;
     const blog = this.blogsService.create(createBlogDto, userId, image);
 
@@ -71,8 +71,11 @@ export class BlogsController {
   }
 
   @Get()
-  async findAll(@Query() qs: Record<string, any>) {
-    await this.policy.authorize('findAll');
+  async findAll(
+    @Query() qs: Record<string, any>,
+    @AuthUser() authUser: AuthUserType,
+  ) {
+    this.blogPolicy.canFindAll();
 
     const { blogs, count } = await this.blogsService.findAll(qs);
     return CustomRes({
@@ -84,7 +87,7 @@ export class BlogsController {
 
   @Get(':slug')
   async findOne(@Param('slug') slug: string) {
-    await this.policy.authorize('findOne');
+    this.blogPolicy.canFindOne();
 
     const blog = await this.blogsService.findOne({ slug });
     return CustomRes({ code: HttpStatus.OK, success: true, data: { blog } });
@@ -111,7 +114,7 @@ export class BlogsController {
     @AuthUser() authUser: AuthUserType,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    await this.policy.authorize('update', authUser);
+    this.blogPolicy.canUpdate(authUser);
     const blog = await this.blogsService.update(slug, updateBlogDto, image);
     return CustomRes({
       success: true,
@@ -126,7 +129,7 @@ export class BlogsController {
     @Param('slug') slug: string,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policy.authorize('delete', authUser);
+    this.blogPolicy.canDelete(authUser);
     const blog = await this.blogsService.remove(slug);
     return CustomRes({
       success: true,

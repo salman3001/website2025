@@ -9,8 +9,6 @@ import {
   UseInterceptors,
   UploadedFile,
   Query,
-  Inject,
-  UseGuards,
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 
@@ -27,7 +25,6 @@ import { CreateMediaDto } from './dto/create-media.dto';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
 import CustomRes from 'src/utils/CustomRes';
-import { PolicyService } from '@salman3001/nest-policy-module';
 import { MediaPolicy } from './media.policy';
 import { UploadFileDto } from './dto/upload-file.dto';
 
@@ -36,8 +33,7 @@ import { UploadFileDto } from './dto/upload-file.dto';
 export class MediaController {
   constructor(
     private readonly mediaService: MediaService,
-    @Inject('MediaPolicy')
-    private readonly policyService: PolicyService<MediaPolicy>,
+    private readonly policyService: MediaPolicy,
   ) {}
 
   @Post()
@@ -61,7 +57,7 @@ export class MediaController {
     @UploadedFile()
     file?: Express.Multer.File,
   ) {
-    await this.policyService.authorize('create', authUser);
+    this.policyService.canCreate(authUser);
 
     const media = await this.mediaService.create(dto, file);
     return CustomRes({ code: 201, success: true, data: media });
@@ -72,7 +68,7 @@ export class MediaController {
     @Query() query: Record<string, any>,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policyService.authorize('findAll', authUser);
+    this.policyService.canFindAll();
 
     const { skip, take, orderBy, search, mediaCategoryId } = query;
     const searchQuery = search ? { name: { contains: search } } : {};
@@ -96,7 +92,7 @@ export class MediaController {
     @Query() query: Record<string, any>,
     @AuthUser() authUser: AuthUserType,
   ) {
-    await this.policyService.authorize('findAllByCategory', authUser);
+    this.policyService.canFindAllByCategory();
 
     const { skip, take, orderBy, search } = query;
     const searchQuery = search ? { name: { contains: search } } : {};
@@ -113,7 +109,7 @@ export class MediaController {
 
   @Get(':id')
   async findOne(@Param('id') id: string, @AuthUser() authUser: AuthUserType) {
-    await this.policyService.authorize('findOne', authUser);
+    this.policyService.canFindOne();
 
     const media = await this.mediaService.findOne({ id: +id });
     return CustomRes({ code: 200, success: true, data: media });
@@ -141,7 +137,7 @@ export class MediaController {
     @UploadedFile()
     file?: Express.Multer.File,
   ) {
-    await this.policyService.authorize('update', authUser);
+    this.policyService.canUpdate(authUser);
 
     const media = await this.mediaService.update(+id, dto, file);
     return CustomRes({
@@ -154,7 +150,7 @@ export class MediaController {
 
   @Delete(':id')
   async remove(@Param('id') id: string, @AuthUser() authUser: AuthUserType) {
-    await this.policyService.authorize('delete', authUser);
+    this.policyService.canDelete(authUser);
 
     const media = await this.mediaService.remove(+id);
     return CustomRes({
