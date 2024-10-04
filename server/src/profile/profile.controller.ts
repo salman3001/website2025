@@ -12,8 +12,8 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from 'src/media/helpers/fileFIlter';
 import { ApiBody, ApiTags, IntersectionType } from '@nestjs/swagger';
-import { UploadFileDto } from 'src/media/dto/upload-file.dto';
 import CustomRes from 'src/utils/CustomRes';
+import { UploadFileDto } from 'src/media/dto/upload-file.dto';
 
 @ApiTags('Profile')
 @Controller('profile')

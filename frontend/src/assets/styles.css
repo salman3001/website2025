@@ -22,6 +22,14 @@ html {
   }
 
   .input {
-    @apply focus-within:outline-offset-0 focus-within:outline-primary focus-within:outline-1;
+    @apply focus-within:outline-offset-0 focus-within:outline-primary focus-within:outline-2 focus-within:border-none;
+  }
+
+  .select {
+    @apply focus-within:outline-offset-0 focus-within:outline-primary focus-within:outline-2 focus-within:border-none;
+  }
+
+  .textarea {
+    @apply focus-within:outline-offset-0 focus-within:outline-primary focus-within:outline-2 focus-within:border-none;
   }
 }

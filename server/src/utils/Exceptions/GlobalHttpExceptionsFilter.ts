@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { CustomHttpException } from './CustomHttpException';
-import { unlinkSync } from 'fs';
+import { existsSync, unlinkSync } from 'fs';
 
 @Catch()
 export class GlobalHttpExceptionsFilter implements ExceptionFilter {
@@ -17,14 +17,14 @@ export class GlobalHttpExceptionsFilter implements ExceptionFilter {
     const file = request.file;
     const files = request.files;
 
-    if (file) {
+    if (file?.path && existsSync(file.path)) {
       unlinkSync(file.path);
     }
 
     if (files && files instanceof Array) {
-      files.forEach((file) => {
+      if (file?.path && existsSync(file.path)) {
         unlinkSync(file.path);
-      });
+      }
     }
 
     if (exception instanceof HttpException) {

@@ -6,7 +6,7 @@ document.addEventListener("astro:page-load", function () {
 
   links.forEach((link) => {
     if (link.href === url) {
-      link.classList.add("bg-primary", "text-base-100"); // Add the "active" class if the URL matches
+      link.classList.add("bg-primary"); // Add the "active" class if the URL matches
     }
   });
 });

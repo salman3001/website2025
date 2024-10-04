@@ -1,0 +1,23 @@
+---
+import { ArrowLeftIcon, PlusIcon } from "@heroicons/vue/24/solid";
+import CreateBlogForm from "src/components/vue/forms/create-blog-form.vue";
+import Layout from "src/layouts/Layout.astro";
+import { routes } from "src/utils/routes";
+---
+
+<Layout title="Create Blog">
+  <div class="container mx-auto px-2 py-5 font-semibold">
+    <div class="flex flex-wrap gap-2 items-center">
+      <a class="btn btn-sm btn-primary" href={routes.admin.blogs.index()}>
+        <ArrowLeftIcon class="size-4" />
+        Back</a
+      >
+      <h1 class="text-xl">Create Blogs</h1>
+    </div>
+
+    <br />
+    <div class="overflow-x-auto container">
+      <CreateBlogForm client:load />
+    </div>
+  </div>
+</Layout>

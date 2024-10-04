@@ -1,16 +1,16 @@
 ---
-import { NavMenus } from "../../utils/nav-menus";
 import Logo from "./logo.astro";
 import { Bars3Icon } from "@heroicons/vue/24/solid";
 import Navsearch from "./navsearch.astro";
 import NavAuthMenu from "../vue/nav-auth-menu.vue";
+import { NavMenus } from "src/utils/consts/nav-menus";
 ---
 
 <div class="navbar bg-base-100 shadow-md p-0 m-0">
   <div class="navbar container py-0 my-0 mx-auto">
     <div class="navbar-start">
-      <label for="nav-drawer" class="btn btn-ghost btn-square flex md:hidden">
-        <Bars3Icon class="size-6 text-primary block md:hidden" />
+      <label for="nav-drawer" class="btn btn-ghost btn-square flex lg:hidden">
+        <Bars3Icon class="size-6 block" />
       </label>
 
       <div class="hidden md:block">
@@ -20,7 +20,7 @@ import NavAuthMenu from "../vue/nav-auth-menu.vue";
     <div class="navbar-center hidden lg:flex">
       <ul
         tabindex="0"
-        class="menu menu-horizontal px-1 font-semibold uppercase text-primary"
+        class="menu menu-horizontal px-1 font-semibold uppercase"
         data-nav-menu-container
       >
         {

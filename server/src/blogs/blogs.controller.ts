@@ -23,7 +23,7 @@ import {
   ApiTags,
   IntersectionType,
 } from '@nestjs/swagger';
-import { UploadFileDto } from 'src/media/dto/upload-file.dto';
+import { UploadImageDto } from 'src/media/dto/upload-image.dto';
 import { AuthUserType } from 'src/utils/types/common';
 import { BlogPolicy } from './blogs.policy';
 import CustomRes from 'src/utils/CustomRes';
@@ -49,7 +49,7 @@ export class BlogsController {
   )
   @ApiBody({
     description: 'Image',
-    type: IntersectionType(UploadFileDto, CreateBlogDto),
+    type: IntersectionType(UploadImageDto, CreateBlogDto),
   })
   @ApiConsumes('multipart/form-data')
   async create(
@@ -105,7 +105,7 @@ export class BlogsController {
   )
   @ApiBody({
     description: 'Image',
-    type: IntersectionType(UploadFileDto, CreateBlogDto),
+    type: IntersectionType(UploadImageDto, CreateBlogDto),
   })
   @ApiConsumes('multipart/form-data')
   async update(

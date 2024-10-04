@@ -8,7 +8,6 @@ import { confirmEmailDto } from './dto/confirmEmail.dto';
 import { forgotPasswordOtpDto } from './dto/forgotPasswordOtp.dto';
 import { resetPasswordDto } from './dto/resetPassword.dto';
 import { ConfigService } from '@nestjs/config';
-import { IEnvConfig } from 'src/config/env.config';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('auth')
@@ -33,24 +32,11 @@ export class AuthController {
       email: user.email,
     });
 
-    res.cookie('auth_token', token, {
-      httpOnly: true,
-      sameSite: true,
-      secure:
-        this.config.get<IEnvConfig>('env').nodeEnv !== 'prod' ? false : true,
-    });
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userPayload } = user;
 
-    res.cookie('user', JSON.stringify(userPayload), {
-      sameSite: true,
-      secure:
-        this.config.get<IEnvConfig>('env')?.nodeEnv !== 'prod' ? false : true,
-    });
-
     return CustomRes({
-      data: null,
+      data: { user: userPayload, token },
       code: HttpStatus.OK,
       message: 'Login Successfully',
       success: true,
@@ -59,8 +45,8 @@ export class AuthController {
 
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('auth_token');
-    res.clearCookie('user');
+    // res.clearCookie('auth_token');
+    // res.clearCookie('user');
 
     return CustomRes({
       data: null,
@@ -95,24 +81,13 @@ export class AuthController {
       userType: user.userType,
       email: user.email,
     });
-
-    res.cookie('auth_token', token, {
-      httpOnly: true,
-      sameSite: true,
-      secure:
-        this.config.get<IEnvConfig>('env')?.nodeEnv !== 'prod' ? false : true,
-    });
-
-    res.cookie('user', JSON.stringify(user), {
-      sameSite: true,
-      secure:
-        this.config.get<IEnvConfig>('env')?.nodeEnv !== 'prod' ? false : true,
-    });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userPayload } = user;
 
     return CustomRes({
       code: HttpStatus.OK,
       message: 'Account activated',
-      data: user,
+      data: { user: userPayload, token },
       success: true,
     });
   }

@@ -9,7 +9,8 @@ import { JwtUserPayload } from 'src/utils/types/common';
 export class AuthMiddleware implements NestMiddleware {
   constructor(private readonly config: ConfigService) {}
   use(req: Request, res: Response, next: () => void) {
-    const auth_token = req.cookies?.auth_token;
+    const authHeader = req.headers?.authorization || '';
+    const auth_token = authHeader.split(' ')[1];
 
     if (!auth_token) {
       req['user'] = null;

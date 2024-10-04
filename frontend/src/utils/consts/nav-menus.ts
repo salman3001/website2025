@@ -1,4 +1,4 @@
-import { routes } from "./routes";
+import { routes } from "../routes";
 
 export interface INavMenu {
   name: string;
@@ -16,6 +16,13 @@ export const NavMenus: INavMenu[] = [
       { name: "Contact", href: routes.web.contact() },
       { name: "Discussion", href: routes.web.discussions() },
       { name: "Portfolio", href: routes.web.portfolio() },
+    ],
+  },
+  {
+    name: "Admin",
+    child: [
+      { name: "Dashboard", href: routes.admin.dashboard() },
+      { name: "Blogs", href: routes.admin.blogs.index() },
     ],
   },
 ];

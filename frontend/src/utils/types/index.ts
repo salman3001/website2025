@@ -12,3 +12,21 @@ export interface AuthUser {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type IResType<T> = {
+  code: number;
+  success: boolean;
+  message?: string;
+  data?: T;
+  errors?: ValidationErrorObj;
+};
+
+type ValidationError = {
+  errors: string[];
+};
+
+export type ValidationErrorObj =
+  | (ValidationError & {
+      [key: string]: ValidationErrorObj;
+    })
+  | null;

@@ -1,18 +1,28 @@
 import axios from "axios";
 import { config } from "../utils/config";
-import { setAuthUser } from "./stores/authUser";
+import { $authStore, setAuth } from "./stores/authStore";
 
 const api = axios.create({
   baseURL: config.apIUrl,
-  withCredentials: true,
 });
 
 api.interceptors.response.use((res) => {
   if (res.status === 401) {
-    setAuthUser(null);
+    setAuth(null);
   }
 
   return res;
+});
+
+api.interceptors.request.use((req) => {
+  const authData = $authStore.get();
+  if (authData) {
+    const { token } = authData;
+    const authHeader = `Bearer ${token}`;
+    req.headers.Authorization = authHeader;
+  }
+
+  return req;
 });
 
 export { api };
