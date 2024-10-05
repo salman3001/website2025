@@ -33,17 +33,9 @@ export default function useApiForm<T extends object>(
           opt?.onSucess && opt.onSucess(res.data.data);
         }
         this.res = res.data;
+        toast.success(this?.res?.message || "Success");
       } catch (error: unknown) {
-        this.res = (error as AxiosError<IResType<any>>).response?.data;
-        const errors = (error as AxiosError<IResType<any>>).response?.data
-          ?.errors;
-
-        if (errors) {
-          this.errors = errors;
-        } else {
-          this.errors = null;
-        }
-        opt?.onError && opt.onError();
+        this.processError(error, opt?.onError);
       }
       this.processing = false;
     },
@@ -65,17 +57,9 @@ export default function useApiForm<T extends object>(
           opt?.onSucess && opt.onSucess(res.data.data);
         }
         this.res = res.data;
+        toast.success(this?.res?.message || "Success");
       } catch (error: unknown) {
-        this.res = (error as AxiosError<IResType<any>>).response?.data;
-        const errors = (error as AxiosError<IResType<any>>).response?.data
-          ?.errors;
-
-        if (errors) {
-          this.errors = errors;
-        } else {
-          this.errors = null;
-        }
-        opt?.onError && opt.onError();
+        this.processError(error, opt?.onError);
       }
       this.processing = false;
     },
@@ -97,17 +81,9 @@ export default function useApiForm<T extends object>(
           opt?.onSucess && opt.onSucess(res?.data?.data);
         }
         this.res = res.data;
+        toast.success(this?.res?.message || "Success");
       } catch (error: unknown) {
-        const errors = (error as AxiosError<IResType<any>>).response?.data
-          ?.errors;
-        this.res = (error as AxiosError<IResType<any>>).response?.data;
-
-        if (errors) {
-          this.errors = errors;
-        } else {
-          this.errors = null;
-        }
-        opt?.onError && opt.onError();
+        this.processError(error, opt?.onError);
       }
       this.processing = false;
     },
@@ -124,35 +100,39 @@ export default function useApiForm<T extends object>(
           opt?.onSucess && opt.onSucess(res?.data?.data);
         }
         this.res = res.data;
+        toast.success(this?.res?.message || "Success");
       } catch (error: unknown) {
-        const errors = (error as AxiosError<IResType<any>>).response?.data
-          ?.errors;
-        this.res = (error as AxiosError<IResType<any>>).response?.data;
-
-        if (errors) {
-          this.errors = errors;
-        } else {
-          this.errors = null;
-        }
-        opt?.onError && opt.onError();
+        this.processError(error, opt?.onError);
       }
       this.processing = false;
     },
-  });
 
-  watch(
-    () => formObject.res,
-    (n) => {
-      if (n && !import.meta.env.SSR && !formObject.disableToast) {
-        if (n.success === true) {
-          toast.success(n.message || " Success");
-        }
-        if (n.success === false) {
-          toast.error(n.message || " Error");
-        }
+    processError(error: unknown, onError?: () => void) {
+      const err = error as AxiosError<IResType<any>>;
+      const errors = err.response?.data?.errors;
+      this.res = err.response?.data;
+
+      if (errors) {
+        this.errors = errors;
+      } else {
+        this.errors = null;
       }
+
+      onError && onError();
+
+      if (err.response) {
+        toast.error(err.response?.data?.message || "Server  Error");
+        return;
+      }
+
+      if (err.request) {
+        toast.error("Request Error");
+        return;
+      }
+
+      toast.error("Something Wenr Error");
     },
-  );
+  });
 
   return formObject;
 }

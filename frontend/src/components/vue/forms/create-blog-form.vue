@@ -119,7 +119,13 @@ const submit = () =>
     </div>
     <br />
     <div class="text-end">
-      <button type="submit" class="btn btn-primary">Create</button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        :disabled="loginForm.processing"
+      >
+        Create
+      </button>
     </div>
   </form>
 </template>

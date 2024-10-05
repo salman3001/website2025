@@ -57,7 +57,13 @@ const submit = () =>
       <br />
 
       <div>
-        <button type="submit" class="btn w-full btn-primary">Sign in</button>
+        <button
+          type="submit"
+          class="btn w-full btn-primary"
+          :disabled="loginForm.processing"
+        >
+          Sign in
+        </button>
       </div>
     </div>
   </form>
