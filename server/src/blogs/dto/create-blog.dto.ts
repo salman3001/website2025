@@ -4,6 +4,7 @@ import {
   IsArray,
   IsBoolean,
   IsNotEmpty,
+  IsNumber,
   IsObject,
   IsOptional,
   IsString,
@@ -46,6 +47,11 @@ export class CreateBlogDto {
   @ValidateNested({ each: true })
   @IsOptional()
   tagSlugs?: string[];
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  mediaId?: number;
 
   @ApiProperty()
   @IsObject()

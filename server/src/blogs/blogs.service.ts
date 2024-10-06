@@ -9,18 +9,10 @@ import { ImageUploadService } from 'src/media/imageUpload.service';
 
 @Injectable()
 export class BlogsService {
-  constructor(
-    private prisma: PrismaService,
-    private imageUploadService: ImageUploadService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  async create(
-    dto: CreateBlogDto,
-    userId: number,
-    image?: Express.Multer.File,
-  ) {
-    const { seo, blogCategorySlug, tagSlugs, ...blogDto } = dto;
-    let imageUrl: string | undefined = undefined;
+  async create(dto: CreateBlogDto, userId: number) {
+    const { seo, blogCategorySlug, tagSlugs, mediaId, ...blogDto } = dto;
 
     const slug = slugify(blogDto.title, { lower: true, strict: true });
     const existBlog = await this.prisma.blog.findFirst({ where: { slug } });
@@ -30,11 +22,6 @@ export class BlogsService {
         message: 'Slug Already Exist',
         success: false,
       });
-    }
-
-    if (image) {
-      const { url } = await this.imageUploadService.uploadImage(image);
-      imageUrl = url;
     }
 
     const blog = await this.prisma.blog.create({
@@ -51,15 +38,11 @@ export class BlogsService {
         tags: {
           connect: tagSlugs ? tagSlugs.map((slug) => ({ slug })) : [],
         },
-        image: imageUrl
-          ? {
-              create: {
-                type: MediaType.Image,
-                name: `Image - ${blogDto.title}`,
-                url: imageUrl,
-              },
-            }
-          : undefined,
+        image: {
+          connect: {
+            id: mediaId,
+          },
+        },
       },
     });
 
@@ -95,9 +78,8 @@ export class BlogsService {
     });
   }
 
-  async update(slug: string, dto: UpdateBlogDto, image: Express.Multer.File) {
-    const { seo, blogCategorySlug, tagSlugs, ...blogDto } = dto;
-    let imageUrl: string | undefined = undefined;
+  async update(slug: string, dto: UpdateBlogDto) {
+    const { seo, blogCategorySlug, tagSlugs, mediaId, ...blogDto } = dto;
 
     const existBlog = await this.prisma.blog.findFirstOrThrow({
       where: { slug },
@@ -110,15 +92,6 @@ export class BlogsService {
         message: 'No Blog found',
         success: false,
       });
-    }
-
-    if (image) {
-      const { url } = await this.imageUploadService.uploadImage(image);
-      imageUrl = url;
-
-      if (existBlog.image) {
-        await this.imageUploadService.deleteImage(existBlog.image.url);
-      }
     }
 
     const newSlug: string =
@@ -140,12 +113,10 @@ export class BlogsService {
         tags: {
           set: tagSlugs ? tagSlugs.map((slug) => ({ slug })) : [],
         },
-        image: imageUrl
+        image: mediaId
           ? {
-              update: {
-                type: MediaType.Image,
-                name: `Image - ${blogDto.title}`,
-                url: imageUrl,
+              connect: {
+                id: mediaId,
               },
             }
           : undefined,
@@ -158,12 +129,7 @@ export class BlogsService {
   async remove(slug: string) {
     const existBlog = await this.prisma.blog.findFirstOrThrow({
       where: { slug },
-      include: { image: true },
     });
-
-    if (existBlog.image) {
-      await this.imageUploadService.deleteImage(existBlog.image.url);
-    }
 
     await this.prisma.blog.delete({ where: { slug } });
 

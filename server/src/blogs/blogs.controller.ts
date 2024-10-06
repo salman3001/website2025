@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  UseInterceptors,
   UploadedFile,
   HttpStatus,
   Query,
@@ -15,15 +14,8 @@ import {
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { fileFilter } from 'src/media/helpers/fileFIlter';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiTags,
-  IntersectionType,
-} from '@nestjs/swagger';
-import { UploadImageDto } from 'src/media/dto/upload-image.dto';
+
+import { ApiTags } from '@nestjs/swagger';
 import { AuthUserType } from 'src/utils/types/common';
 import { BlogPolicy } from './blogs.policy';
 import CustomRes from 'src/utils/CustomRes';
@@ -38,20 +30,6 @@ export class BlogsController {
   ) {}
 
   @Post()
-  @UseInterceptors(
-    FileInterceptor(
-      'image',
-      fileFilter({
-        maxSizeInMb: 5,
-        mimeType: ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
-      }),
-    ),
-  )
-  @ApiBody({
-    description: 'Image',
-    type: IntersectionType(UploadImageDto, CreateBlogDto),
-  })
-  @ApiConsumes('multipart/form-data')
   async create(
     @Body() createBlogDto: CreateBlogDto,
     @AuthUser() authUser: AuthUserType,
@@ -60,7 +38,7 @@ export class BlogsController {
     this.blogPolicy.canCreate(authUser);
 
     const userId = authUser.id;
-    const blog = this.blogsService.create(createBlogDto, userId, image);
+    const blog = this.blogsService.create(createBlogDto, userId);
 
     return CustomRes({
       code: HttpStatus.CREATED,
@@ -94,20 +72,6 @@ export class BlogsController {
   }
 
   @Patch(':slug')
-  @UseInterceptors(
-    FileInterceptor(
-      'image',
-      fileFilter({
-        maxSizeInMb: 5,
-        mimeType: ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
-      }),
-    ),
-  )
-  @ApiBody({
-    description: 'Image',
-    type: IntersectionType(UploadImageDto, CreateBlogDto),
-  })
-  @ApiConsumes('multipart/form-data')
   async update(
     @Param('slug') slug: string,
     @Body() updateBlogDto: UpdateBlogDto,
@@ -115,7 +79,7 @@ export class BlogsController {
     @UploadedFile() image: Express.Multer.File,
   ) {
     this.blogPolicy.canUpdate(authUser);
-    const blog = await this.blogsService.update(slug, updateBlogDto, image);
+    const blog = await this.blogsService.update(slug, updateBlogDto);
     return CustomRes({
       success: true,
       code: HttpStatus.CREATED,

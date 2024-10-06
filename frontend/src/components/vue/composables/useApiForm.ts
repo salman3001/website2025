@@ -31,9 +31,9 @@ export default function useApiForm<T extends object>(
         );
         if (res.data.success === true) {
           opt?.onSucess && opt.onSucess(res.data.data);
+          toast.success(this?.res?.message || "Success");
         }
         this.res = res.data;
-        toast.success(this?.res?.message || "Success");
       } catch (error: unknown) {
         this.processError(error, opt?.onError);
       }
@@ -55,9 +55,9 @@ export default function useApiForm<T extends object>(
         );
         if (res.data.success === true) {
           opt?.onSucess && opt.onSucess(res.data.data);
+          toast.success(this?.res?.message || "Success");
         }
         this.res = res.data;
-        toast.success(this?.res?.message || "Success");
       } catch (error: unknown) {
         this.processError(error, opt?.onError);
       }
@@ -79,9 +79,9 @@ export default function useApiForm<T extends object>(
         );
         if (res.data.success === true) {
           opt?.onSucess && opt.onSucess(res?.data?.data);
+          toast.success(this?.res?.message || "Success");
         }
         this.res = res.data;
-        toast.success(this?.res?.message || "Success");
       } catch (error: unknown) {
         this.processError(error, opt?.onError);
       }
@@ -98,9 +98,9 @@ export default function useApiForm<T extends object>(
         const res = await api.delete<IResType<any>>(url, config);
         if (res.data.success === true) {
           opt?.onSucess && opt.onSucess(res?.data?.data);
+          toast.success(this?.res?.message || "Success");
         }
         this.res = res.data;
-        toast.success(this?.res?.message || "Success");
       } catch (error: unknown) {
         this.processError(error, opt?.onError);
       }
@@ -119,6 +119,7 @@ export default function useApiForm<T extends object>(
       }
 
       onError && onError();
+      console.log(error);
 
       if (err.response) {
         toast.error(err.response?.data?.message || "Server  Error");
