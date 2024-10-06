@@ -6,6 +6,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
+import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class CreateDiscussionCommentDto {
   @ApiProperty()
@@ -21,6 +22,6 @@ export class CreateDiscussionCommentDto {
 
   @ApiProperty()
   @IsNumber()
-  @IsOptional()
+  @IsOptionalEmpty()
   parentId: number;
 }

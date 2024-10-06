@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, Length } from 'class-validator';
+import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class UpdateMediaDto {
   @ApiProperty()
@@ -8,6 +9,6 @@ export class UpdateMediaDto {
   name: string;
 
   @ApiProperty()
-  @IsOptional()
+  @IsOptionalEmpty()
   mediaCategoryId?: number;
 }

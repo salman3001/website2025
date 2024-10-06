@@ -11,7 +11,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
   imports: [
     MulterModule.register({
       dest: './temp',
-      preservePath: true,
     }),
   ],
   controllers: [MediaController],

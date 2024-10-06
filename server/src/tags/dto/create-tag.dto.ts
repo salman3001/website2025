@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class CreateTagDto {
   @ApiProperty()
@@ -10,6 +11,6 @@ export class CreateTagDto {
 
   @ApiProperty()
   @IsString()
-  @IsOptional()
+  @IsOptionalEmpty()
   desc?: string;
 }

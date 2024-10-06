@@ -1,12 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MediaType } from '@prisma/client';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsEnum, IsNumber, IsString, Length } from 'class-validator';
+import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class CreateMediaDto {
   @ApiProperty()
@@ -19,7 +14,7 @@ export class CreateMediaDto {
   type: MediaType;
 
   @ApiProperty({ required: false })
-  @IsOptional()
-  @IsNotEmpty()
+  @IsNumber()
+  @IsOptionalEmpty()
   mediaCategoryId?: number;
 }

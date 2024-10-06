@@ -4,11 +4,11 @@ import {
   IsArray,
   IsBoolean,
   IsNotEmpty,
-  IsOptional,
   IsString,
   Length,
   ValidateNested,
 } from 'class-validator';
+import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class CreateProjectDto {
   @ApiProperty()
@@ -26,7 +26,7 @@ export class CreateProjectDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
+  @IsOptionalEmpty()
   desc?: string;
 
   @ApiProperty()

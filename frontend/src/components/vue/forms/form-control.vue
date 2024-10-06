@@ -128,6 +128,7 @@ const handleFile = (e: Event) => {
         [className ?? 'nxxx']: true,
       }"
       id="name"
+      v-model="model"
       :multiple="multiple ? true : false"
     >
       <slot />

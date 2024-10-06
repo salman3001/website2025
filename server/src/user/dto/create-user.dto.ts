@@ -4,11 +4,11 @@ import {
   IsBoolean,
   IsEmail,
   IsEnum,
-  IsOptional,
   IsPhoneNumber,
   IsString,
   Length,
 } from 'class-validator';
+import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class CreateUserDto {
   @ApiProperty()
@@ -28,7 +28,7 @@ export class CreateUserDto {
 
   @ApiProperty()
   @IsPhoneNumber()
-  @IsOptional()
+  @IsOptionalEmpty()
   phone: string;
 
   @ApiProperty({ type: 'select', enum: UserType })

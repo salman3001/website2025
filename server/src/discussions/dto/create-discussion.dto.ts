@@ -11,6 +11,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { CreateSeoDto } from 'src/seo/dto/create-seo.dto';
+import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class CreateDiscussionDto {
   @ApiProperty()
@@ -27,20 +28,20 @@ export class CreateDiscussionDto {
 
   @ApiProperty()
   @IsBoolean()
-  @IsOptional()
+  @IsOptionalEmpty()
   Published: boolean;
 
   @ApiProperty()
   @IsArray()
   @Type(() => String)
   @ValidateNested({ each: true })
-  @IsOptional()
+  @IsOptionalEmpty()
   tagSlugs?: string[];
 
   @ApiProperty()
   @IsObject()
   @ValidateNested()
   @Type(() => CreateSeoDto)
-  @IsOptional()
+  @IsOptionalEmpty()
   seo?: CreateSeoDto;
 }

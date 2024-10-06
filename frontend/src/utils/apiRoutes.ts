@@ -13,4 +13,11 @@ export const apiRoutes = {
     update: (slug: string) => `/blogs/${slug}`,
     delete: (slug: string) => `/blogs/${slug}`,
   },
+  media: {
+    index: () => `/media`,
+    create: () => `/media`,
+    view: (id: number) => `/media/${id}`,
+    update: (id: number) => `/media/${id}`,
+    delete: (id: number) => `/media/${id}`,
+  },
 };

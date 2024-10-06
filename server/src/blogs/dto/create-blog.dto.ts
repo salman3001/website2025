@@ -6,12 +6,12 @@ import {
   IsNotEmpty,
   IsNumber,
   IsObject,
-  IsOptional,
   IsString,
   Length,
   ValidateNested,
 } from 'class-validator';
 import { CreateSeoDto } from 'src/seo/dto/create-seo.dto';
+import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class CreateBlogDto {
   @ApiProperty()
@@ -28,35 +28,35 @@ export class CreateBlogDto {
 
   @ApiProperty()
   @IsString()
-  @IsOptional()
+  @IsOptionalEmpty()
   longDesc: string;
 
   @ApiProperty()
   @IsBoolean()
-  @IsOptional()
+  @IsOptionalEmpty()
   IsPublished: boolean;
 
   @ApiProperty()
   @IsString()
-  @IsOptional()
+  @IsOptionalEmpty()
   blogCategorySlug?: string;
 
   @ApiProperty()
   @IsArray()
   @Type(() => String)
   @ValidateNested({ each: true })
-  @IsOptional()
+  @IsOptionalEmpty()
   tagSlugs?: string[];
 
   @ApiProperty()
   @IsNumber()
-  @IsOptional()
+  @IsOptionalEmpty()
   mediaId?: number;
 
   @ApiProperty()
   @IsObject()
   @ValidateNested()
   @Type(() => CreateSeoDto)
-  @IsOptional()
+  @IsOptionalEmpty()
   seo?: CreateSeoDto;
 }

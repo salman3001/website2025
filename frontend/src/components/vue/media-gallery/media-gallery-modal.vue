@@ -36,8 +36,18 @@ const closeModal = () => {
   <Modal v-model="open">
     <div>
       <button @click="openModal">Select Media</button>
-      <div v-if="selected && typeof selected=== ">
-        <PreviewSelectedMedia v-for="media in selected" :media="media" />
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+      >
+        <PreviewSelectedMedia
+          v-if="selected && Array.isArray(selected)"
+          v-for="media in selected"
+          :media="media"
+        />
+        <PreviewSelectedMedia
+          v-if="selected && !Array.isArray(selected)"
+          :media="selected"
+        />
       </div>
     </div>
     <template #content>

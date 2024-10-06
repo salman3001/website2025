@@ -2,11 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
-  IsOptional,
   IsPhoneNumber,
   IsString,
   Length,
 } from 'class-validator';
+import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class CreateContactMessageDto {
   @ApiProperty()
@@ -17,7 +17,7 @@ export class CreateContactMessageDto {
 
   @ApiProperty()
   @IsPhoneNumber()
-  @IsOptional()
+  @IsOptionalEmpty()
   phone?: string;
 
   @ApiProperty()

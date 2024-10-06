@@ -1,22 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsString, MaxLength } from 'class-validator';
+import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class CreateSeoDto {
   @ApiProperty()
   @IsString()
   @MaxLength(256)
-  @IsOptional()
+  @IsOptionalEmpty()
   title?: string;
 
   @ApiProperty()
   @IsString()
   @MaxLength(256)
-  @IsOptional()
+  @IsOptionalEmpty()
   keyword?: string;
 
   @ApiProperty()
   @IsString()
   @MaxLength(256)
-  @IsOptional()
+  @IsOptionalEmpty()
   desc?: string;
 }

@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as sharp from 'sharp';
 import { ConfigService } from '@nestjs/config';
 import { IEnvConfig } from 'src/config/env.config';
+import { IAppConfig } from 'src/config/app.config';
 
 @Injectable()
 export class ImageUploadService {
@@ -15,6 +16,16 @@ export class ImageUploadService {
     folder: string = '',
   ): Promise<{ url: string }> {
     const url = await this.processImageAndSave(file, folder);
+
+    const originalPath = join(
+      this.configService.get<IAppConfig>('app').appPath,
+      file.path,
+    );
+
+    if (existsSync(originalPath)) {
+      unlinkSync(originalPath);
+    }
+
     return { url };
   }
 

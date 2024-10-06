@@ -9,9 +9,6 @@ defineProps<{
 
 <template>
   <div class="card bg-base-100 shadow-xl">
-    <div class="card-body p-2">
-      <button>remove</button>
-    </div>
     <figure>
       <img
         v-if="media.type === MediaType.Image"

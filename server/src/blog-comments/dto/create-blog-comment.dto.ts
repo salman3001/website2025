@@ -1,11 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
+import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class CreateBlogCommentDto {
   @ApiProperty()
@@ -21,6 +16,6 @@ export class CreateBlogCommentDto {
 
   @ApiProperty()
   @IsNumber()
-  @IsOptional()
+  @IsOptionalEmpty()
   parentId: number;
 }
