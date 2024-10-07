@@ -6,11 +6,20 @@ import { MediaPolicy } from './media.policy';
 import { ImageUploadService } from './imageUpload.service';
 import { FilesUploadService } from './fileUpload.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import * as multer from 'multer';
+import { join } from 'path';
 
 @Module({
   imports: [
     MulterModule.register({
-      dest: './temp',
+      storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+          cb(null, join(process.cwd(), 'temp'));
+        },
+        filename: (req, file, cb) => {
+          cb(null, Date.now() + '-' + file.originalname);
+        },
+      }),
     }),
   ],
   controllers: [MediaController],

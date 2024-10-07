@@ -2,7 +2,7 @@ import { registerAs } from '@nestjs/config';
 import path, { join } from 'path';
 
 const appConfig = registerAs('app', () => ({
-  appPath: join(process.cwd(), '..'),
+  appPath: join(process.cwd()),
 }));
 
 export default appConfig;

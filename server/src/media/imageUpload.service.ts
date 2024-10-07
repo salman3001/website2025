@@ -17,14 +17,17 @@ export class ImageUploadService {
   ): Promise<{ url: string }> {
     const url = await this.processImageAndSave(file, folder);
 
-    const originalPath = join(
-      this.configService.get<IAppConfig>('app').appPath,
-      file.path,
-    );
+    // const originalPath = join(
+    //   this.configService.get<IAppConfig>('app').appPath,
+    //   file.path,
+    // );
 
-    if (existsSync(originalPath)) {
-      unlinkSync(originalPath);
-    }
+    // console.log(originalPath);
+
+    // if (existsSync(originalPath)) {
+    //   console.log('exist');
+    //   unlinkSync(originalPath);
+    // }
 
     return { url };
   }

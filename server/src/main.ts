@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { IEnvConfig } from './config/env.config';
 import { CustomValidationPipe } from './utils/pipes/CustomValidationPipe';
 import { swaggerConfig } from './config/swagger.config';
+import { DeleteTempFilesInterceptor } from './utils/interceptors/deleteTempFile.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -19,6 +20,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.useGlobalFilters(new GlobalHttpExceptionsFilter());
   app.useGlobalPipes(new CustomValidationPipe());
+  app.useGlobalInterceptors(new DeleteTempFilesInterceptor());
 
   //cors
   app.enableCors({
