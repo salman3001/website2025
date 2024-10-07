@@ -1,29 +1,21 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { MediaWindow, type Media, MediaType } from ".";
+import { computed, onMounted, ref } from "vue";
+import { MediaWindow, type Media, type MediaCategory } from ".";
 import FormControl from "../forms/form-control.vue";
 import { PlusIcon } from "@heroicons/vue/24/solid";
 import MediaCard from "./media-card.vue";
 import Pagination from "../pagination.vue";
+import useApiGet from "../composables/useApiGet";
+import { apiRoutes } from "src/utils/apiRoutes";
+import type { IPaginated } from "src/utils/types";
 
-const categories = ref<{ name: string; id: number }[]>([]);
+const { data: categories, exec: getCategories } = useApiGet<MediaCategory[]>();
 
-const medias: Media[] = [
-  {
-    id: 1,
-    name: "media 1",
-    mediaCategoryId: 1,
-    type: MediaType.Image,
-    url: "uploads/images/1727002279405f8333f2a-4f2f-4069-a609-6f0a3e883cb7.webp",
-  },
-  {
-    id: 2,
-    name: "media 3",
-    mediaCategoryId: 1,
-    type: MediaType.document,
-    url: "uploads/images/1727002279405f8333f2a-4f2f-4069-a609-6f0a3e883cb7.webp",
-  },
-];
+const {
+  data: medias,
+  processing,
+  exec: getMedias,
+} = useApiGet<IPaginated<Media[]>>();
 
 defineProps<{
   multiple?: boolean;
@@ -49,6 +41,11 @@ const anyThingSelected = computed(() => {
     return false;
   }
 });
+
+onMounted(() => {
+  getCategories(apiRoutes.mediaCategory.index());
+  getMedias(apiRoutes.media.index());
+});
 </script>
 <template>
   <div class="flex justify-between items-center">
@@ -59,6 +56,7 @@ const anyThingSelected = computed(() => {
       <PlusIcon class="size-6" />
       Add Media
     </button>
+
     <div>
       <FormControl
         type="select"
@@ -79,36 +77,39 @@ const anyThingSelected = computed(() => {
       </FormControl>
     </div>
   </div>
+  <div class="flex items-center justify-between">
+    <div class="space-x-2">
+      <button
+        class="btn btn-primary btn-sm"
+        v-if="anyThingSelected"
+        @click="() => emit('selected', selected)"
+      >
+        Select {{ selected?.length }}
+      </button>
+      <button
+        class="btn btn-primary btn-sm btn-outline btn-error"
+        v-if="anyThingSelected"
+        @click="() => emit('delete', selected)"
+      >
+        Delete {{ selected?.length }}
+      </button>
+    </div>
+  </div>
   <br />
   <div
     class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-[30rem] overflow-scroll p-4 outline outline-1 rounded-lg outline-gray-300"
   >
+    <div v-if="processing">Loading..</div>
     <MediaCard
-      v-for="media in medias"
+      v-else
+      v-for="media in medias?.data"
       v-model="selected"
       :media="media"
       :multiple="multiple"
     />
   </div>
-
   <br />
-  <div class="flex items-center justify-between">
-    <div class="space-x-2">
-      <button
-        class="btn btn-primary"
-        v-if="anyThingSelected"
-        @click="() => emit('selected', selected)"
-      >
-        Select
-      </button>
-      <button
-        class="btn btn-primary"
-        v-if="anyThingSelected"
-        @click="() => emit('delete', selected)"
-      >
-        Delete
-      </button>
-    </div>
+  <div class="text-end">
     <Pagination />
   </div>
 </template>

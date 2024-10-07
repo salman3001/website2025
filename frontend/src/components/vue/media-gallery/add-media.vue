@@ -5,6 +5,7 @@ import FormControl from "../forms/form-control.vue";
 import { ArrowLeftIcon, EnvelopeIcon } from "@heroicons/vue/24/solid";
 import useApiForm from "../composables/useApiForm";
 import { apiRoutes } from "src/utils/apiRoutes";
+import useApiForm2 from "../composables/useApiForm2";
 
 const categories = ref<{ name: string; id: number }[]>([]);
 
@@ -12,7 +13,7 @@ const emit = defineEmits<{
   windowChange: [window: MediaWindow];
 }>();
 
-const mediaCreateForm = useApiForm({
+const { postForm, form, errors, processing } = useApiForm2({
   file: null,
   name: "",
   type: MediaType.Image,
@@ -20,7 +21,7 @@ const mediaCreateForm = useApiForm({
 });
 
 const submit = () => {
-  mediaCreateForm.postForm(
+  postForm(
     apiRoutes.media.index(),
     {},
     {
@@ -50,8 +51,8 @@ const submit = () => {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <FormControl
           name="Media Type"
-          v-model="mediaCreateForm.type"
-          :errors="mediaCreateForm?.errors?.type?.errors"
+          v-model="form.type"
+          :errors="errors?.type?.errors"
           type="select"
         >
           <option :value="MediaType.Image">
@@ -69,14 +70,14 @@ const submit = () => {
         </FormControl>
         <FormControl
           name="Name"
-          v-model="mediaCreateForm.name"
-          :errors="mediaCreateForm?.errors?.name?.errors"
+          v-model="form.name"
+          :errors="errors?.name?.errors"
           placeholder="Media Name"
         />
         <FormControl
           name="Media Category"
-          v-model="mediaCreateForm.mediaCategoryId"
-          :errors="mediaCreateForm?.errors?.mediaCategoryId?.errors"
+          v-model="form.mediaCategoryId"
+          :errors="errors?.mediaCategoryId?.errors"
           type="select"
         >
           <option value="">Select Category</option>
@@ -85,37 +86,37 @@ const submit = () => {
           </option>
         </FormControl>
         <FormControl
-          v-if="mediaCreateForm.type === MediaType.Image"
+          v-if="form.type === MediaType.Image"
           name="Image"
-          v-model="mediaCreateForm.file"
-          :errors="mediaCreateForm?.errors?.file?.errors"
+          v-model="form.file"
+          :errors="errors?.file?.errors"
           placeholder="Image"
           type="file"
           accept=".jpeg,.jpg,.webp,.png"
         />
         <FormControl
-          v-if="mediaCreateForm.type === MediaType.document"
+          v-if="form.type === MediaType.document"
           name="Document"
-          v-model="mediaCreateForm.file"
-          :errors="mediaCreateForm?.errors?.file?.errors"
+          v-model="form.file"
+          :errors="errors?.file?.errors"
           placeholder="Document"
           type="file"
           accept=".pdf,.doc,.docx,.txt"
         />
         <FormControl
-          v-if="mediaCreateForm.type === MediaType.Audio"
+          v-if="form.type === MediaType.Audio"
           name="Audio"
-          v-model="mediaCreateForm.file"
-          :errors="mediaCreateForm?.errors?.file?.errors"
+          v-model="form.file"
+          :errors="errors?.file?.errors"
           placeholder="Audio"
           type="file"
           accept=".mp3,.wav"
         />
         <FormControl
-          v-if="mediaCreateForm.type === MediaType.Video"
+          v-if="form.type === MediaType.Video"
           name="Video"
-          v-model="mediaCreateForm.file"
-          :errors="mediaCreateForm?.errors?.file?.errors"
+          v-model="form.file"
+          :errors="errors?.file?.errors"
           placeholder="Video"
           type="file"
           accept=".mp4,.avi"
@@ -123,11 +124,7 @@ const submit = () => {
         <br />
       </div>
       <div class="text-end">
-        <button
-          type="submit"
-          class="btn btn-primary"
-          :disabled="mediaCreateForm.processing"
-        >
+        <button type="submit" class="btn btn-primary" :disabled="processing">
           Create Media
         </button>
       </div>

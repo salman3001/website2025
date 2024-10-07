@@ -10,7 +10,7 @@ import PreviewSelectedMedia from "./preview-selected-media.vue";
 const open = ref(false);
 
 const props = withDefaults(defineProps<{ multiple?: boolean }>(), {
-  multiple: true,
+  multiple: false,
 });
 
 const selected = ref<Media[] | Media | undefined>(
@@ -51,7 +51,7 @@ const closeModal = () => {
       </div>
     </div>
     <template #content>
-      <div class="modal-box max-w-full h-full m-10">
+      <div class="modal-box max-w-5xl h-full m-10">
         <button
           class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
           @click="closeModal"

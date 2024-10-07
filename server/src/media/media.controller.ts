@@ -76,14 +76,18 @@ export class MediaController {
       ? { mediaCategoryId: { equals: mediaCategoryId } }
       : {};
 
-    const data = await this.mediaService.findAll({
+    const { count, media } = await this.mediaService.findAll({
       skip,
       take,
       orderBy,
       where: { AND: { ...searchQuery, ...categoryQuery } },
     });
 
-    return CustomRes({ code: 200, success: true, data });
+    return CustomRes({
+      code: 200,
+      success: true,
+      data: { data: media, count },
+    });
   }
 
   @Get('category/:id')

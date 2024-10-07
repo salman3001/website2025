@@ -53,7 +53,7 @@ export class UserController {
     return CustomRes({
       code: HttpStatus.CREATED,
       success: true,
-      data: { count, users },
+      data: { data: count, users },
     });
   }
 

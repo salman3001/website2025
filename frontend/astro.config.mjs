@@ -8,7 +8,10 @@ import node from "@astrojs/node";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), vue({ appEntrypoint: "/src/components/vue/app" })],
+  integrations: [
+    tailwind(),
+    vue(/*{ appEntrypoint: "/src/components/vue/app" }*/),
+  ],
   output: "server",
 
   adapter: node({

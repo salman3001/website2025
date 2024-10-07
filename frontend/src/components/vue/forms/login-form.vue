@@ -1,16 +1,21 @@
 <script setup lang="ts">
 import { apiRoutes } from "src/utils/apiRoutes";
-import useApiForm from "../composables/useApiForm";
 import { navigate } from "astro:transitions/client";
 import { routes } from "src/utils/routes";
 import { setAuth } from "src/scripts/stores/authStore";
 import FormControl from "./form-control.vue";
 import { EnvelopeIcon, LockClosedIcon } from "@heroicons/vue/24/solid";
+import useApiForm2 from "../composables/useApiForm2";
 
-const loginForm = useApiForm({ email: "", password: "" });
+const {
+  form: loginForm,
+  post,
+  errors,
+  processing,
+} = useApiForm2({ email: "", password: "" });
 
 const submit = () =>
-  loginForm.post(
+  post(
     apiRoutes.auth.signin(),
     {},
     {
@@ -36,7 +41,7 @@ const submit = () =>
       <FormControl
         name="Email"
         v-model="loginForm.email"
-        :errors="loginForm?.errors?.email?.errors"
+        :errors="errors?.email?.errors"
         placeholder="user@email.com"
       >
         <template #start-icon>
@@ -46,7 +51,7 @@ const submit = () =>
       <FormControl
         name="Password"
         v-model="loginForm.password"
-        :errors="loginForm?.errors?.password?.errors"
+        :errors="errors?.password?.errors"
         placeholder="*******"
         type="password"
       >
@@ -60,7 +65,7 @@ const submit = () =>
         <button
           type="submit"
           class="btn w-full btn-primary"
-          :disabled="loginForm.processing"
+          :disabled="processing"
         >
           Sign in
         </button>

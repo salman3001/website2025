@@ -53,7 +53,7 @@ export class DiscussionCommentsController {
     return CustomRes({
       code: HttpStatus.OK,
       success: true,
-      data: { comments, count },
+      data: { data: comments, count },
     });
   }
 

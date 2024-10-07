@@ -54,7 +54,7 @@ export class DiscussionsController {
     return CustomRes({
       code: HttpStatus.OK,
       success: true,
-      data: { discussions, count },
+      data: { data: discussions, count },
     });
   }
 

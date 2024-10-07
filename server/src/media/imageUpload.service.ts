@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import * as sharp from 'sharp';
 import { ConfigService } from '@nestjs/config';
 import { IEnvConfig } from 'src/config/env.config';
-import { IAppConfig } from 'src/config/app.config';
 
 @Injectable()
 export class ImageUploadService {
@@ -16,18 +15,6 @@ export class ImageUploadService {
     folder: string = '',
   ): Promise<{ url: string }> {
     const url = await this.processImageAndSave(file, folder);
-
-    // const originalPath = join(
-    //   this.configService.get<IAppConfig>('app').appPath,
-    //   file.path,
-    // );
-
-    // console.log(originalPath);
-
-    // if (existsSync(originalPath)) {
-    //   console.log('exist');
-    //   unlinkSync(originalPath);
-    // }
 
     return { url };
   }
@@ -48,12 +35,15 @@ export class ImageUploadService {
     width?: number,
     height?: number,
   ): Promise<string> {
+    sharp.cache(false);
+
     const resizedBuffer = await sharp(file.path)
       .resize(width, height, { fit: 'cover' })
       .toFormat('webp')
       .toBuffer();
 
-    return await this.writeImage(folder, resizedBuffer, 'webp');
+    const url = await this.writeImage(folder, resizedBuffer, 'webp');
+    return url;
   }
 
   private async writeImage(

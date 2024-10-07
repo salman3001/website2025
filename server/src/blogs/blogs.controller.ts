@@ -59,7 +59,7 @@ export class BlogsController {
     return CustomRes({
       code: HttpStatus.OK,
       success: true,
-      data: { blogs, count },
+      data: { data: blogs, count },
     });
   }
 

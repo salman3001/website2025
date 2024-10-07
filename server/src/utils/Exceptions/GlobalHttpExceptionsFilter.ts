@@ -14,19 +14,6 @@ export class GlobalHttpExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    // const request = ctx.getRequest<Request>();
-    // const file = request.file;
-    // const files = request.files;
-
-    // if (file?.path && existsSync(join(process.cwd(), file.path))) {
-    //   unlinkSync(file.path);
-    // }
-
-    // if (files && files instanceof Array) {
-    //   if (file?.path && existsSync(join(process.cwd(), file.path))) {
-    //     unlinkSync(file.path);
-    //   }
-    // }
 
     if (exception instanceof HttpException) {
       const status = exception.getStatus();

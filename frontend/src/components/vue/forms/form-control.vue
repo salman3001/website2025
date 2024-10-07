@@ -100,6 +100,7 @@ const handleFile = (e: Event) => {
       <input
         type="radio"
         name="radio-10"
+        :id="name"
         class="radio radio-primary"
         :class="{
           [className ?? 'nxxx']: true,

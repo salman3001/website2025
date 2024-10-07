@@ -18,3 +18,8 @@ export interface Media {
   url: string;
   mediaCategoryId: number;
 }
+
+export interface MediaCategory {
+  id: number;
+  name: string;
+}

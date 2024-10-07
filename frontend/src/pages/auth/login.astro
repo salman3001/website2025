@@ -4,5 +4,7 @@ import AuthLayout from "../../layouts/authLayout.astro";
 ---
 
 <AuthLayout title="Login">
-  <LoginForm client:load />
+  <LoginForm client:only="vue">
+    <div slot="fallback">Loading..</div>
+  </LoginForm>
 </AuthLayout>

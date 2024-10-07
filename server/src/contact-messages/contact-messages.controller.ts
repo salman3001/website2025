@@ -50,7 +50,7 @@ export class ContactMessagesController {
     return CustomRes({
       code: HttpStatus.OK,
       success: true,
-      data: { messages, count },
+      data: { data: messages, count },
     });
   }
 

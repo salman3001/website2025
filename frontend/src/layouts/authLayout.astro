@@ -3,7 +3,6 @@ import "../assets/styles.css";
 import { ViewTransitions } from "astro:transitions";
 import Logo from "../components/layouts/logo.astro";
 import { config } from "../utils/config";
-import Toast from "../components/vue/toast/toast.vue";
 
 interface Props {
   title: string;
@@ -21,10 +20,9 @@ const { title } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
-    <ViewTransitions />
+    <!-- <ViewTransitions /> -->
   </head>
   <body>
-    <Toast client:load />
     <div class="bg-no-repeat bg-cover bg-center relative">
       <div
         class="absolute bg-gradient-to-b from-gray-400 to-primary opacity-75 inset-0 -z-0"
@@ -51,5 +49,8 @@ const { title } = Astro.props;
         <slot />
       </div>
     </div>
+    <script>
+      import "../scripts/main";
+    </script>
   </body>
 </html>

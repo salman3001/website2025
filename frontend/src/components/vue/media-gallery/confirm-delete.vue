@@ -1,13 +1,38 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import { MediaWindow, type Media } from ".";
 import { ArrowLeftIcon } from "@heroicons/vue/24/solid";
+import useApiForm from "../composables/useApiForm";
+import { apiRoutes } from "src/utils/apiRoutes";
 
-defineProps<{ selectedForDelete: Media[] | Media | undefined }>();
+const props = defineProps<{ selectedForDelete: Media[] | Media | undefined }>();
+
+const { deleteRecord } = useApiForm({});
 
 const emit = defineEmits<{
   windowChange: [window: MediaWindow];
 }>();
+
+const confirmAction = async () => {
+  if (props.selectedForDelete) {
+    if (Array.isArray(props.selectedForDelete)) {
+      const tasks = props.selectedForDelete.map((media) =>
+        deleteRecord(apiRoutes.media.delete(media.id), {}),
+      );
+      await Promise.all(tasks);
+      emit("windowChange", MediaWindow.MEDIA_LIST);
+    } else {
+      deleteRecord(
+        apiRoutes.media.delete(props.selectedForDelete.id),
+        {},
+        {
+          onSucess: () => {
+            emit("windowChange", MediaWindow.MEDIA_LIST);
+          },
+        },
+      );
+    }
+  }
+};
 </script>
 
 <template>
@@ -22,5 +47,27 @@ const emit = defineEmits<{
     <div></div>
   </div>
   <br />
-  <div>Confirm Delete {{ selectedForDelete }}</div>
+  <div>
+    <ul class="menu menu-lg">
+      <li>
+        <h2 class="menu-title">
+          Are you Sure you want to delete following media
+        </h2>
+        <ul v-if="selectedForDelete">
+          <li
+            class="list-disc"
+            v-if="Array.isArray(selectedForDelete)"
+            v-for="(media, i) in selectedForDelete"
+          >
+            {{ i + 1 }}->{{ media.name }}
+          </li>
+          <li v-else>{{ selectedForDelete.name }}</li>
+        </ul>
+      </li>
+    </ul>
+    <br />
+    <div class="text-end" @click="confirmAction">
+      <button class="btn btn-primary">Confirm</button>
+    </div>
+  </div>
 </template>

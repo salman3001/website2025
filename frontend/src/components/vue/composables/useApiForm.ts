@@ -21,8 +21,8 @@ export default function useApiForm<T extends object>(
       config?: AxiosRequestConfig,
       opt?: { onSucess?: (resData: any) => void; onError?: () => void },
     ) {
-      this.errors = null;
       this.processing = true;
+      this.errors = null;
       try {
         const res = await api.post<IResType<any>>(
           url,
@@ -87,7 +87,7 @@ export default function useApiForm<T extends object>(
       }
       this.processing = false;
     },
-    async delete(
+    async deleteRecord(
       url: string,
       config?: AxiosRequestConfig,
       opt?: { onSucess?: (resData: any) => void; onError?: () => void },
@@ -131,7 +131,7 @@ export default function useApiForm<T extends object>(
         return;
       }
 
-      toast.error("Something Wenr Error");
+      toast.error("Something Went Error");
     },
   });
 

@@ -30,3 +30,8 @@ export type ValidationErrorObj =
       [key: string]: ValidationErrorObj;
     })
   | null;
+
+export interface IPaginated<T> {
+  count: number;
+  data: T;
+}

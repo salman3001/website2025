@@ -52,7 +52,7 @@ export class TagsController {
     return CustomRes({
       code: HttpStatus.OK,
       success: true,
-      data: { tags, count },
+      data: { data: tags, count },
     });
   }
 

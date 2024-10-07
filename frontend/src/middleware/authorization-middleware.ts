@@ -5,8 +5,6 @@ import { routes } from "src/utils/routes";
 export const authorizationMiddleware = defineMiddleware((ctx, next) => {
   const path = ctx.url.pathname;
   const user = ctx.locals?.user;
-  console.log(user);
-
   const authPaths = ["/admin/.*", "/profile/.*"];
 
   const adminPaths = ["/admin/.*", "/profile/.*"];

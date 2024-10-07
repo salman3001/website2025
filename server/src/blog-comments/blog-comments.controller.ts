@@ -52,7 +52,7 @@ export class BlogCommentsController {
     return CustomRes({
       code: HttpStatus.OK,
       success: true,
-      data: { comments, count },
+      data: { data: comments, count },
     });
   }
 

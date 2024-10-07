@@ -20,4 +20,11 @@ export const apiRoutes = {
     update: (id: number) => `/media/${id}`,
     delete: (id: number) => `/media/${id}`,
   },
+  mediaCategory: {
+    index: () => `/media-categories`,
+    create: () => `/media-categories`,
+    view: (id: number) => `/media-categories/${id}`,
+    update: (id: number) => `/media-categories/${id}`,
+    delete: (id: number) => `/media-categories/${id}`,
+  },
 };

@@ -52,7 +52,7 @@ export class ProjectsController {
     return CustomRes({
       code: HttpStatus.OK,
       success: true,
-      data: { projects, count },
+      data: { data: projects, count },
     });
   }
 

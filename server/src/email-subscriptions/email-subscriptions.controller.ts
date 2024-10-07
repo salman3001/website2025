@@ -53,7 +53,7 @@ export class EmailSubscriptionsController {
     return CustomRes({
       code: HttpStatus.OK,
       success: true,
-      data: { subscriptions, count },
+      data: { data: subscriptions, count },
     });
   }
 

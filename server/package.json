@@ -21,7 +21,7 @@
     "email:dev": "email dev -d ./src/mails/templates",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:diploy": "prisma diploy",
+    "prisma:push": "prisma db push",
     "prisma:reset": "prisma migrate reset",
     "prisma:studio": "prisma studio",
     "prisma:seed": "prisma db seed"
