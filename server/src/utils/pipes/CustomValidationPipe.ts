@@ -7,6 +7,7 @@ export class CustomValidationPipe extends ValidationPipe {
     super({
       whitelist: true,
       transform: true,
+      transformOptions: { enableImplicitConversion: true },
       exceptionFactory(errors) {
         return new CustomHttpException({
           success: false,

@@ -9,9 +9,13 @@ import PreviewSelectedMedia from "./preview-selected-media.vue";
 
 const open = ref(false);
 
-const props = withDefaults(defineProps<{ multiple?: boolean }>(), {
-  multiple: false,
-});
+const props = withDefaults(
+  defineProps<{ multiple?: boolean; name: string }>(),
+  {
+    multiple: true,
+    name: "mediaId",
+  },
+);
 
 const selected = ref<Media[] | Media | undefined>(
   props.multiple === true ? [] : undefined,
@@ -43,9 +47,11 @@ const closeModal = () => {
           v-if="selected && Array.isArray(selected)"
           v-for="media in selected"
           :media="media"
+          :name="name"
         />
         <PreviewSelectedMedia
           v-if="selected && !Array.isArray(selected)"
+          :name="name"
           :media="selected"
         />
       </div>

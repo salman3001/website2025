@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { MediaWindow, type Media, type MediaCategory } from ".";
 import FormControl from "../forms/form-control.vue";
 import { PlusIcon } from "@heroicons/vue/24/solid";
@@ -27,6 +27,14 @@ const emit = defineEmits<{
   delete: [values: Media[]];
 }>();
 
+const perPage = 2;
+const query = reactive({
+  skip: 0 * perPage,
+  take: perPage,
+  orderBy: "name",
+  search: "",
+});
+
 const selected = ref([]);
 
 const anyThingSelected = computed(() => {
@@ -44,7 +52,11 @@ const anyThingSelected = computed(() => {
 
 onMounted(() => {
   getCategories(apiRoutes.mediaCategory.index());
-  getMedias(apiRoutes.media.index());
+  getMedias(apiRoutes.media.index(), { params: query });
+});
+
+watch(query, () => {
+  getMedias(apiRoutes.media.index(), { params: query });
 });
 </script>
 <template>
@@ -109,7 +121,12 @@ onMounted(() => {
     />
   </div>
   <br />
-  <div class="text-end">
-    <Pagination />
+  <div v-if="medias" class="text-end">
+    <Pagination
+      :skip="query.skip"
+      :perPage="perPage"
+      :total="medias.count"
+      @change="(page) => (query.skip = (page - 1) * perPage)"
+    />
   </div>
 </template>

@@ -1,0 +1,50 @@
+---
+interface Props {
+  name: string;
+  label?: string;
+  errors?: string[];
+  className?: string;
+  hideLable?: boolean;
+  placeholder?: string;
+  value?: string;
+  type?: "email" | "password";
+}
+
+const { name, className, errors, hideLable, placeholder, value, type, label } =
+  Astro.props;
+---
+
+<div class="form-control py-2">
+  {
+    !hideLable && (
+      <label class="label pb-1" for={name}>
+        <span class="label-text ">{label}</span>
+      </label>
+    )
+  }
+
+  <label
+    class={`input input-bordered flex items-center gap-2 ${errors ? "input-error text-error" : ""} ${className ?? ""}`}
+  >
+    <slot name="start-icon" />
+    <input
+      id={name}
+      name={name}
+      type={type ?? "text"}
+      placeholder={placeholder || ""}
+      value={value}
+      class="grow"
+      transition:persist
+    />
+    <slot name="end-icon" />
+  </label>
+  {
+    errors && (
+      <div class="label gap-1 flex flex-col justify-start w-full p-0 items-start">
+        {errors.map((err) => (
+          <span class="label-text-alt  text-red-500">{err}</span>
+        ))}
+      </div>
+    )
+  }
+</div>

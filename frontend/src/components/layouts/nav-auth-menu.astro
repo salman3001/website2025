@@ -1,0 +1,52 @@
+---
+import { actions } from "astro:actions";
+import { routes } from "src/utils/routes";
+
+const logoutResults = Astro.getActionResult(actions.authActions.logout);
+
+if (logoutResults?.data?.success) {
+  Astro.cookies.delete("user", { path: "/" });
+  Astro.cookies.delete("token", { path: "/" });
+  Astro.redirect(routes.web.home());
+}
+---
+
+<>
+  {
+    Astro?.locals?.user ? (
+      <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+          <div class="w-10 rounded-full">
+            <img
+              alt="Tailwind CSS Navbar component"
+              src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+            />
+          </div>
+        </div>
+        <ul
+          tabindex="0"
+          class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+        >
+          <li>
+            <a class="justify-between">
+              Profile
+              <span class="badge">New</span>
+            </a>
+          </li>
+          <li>
+            <a>Settings</a>
+          </li>
+          <li>
+            <from method="post" action={actions.authActions.logout}>
+              Logout
+            </from>
+          </li>
+        </ul>
+      </div>
+    ) : (
+      <a href={routes.auth.signin()}>
+        <button class="btn btn-sm btn-primary">Login</button>
+      </a>
+    )
+  }
+</>

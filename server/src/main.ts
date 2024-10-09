@@ -10,12 +10,14 @@ import { IEnvConfig } from './config/env.config';
 import { CustomValidationPipe } from './utils/pipes/CustomValidationPipe';
 import { swaggerConfig } from './config/swagger.config';
 import { DeleteTempFilesInterceptor } from './utils/interceptors/deleteTempFile.interceptor';
+import { urlencoded } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = app.get<ConfigService>(ConfigService);
 
   // middlewares
+  app.use(urlencoded({ extended: true }));
   app.useStaticAssets(join(process.cwd(), 'public'));
   app.use(cookieParser());
   app.useGlobalFilters(new GlobalHttpExceptionsFilter());

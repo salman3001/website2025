@@ -1,5 +1,6 @@
 ---
 import { NavMenus } from "src/utils/consts/nav-menus";
+import NavLink from "./nav-link.astro";
 ---
 
 <div class="drawer">
@@ -21,7 +22,7 @@ import { NavMenus } from "src/utils/consts/nav-menus";
           if (!link.child) {
             return (
               <li>
-                <a href={link.href}>{link.name}</a>
+                <NavLink href={link.href} name={link.name} />
               </li>
             );
           }
@@ -32,7 +33,7 @@ import { NavMenus } from "src/utils/consts/nav-menus";
               <div class="collapse-content">
                 {link.child.map((link) => (
                   <li>
-                    <a href={link.href}>{link.name}</a>
+                    <NavLink href={link.href} name={link.name} />
                   </li>
                 ))}
               </div>

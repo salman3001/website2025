@@ -1,0 +1,44 @@
+---
+const message = Astro.locals.flashMessage;
+---
+
+{
+  message && (
+    <div id="toast" class={"toast toast-top z-50"}>
+      {message.type === "success" && (
+        <div class="alert alert-success">
+          <span>{message.message}</span>
+        </div>
+      )}
+
+      {message.type === "warning" && (
+        <div class="alert alert-warning">
+          <span>{message.message}</span>
+        </div>
+      )}
+
+      {message.type === "info" && (
+        <div class="alert alert-info">
+          <span>{message.message}</span>
+        </div>
+      )}
+
+      {message.type === "error" && (
+        <div class="alert alert-error">
+          <span>{message.message}</span>
+        </div>
+      )}
+    </div>
+  )
+}
+<script>
+  document.addEventListener("astro:page-load", function () {
+    const toast = document.getElementById("toast");
+
+    if (toast) {
+      setTimeout(() => {
+        toast.remove();
+      }, 5000);
+    }
+  });
+</script>

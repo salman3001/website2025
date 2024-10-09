@@ -1,0 +1,39 @@
+---
+interface Props {
+  action: string;
+  className?: string;
+}
+
+const { action, className } = Astro.props;
+---
+
+<post-form class={className}>
+  <form action={action} method="post">
+    <slot />
+  </form>
+</post-form>
+<script>
+  class PostForm extends HTMLElement {
+    connectedCallback() {
+      const submitButton = this.querySelector<HTMLButtonElement>(
+        'button[type="submit"]',
+      );
+      const form = this.querySelector("form");
+
+      if (form) {
+        form.addEventListener("submit", () => {
+          console.log("ran", form);
+          console.log("submitting");
+
+          if (submitButton) {
+            console.log("butt", submitButton);
+            submitButton.disabled = true;
+          }
+        });
+      }
+    }
+  }
+
+  // Tell the browser to use our AstroHeart class for <astro-heart> elements.
+  customElements.define("post-form", PostForm);
+</script>

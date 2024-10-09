@@ -11,18 +11,18 @@ export const NavMenus: INavMenu[] = [
   { name: "Blogs", href: routes.web.blogs() },
   { name: "Courses", href: routes.web.tutorials() },
   {
+    name: "Admin",
+    child: [
+      { name: "Dashboard", href: routes.admin.dashboard() },
+      { name: "Blogs", href: routes.admin.blogs.index() },
+    ],
+  },
+  {
     name: "More",
     child: [
       { name: "Contact", href: routes.web.contact() },
       { name: "Discussion", href: routes.web.discussions() },
       { name: "Portfolio", href: routes.web.portfolio() },
-    ],
-  },
-  {
-    name: "Admin",
-    child: [
-      { name: "Dashboard", href: routes.admin.dashboard() },
-      { name: "Blogs", href: routes.admin.blogs.index() },
     ],
   },
 ];

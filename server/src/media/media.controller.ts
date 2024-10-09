@@ -27,6 +27,7 @@ import { AuthUserType } from 'src/utils/types/common';
 import CustomRes from 'src/utils/CustomRes';
 import { MediaPolicy } from './media.policy';
 import { UploadFileDto } from './dto/upload-file.dto';
+import { MediaQueryDto } from './dto/media-query.dto';
 
 @ApiTags('Media')
 @Controller('media')
@@ -65,12 +66,12 @@ export class MediaController {
 
   @Get()
   async findAll(
-    @Query() query: Record<string, any>,
+    @Query() query: MediaQueryDto,
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policyService.canFindAll();
 
-    const { skip, take, orderBy, search, mediaCategoryId } = query;
+    const { skip, take, search, mediaCategoryId } = query;
     const searchQuery = search ? { name: { contains: search } } : {};
     const categoryQuery = mediaCategoryId
       ? { mediaCategoryId: { equals: mediaCategoryId } }
@@ -79,7 +80,6 @@ export class MediaController {
     const { count, media } = await this.mediaService.findAll({
       skip,
       take,
-      orderBy,
       where: { AND: { ...searchQuery, ...categoryQuery } },
     });
 

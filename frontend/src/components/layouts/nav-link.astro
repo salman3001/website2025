@@ -1,0 +1,30 @@
+---
+interface Props {
+  href?: string;
+  name: string;
+}
+
+const { href, name } = Astro.props;
+---
+
+<nav-link>
+  <a href={href}>{name}</a>
+</nav-link>
+
+<script>
+  class NavLink extends HTMLElement {
+    setNavStyles() {
+      const link = this.querySelector("a")!;
+      const url = window.location.href;
+      if (link.href === url) {
+        link.classList.add("text-primary"); // Add the "active" class if the URL matches
+      }
+    }
+
+    connectedCallback() {
+      document.addEventListener("astro:page-load", () => this.setNavStyles());
+    }
+  }
+
+  customElements.define("nav-link", NavLink);
+</script>

@@ -1,0 +1,41 @@
+---
+interface Props {
+  name: string;
+  accept: string;
+  errors?: string[];
+  className?: string;
+  hideLable?: boolean;
+  label?: string;
+}
+
+const { name, accept, className, errors, hideLable, label } = Astro.props;
+---
+
+<!-- file -->
+<label class="form-control">
+  {
+    !hideLable && (
+      <div class="label">
+        <span class="label-text capitalize">{{ label }}</span>
+      </div>
+    )
+  }
+  <input
+    id={name}
+    name={name}
+    type="file"
+    class={`file-input file-input-bordered ${errors ? "file-input-error text-error" : ""} ${className ?? ""}`}
+    accept={accept}
+    id={name}
+    transition:persist
+  />
+  {
+    errors && (
+      <div class="label gap-1 flex flex-col justify-start w-full p-0 items-start">
+        {errors.map((err) => (
+          <span class="label-text-alt  text-red-500">{err}</span>
+        ))}
+      </div>
+    )
+  }
+</label>

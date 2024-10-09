@@ -1,0 +1,41 @@
+---
+interface Props {
+  name: string;
+  errors?: string[];
+  className?: string;
+  hideLable?: boolean;
+  placeholder?: string;
+  value?: string;
+  label?: string;
+}
+
+const { name, className, errors, hideLable, placeholder, value, label } =
+  Astro.props;
+---
+
+<div class="form-control py-2">
+  {
+    !hideLable && (
+      <label class="label pb-1" for={name}>
+        <span class="label-text">{label}</span>
+      </label>
+    )
+  }
+  <textarea
+    class={`textarea textarea-bordered p-1 ${errors ? "textarea-error text-error" : ""} ${className ?? ""}`}
+    id={name}
+    name={name}
+    placeholder={placeholder || ""}
+    value={value}
+    rows="5"
+    transition:persist></textarea>
+  {
+    errors && (
+      <div class="label gap-1 flex flex-col justify-start w-full p-0 items-start">
+        {errors.map((err) => (
+          <span class="label-text-alt  text-red-500">{err}</span>
+        ))}
+      </div>
+    )
+  }
+</div>

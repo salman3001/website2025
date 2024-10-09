@@ -4,11 +4,13 @@ import { MediaType, type Media } from ".";
 
 defineProps<{
   media: Media;
+  name: string;
 }>();
 </script>
 
 <template>
   <div class="card bg-base-100 shadow-xl">
+    <input type="text" :name="name" class="hidden" :value="media?.id" />
     <figure>
       <img
         v-if="media.type === MediaType.Image"

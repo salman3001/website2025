@@ -33,8 +33,6 @@ export class DeleteTempFilesInterceptor implements NestInterceptor {
         runFileDeletor();
       }),
       catchError((err) => {
-        console.log('ran deleteors');
-
         runFileDeletor();
         return throwError(() => err);
       }),

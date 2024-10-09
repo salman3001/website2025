@@ -1,9 +1,10 @@
 ---
 import Logo from "./logo.astro";
-import { Bars3Icon } from "@heroicons/vue/24/solid";
+import { Bars3Icon, ChevronDownIcon } from "@heroicons/vue/24/solid";
 import Navsearch from "./navsearch.astro";
-import NavAuthMenu from "../vue/nav-auth-menu.vue";
 import { NavMenus } from "src/utils/consts/nav-menus";
+import NavLink from "./nav-link.astro";
+import NavAuthMenu from "./nav-auth-menu.astro";
 ---
 
 <div class="navbar bg-base-100 shadow-md p-0 m-0">
@@ -19,36 +20,33 @@ import { NavMenus } from "src/utils/consts/nav-menus";
     </div>
     <div class="navbar-center hidden lg:flex">
       <ul
-        tabindex="0"
-        class="menu menu-horizontal px-1 font-semibold uppercase"
-        data-nav-menu-container
+        class="px-1 font-semibold capitalize flex justify-center gap-3 items-center"
       >
         {
           NavMenus.map((link) => {
             if (!link.child) {
               return (
                 <li>
-                  <a href={link.href}>{link.name}</a>
+                  <NavLink href={link.href} name={link.name} />
                 </li>
               );
             }
             return (
-              <div class="dropdown p-0 m-0">
+              <div class="dropdown">
                 <div
                   tabindex="0"
                   role="button"
-                  class="btn btn-sm btn-outline m-1 btn-primary text-base-100 text-xs"
+                  class="flex items-center gap-0.5"
                 >
-                  {link.name}
+                  <span>{link.name}</span>
+                  <ChevronDownIcon class="size-4" />
                 </div>
                 <ul
                   tabindex="0"
-                  class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+                  class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-3 shadow gap-1"
                 >
                   {link.child.map((link) => (
-                    <li>
-                      <a href={link.href}>{link.name}</a>
-                    </li>
+                    <NavLink href={link.href} name={link.name} />
                   ))}
                 </ul>
               </div>
@@ -59,7 +57,7 @@ import { NavMenus } from "src/utils/consts/nav-menus";
     </div>
     <div class="navbar-end gap-2">
       <Navsearch />
-      <NavAuthMenu client:only="vue" />
+      <NavAuthMenu />
     </div>
   </div>
 </div>
