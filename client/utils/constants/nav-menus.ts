@@ -1,9 +1,12 @@
 import { routes } from "../routes";
+import type { AuthUser } from "../types";
+import { UserType } from "../types/modals";
 
 export interface INavMenu {
   name: string;
   href?: string;
   child?: INavMenu[];
+  userAllowed?: (user: AuthUser | null) => boolean;
 }
 
 export const NavMenus: INavMenu[] = [
@@ -12,6 +15,7 @@ export const NavMenus: INavMenu[] = [
   { name: "Courses", href: routes.web.tutorials() },
   {
     name: "Admin",
+    userAllowed: (user) => user?.userType === UserType.Admin,
     child: [
       { name: "Dashboard", href: routes.admin.dashboard() },
       { name: "Blogs", href: routes.admin.blogs.index() },

@@ -1,5 +1,5 @@
-import { UserType } from "~/utils/enums";
 import type { AuthUser } from "~/utils/types";
+import { UserType } from "~/utils/types/modals";
 
 export default defineNuxtRouteMiddleware((to, from) => {
   const user = useCookie("user") as unknown as Ref<AuthUser>;

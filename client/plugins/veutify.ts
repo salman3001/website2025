@@ -4,7 +4,19 @@ import { createVuetify } from "vuetify";
 
 export default defineNuxtPlugin((app) => {
   const vuetify = createVuetify({
-    // ... your configuration
+    defaults: {
+      VTextField: {
+        variant: "outlined",
+        density: "compact",
+      },
+      VBtn: {
+        color: "primary",
+      },
+      VSelect: {
+        density: "compact",
+        variant: "outlined",
+      },
+    },
   });
   app.vueApp.use(vuetify);
 });

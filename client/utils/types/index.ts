@@ -1,4 +1,4 @@
-import type { UserType } from "../enums";
+import type { UserType } from "./modals";
 
 export interface AuthUser {
   id: number;

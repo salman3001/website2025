@@ -4,6 +4,7 @@ import { NavMenus } from "~/utils/constants/nav-menus";
 
 const drawer = ref(false);
 const sideMenuGroups = ref([]);
+const { user } = useAuth();
 </script>
 
 <template>
@@ -11,13 +12,16 @@ const sideMenuGroups = ref([]);
     <v-app-bar color="primary" prominent density="compact" class="pr-2">
       <v-app-bar-nav-icon
         variant="text"
+        color="none"
         @click.stop="drawer = !drawer"
         v-if="$vuetify.display.smAndDown"
       ></v-app-bar-nav-icon>
 
-      <v-toolbar-title>My files</v-toolbar-title>
+      <v-toolbar-title>
+        <Logo />
+      </v-toolbar-title>
 
-      <v-spacer></v-spacer>
+      <!-- <v-spacer></v-spacer> -->
 
       <v-row
         style="max-width: max-content"
@@ -26,30 +30,46 @@ const sideMenuGroups = ref([]);
         v-if="$vuetify.display.mdAndUp"
       >
         <v-col v-for="(menu, i) in NavMenus">
-          <v-menu open-on-hover v-if="menu.child">
+          <v-menu
+            open-on-hover
+            v-if="
+              menu?.child &&
+              (menu?.userAllowed ? menu?.userAllowed(user) : true)
+            "
+          >
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" append-icon="mdi-chevron-down">
+              <v-btn v-bind="props" append-icon="mdi-chevron-down" color="none">
                 {{ menu.name }}
               </v-btn>
             </template>
 
             <v-list density="compact">
-              <v-list-item
-                v-for="(subMenu, index) in menu.child"
-                :key="index"
-                :to="subMenu.href"
-                nuxt
-              >
-                <v-list-item-title>{{ subMenu.name }}</v-list-item-title>
-              </v-list-item>
+              <template v-for="(subMenu, index) in menu.child">
+                <v-list-item
+                  v-if="
+                    subMenu?.userAllowed ? subMenu?.userAllowed(user) : true
+                  "
+                  :to="subMenu.href"
+                  :key="index"
+                  nuxt
+                >
+                  <v-list-item-title>{{ subMenu.name }}</v-list-item-title>
+                </v-list-item>
+              </template>
             </v-list>
           </v-menu>
-          <v-btn v-else :to="menu.href" nuxt>{{ menu.name }}</v-btn>
+          <v-btn
+            v-else-if="menu?.userAllowed ? menu?.userAllowed(user) : true"
+            :to="menu.href"
+            nuxt
+            color="none"
+            >{{ menu.name }}</v-btn
+          >
         </v-col>
       </v-row>
 
       <template v-if="$vuetify.display.mdAndUp">
-        <v-btn icon="mdi-magnify" variant="text"></v-btn>
+        <v-btn icon="mdi-magnify" variant="text" color="none"></v-btn>
       </template>
       <AuthMenu />
     </v-app-bar>
@@ -57,19 +77,31 @@ const sideMenuGroups = ref([]);
     <v-navigation-drawer v-model="drawer" temporary>
       <v-list v-model:opened="sideMenuGroups">
         <template v-for="(menu, i) in NavMenus" :key="i">
-          <v-list-group v-if="menu.child" :value="menu.name">
+          <v-list-group
+            v-if="
+              menu.child && (menu?.userAllowed ? menu?.userAllowed(user) : true)
+            "
+            :value="menu.name"
+          >
             <template v-slot:activator="{ props }">
               <v-list-item v-bind="props" :title="menu.name" />
             </template>
-            <v-list-item
-              v-for="subMenu in menu.child"
-              :title="subMenu.name"
-              :to="subMenu.href"
-              nuxt
-            />
+            <template v-for="subMenu in menu.child">
+              <v-list-item
+                v-if="subMenu?.userAllowed ? subMenu?.userAllowed(user) : true"
+                :title="subMenu.name"
+                :to="subMenu.href"
+                nuxt
+              />
+            </template>
           </v-list-group>
 
-          <v-list-item v-else :to="menu.href" nuxt>{{ menu.name }}</v-list-item>
+          <v-list-item
+            v-else-if="menu?.userAllowed ? menu?.userAllowed(user) : true"
+            :to="menu.href"
+            nuxt
+            >{{ menu.name }}</v-list-item
+          >
         </template>
         <!-- <v-list-group value="User">
           <template v-slot:activator="{ props }">

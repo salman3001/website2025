@@ -20,6 +20,7 @@ import { AuthUserType } from 'src/utils/types/common';
 import { BlogPolicy } from './blogs.policy';
 import CustomRes from 'src/utils/CustomRes';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
+import { BlogsQueryDto } from './dto/blogs-query.dto';
 
 @ApiTags('blogs')
 @Controller('blogs')
@@ -50,7 +51,7 @@ export class BlogsController {
 
   @Get()
   async findAll(
-    @Query() qs: Record<string, any>,
+    @Query() qs: BlogsQueryDto,
     @AuthUser() authUser: AuthUserType,
   ) {
     this.blogPolicy.canFindAll();

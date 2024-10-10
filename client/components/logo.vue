@@ -1,5 +1,20 @@
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    color?: "light" | "dark";
+  }>(),
+  { color: "light" },
+);
+</script>
+
 <template>
   <NuxtLink :to="routes.web.home()">
-    <h1>{{ $config.public.appName }}</h1>
+    <VBtn
+      variant="text"
+      class="text-h5"
+      :color="color === 'light' ? 'white' : 'primary'"
+    >
+      {{ $config.public.appName }}
+    </VBtn>
   </NuxtLink>
 </template>

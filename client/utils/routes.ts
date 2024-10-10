@@ -14,6 +14,7 @@ export const routes = {
     signup: () => "/auth/signup",
     forgotPassword: () => "/auth/forgot-password",
     resetPassword: (token: string) => `/auth/reset-password/${token}`,
+    checkEmail: () => `/auth/check-email/`,
   },
   admin: {
     dashboard: () => "/admin/dashboard",
