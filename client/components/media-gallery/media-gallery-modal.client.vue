@@ -5,31 +5,20 @@ import MediaList from "./media-list.vue";
 import AddMedia from "./add-media.vue";
 import ConfirmDelete from "./confirm-delete.vue";
 import PreviewSelectedMedia from "./preview-selected-media.vue";
+import UpdateMedia from "./update-media.vue";
 
-const open = ref(false);
+withDefaults(defineProps<{ name: string }>(), {
+  name: "mediaId",
+});
 
-const props = withDefaults(
-  defineProps<{ multiple?: boolean; name: string }>(),
-  {
-    multiple: true,
-    name: "mediaId",
-  },
-);
-
-const selected = ref<Media[] | Media | undefined>(
-  props.multiple === true ? [] : undefined,
-);
-
-const selectedForDelete = ref<Media[] | Media | undefined>(
-  props.multiple === true ? [] : undefined,
-);
-
+const selected = defineModel<Media[]>({ required: true });
+const selectedForDelete = ref<Media[]>([]);
+const selectedForEdit = ref<Media>();
 const mediaWindow = ref<MediaWindow>(MediaWindow.MEDIA_LIST);
 
-const openModal = () => {
-  mediaWindow.value = MediaWindow.MEDIA_LIST;
-  open.value = true;
-};
+const emit = defineEmits<{
+  selected: [values: Media[]];
+}>();
 </script>
 <template>
   <v-dialog :max-width="1200">
@@ -42,18 +31,7 @@ const openModal = () => {
         variant="tonal"
       ></v-btn>
       <div class="d-flex ga-2 flex-wrap">
-        <PreviewSelectedMedia
-          v-if="selected && Array.isArray(selected)"
-          v-for="media in selected"
-          :media="media"
-          :name="name"
-        />
-
-        <PreviewSelectedMedia
-          v-if="selected && !Array.isArray(selected)"
-          :name="name"
-          :media="selected"
-        />
+        <PreviewSelectedMedia v-model:="selected" :name="name" />
       </div>
     </template>
 
@@ -77,17 +55,23 @@ const openModal = () => {
               @windowChange="(v) => (mediaWindow = v)"
               :medias="[1, 2, 3, 4, 5]"
               v-model="selected"
-              :multiple="multiple"
               @selected="
                 (v) => {
                   selected = v;
                   isActive.value = false;
+                  emit('selected', v);
                 }
               "
               @delete="
                 (v) => {
                   selectedForDelete = v;
                   mediaWindow = MediaWindow.CONFIRM_DELETE;
+                }
+              "
+              @edit="
+                (v) => {
+                  selectedForEdit = v;
+                  mediaWindow = MediaWindow.UPDATE_NEDIA;
                 }
               "
             />
@@ -99,9 +83,14 @@ const openModal = () => {
             />
           </div>
           <div v-if="mediaWindow === MediaWindow.ADD_MEDIA">
-            <AddMedia
+            <AddMedia @windowChange="(v) => (mediaWindow = v)" />
+          </div>
+          <div
+            v-if="mediaWindow === MediaWindow.UPDATE_NEDIA && selectedForEdit"
+          >
+            <UpdateMedia
               @windowChange="(v) => (mediaWindow = v)"
-              @close="() => (isActive.value = false)"
+              :media="selectedForEdit"
             />
           </div>
         </v-card-text>

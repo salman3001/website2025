@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { Media } from "~/components/media-gallery";
+
 const { errors, exec, loading } = useFetcher();
 
+const media = ref<Media[]>([]);
 const form = reactive({
-  mediaId: null as null | number,
   title: "",
   shortDesc: "",
   longDesc: "",
@@ -16,10 +18,16 @@ const form = reactive({
   },
 });
 
-const login = async () => {
+const createBlog = async () => {
   exec(
     apiRoutes.blogs.create(),
-    { method: "post", body: toRaw(form) },
+    {
+      method: "post",
+      body: {
+        ...toRaw(form),
+        mediaId: media.value ? media.value[0]?.id : undefined,
+      },
+    },
     {
       onSuccess: (res) => {
         navigateTo(routes.admin.blogs.index());
@@ -45,11 +53,16 @@ const login = async () => {
     <VForm
       @submit.prevent="
         () => {
-          login();
+          createBlog();
         }
       "
     >
       <VRow>
+        <!-- Thumbnail -->
+        <VCol cols="12">
+          <MediaGalleryModal name="mediaId" v-model="media" />
+        </VCol>
+
         <!-- Title -->
         <VCol cols="12" md="6">
           <VTextField
@@ -95,11 +108,7 @@ const login = async () => {
 
         <!-- Long Desc -->
         <VCol cols="12">
-          <VTextarea
-            v-model="form.longDesc"
-            label="Long Description"
-            :error-messages="errors?.longDesc?.errors"
-          />
+          <MarkDownEditor v-model="form.longDesc" />
         </VCol>
 
         <VCol cols="12" md="6">
@@ -130,7 +139,7 @@ const login = async () => {
         </VCol>
 
         <!-- create Blog -->
-        <VCol cols="12" class="text-center">
+        <VCol cols="12" class="text-end">
           <VBtn type="submit" color="primary" :disabled="loading">
             Create Blog
           </VBtn>

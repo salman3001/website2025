@@ -1,5 +1,10 @@
-export const generateCommonPrismaQuery = (dto: any) => {
-  const { orderBy, search, select, skip, take } = dto;
+export const generateCommonPrismaQuery = (dto: {
+  select: string[];
+  orderBy: string;
+  skip: number;
+  take: number;
+}) => {
+  const { orderBy, select, skip, take } = dto;
 
   const [orderByKey, orderByDir] = orderBy
     ? orderBy.split(':')
@@ -8,11 +13,15 @@ export const generateCommonPrismaQuery = (dto: any) => {
   const orderByQuery =
     orderByKey && orderByDir ? { [orderByKey]: orderByDir } : {};
 
-  const selectQuery = {};
+  let selectQuery = undefined;
+
   if (select) {
+    const query = {};
     select.forEach((sel) => {
-      selectQuery[sel] = true;
+      query[sel] = true;
     });
+
+    selectQuery = query;
   }
 
   return {

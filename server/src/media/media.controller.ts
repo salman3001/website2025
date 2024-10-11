@@ -77,7 +77,7 @@ export class MediaController {
     const { selectQuery, orderByQuery, skip, take } =
       generateCommonPrismaQuery(commonQueryDto);
 
-    const searchQuery = search ? { title: { contains: search } } : {};
+    const searchQuery = search ? { name: { contains: search } } : {};
 
     const categoryQuery = mediaCategoryId
       ? { mediaCategoryId: { equals: mediaCategoryId } }

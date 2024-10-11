@@ -1,5 +1,1 @@
-<template>
-  Home Page
-
-  <MediaGalleryModal />
-</template>
+<template>Home Page</template>

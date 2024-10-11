@@ -71,14 +71,18 @@ export class MediaService {
     });
 
     const url = await this.uploadMedia(file, media.type);
+    const { mediaCategoryId, ...restDto } = dto;
 
     const updatedMedia = await this.prisma.media.update({
       where: {
         id: media.id,
       },
       data: {
-        ...dto,
+        ...restDto,
         url,
+        MediaCategory: mediaCategoryId
+          ? { connect: { id: mediaCategoryId } }
+          : {},
       },
     });
 
@@ -113,10 +117,8 @@ export class MediaService {
       return url;
     }
 
-    if (type === MediaType.document) {
-      const url = await this.fileUpload.uploadFile(file, 'documents');
-      return url;
-    }
+    const url = await this.fileUpload.uploadFile(file, 'documents');
+    return url;
   }
 
   private async removeMedia(url: string, type: MediaType) {
@@ -124,8 +126,6 @@ export class MediaService {
       await this.imageUpload.deleteImage(url);
     }
 
-    if (type === MediaType.document) {
-      await this.fileUpload.deleteFile(url);
-    }
+    await this.fileUpload.deleteFile(url);
   }
 }

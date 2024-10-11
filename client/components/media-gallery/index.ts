@@ -1,6 +1,7 @@
 export enum MediaWindow {
   MEDIA_LIST = "MEDIA_LIST",
   ADD_MEDIA = "ADD_MEDIA",
+  UPDATE_NEDIA = "UPDATE_NEDIA",
   CONFIRM_DELETE = "CONFIRM_DELETE",
 }
 
