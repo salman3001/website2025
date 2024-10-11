@@ -26,6 +26,7 @@ export default defineNuxtConfig({
     public: {
       baseApi: "http://localhost:4000/api",
       appName: "Website2024",
+      uploadsPath: "http://localhost:4000/uploads/",
     },
   },
 });

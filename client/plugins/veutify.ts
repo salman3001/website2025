@@ -9,6 +9,14 @@ export default defineNuxtPlugin((app) => {
         variant: "outlined",
         density: "compact",
       },
+      VTextarea: {
+        variant: "outlined",
+        density: "compact",
+      },
+      VFileInput: {
+        variant: "outlined",
+        density: "compact",
+      },
       VBtn: {
         color: "primary",
       },

@@ -39,9 +39,13 @@ export class MediaCategoriesService {
     return { count, mediaCategories };
   }
 
-  findOne(where: Prisma.MediaCategoryWhereUniqueInput) {
+  findOne(params: {
+    where: Prisma.MediaCategoryWhereUniqueInput;
+    select?: Prisma.MediaCategorySelect;
+  }) {
     return this.prisma.mediaCategory.findUnique({
-      where,
+      where: params.where,
+      select: params?.select,
     });
   }
 

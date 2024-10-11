@@ -40,8 +40,9 @@ export class MediaService {
     cursor?: Prisma.MediaWhereUniqueInput;
     where?: Prisma.MediaWhereInput;
     orderBy?: Prisma.MediaOrderByWithRelationInput;
+    select?: Prisma.MediaSelect;
   }) {
-    const { skip, take, cursor, where, orderBy } = params;
+    const { skip, take, cursor, where, orderBy, select } = params;
     const [count, media] = await this.prisma.$transaction([
       this.prisma.media.count(),
       this.prisma.media.findMany({
@@ -50,6 +51,7 @@ export class MediaService {
         cursor,
         where,
         orderBy,
+        select,
       }),
     ]);
     return { count, media };

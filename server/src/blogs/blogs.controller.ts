@@ -21,6 +21,7 @@ import { BlogPolicy } from './blogs.policy';
 import CustomRes from 'src/utils/CustomRes';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { BlogsQueryDto } from './dto/blogs-query.dto';
+import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrismaQuery';
 
 @ApiTags('blogs')
 @Controller('blogs')
@@ -55,8 +56,22 @@ export class BlogsController {
     @AuthUser() authUser: AuthUserType,
   ) {
     this.blogPolicy.canFindAll();
+    const { blogCategoryId, search, ...restQuery } = qs;
+    const { orderByQuery, selectQuery, skip, take } =
+      generateCommonPrismaQuery(restQuery);
 
-    const { blogs, count } = await this.blogsService.findAll(qs);
+    const searchQuery = search ? { title: { contains: search } } : {};
+    const serachByCategoryQuery = blogCategoryId
+      ? { blogCategoryId: { eq: blogCategoryId } }
+      : {};
+
+    const { blogs, count } = await this.blogsService.findAll({
+      skip,
+      take,
+      where: { ...searchQuery, ...serachByCategoryQuery },
+      orderBy: orderByQuery,
+      select: selectQuery,
+    });
     return CustomRes({
       code: HttpStatus.OK,
       success: true,

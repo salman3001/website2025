@@ -28,6 +28,7 @@ import CustomRes from 'src/utils/CustomRes';
 import { MediaPolicy } from './media.policy';
 import { UploadFileDto } from './dto/upload-file.dto';
 import { MediaQueryDto } from './dto/media-query.dto';
+import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrismaQuery';
 
 @ApiTags('Media')
 @Controller('media')
@@ -71,8 +72,13 @@ export class MediaController {
   ) {
     this.policyService.canFindAll();
 
-    const { skip, take, search, mediaCategoryId } = query;
-    const searchQuery = search ? { name: { contains: search } } : {};
+    const { mediaCategoryId, search, ...commonQueryDto } = query;
+
+    const { selectQuery, orderByQuery, skip, take } =
+      generateCommonPrismaQuery(commonQueryDto);
+
+    const searchQuery = search ? { title: { contains: search } } : {};
+
     const categoryQuery = mediaCategoryId
       ? { mediaCategoryId: { equals: mediaCategoryId } }
       : {};
@@ -81,6 +87,8 @@ export class MediaController {
       skip,
       take,
       where: { AND: { ...searchQuery, ...categoryQuery } },
+      orderBy: orderByQuery,
+      select: selectQuery,
     });
 
     return CustomRes({
@@ -88,27 +96,6 @@ export class MediaController {
       success: true,
       data: { data: media, count },
     });
-  }
-
-  @Get('category/:id')
-  async findAllByCategory(
-    @Param('id') id: string,
-    @Query() query: Record<string, any>,
-    @AuthUser() authUser: AuthUserType,
-  ) {
-    this.policyService.canFindAllByCategory();
-
-    const { skip, take, orderBy, search } = query;
-    const searchQuery = search ? { name: { contains: search } } : {};
-
-    const data = await this.mediaService.findAll({
-      skip,
-      take,
-      orderBy,
-      where: { AND: { mediaCategoryId: +id, ...searchQuery } },
-    });
-
-    return CustomRes({ code: 200, success: true, data });
   }
 
   @Get(':id')

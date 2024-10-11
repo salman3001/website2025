@@ -7,14 +7,15 @@ const config = useRuntimeConfig();
 const search = ref("");
 const perPage = ref(5);
 const page = ref(1);
+const skip = computed(() => perPage.value * (page.value - 1));
 
 const { data, execute } = await useFetch<
   IResType<{ data: Blog[]; count: number }>
 >(config.public.baseApi + apiRoutes.blogs.index(), {
   query: {
-    skip: perPage.value * (page.value - 1),
-    take: perPage.value,
-    search: search.value,
+    skip: skip,
+    take: perPage,
+    search: search,
   },
 });
 
@@ -55,6 +56,12 @@ const headers = [
               hide-details
             />
             <VBtn variant="tonal" prepend-icon="mdi-upload" text="Export" />
+            <VBtn
+              prepend-icon="mdi-plus"
+              text="Create Blog"
+              :to="routes.admin.blogs.create()"
+              nuxt
+            />
           </div>
         </div>
       </VCardText>

@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString, Length } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class CommonQueryDto {
@@ -13,10 +20,16 @@ export class CommonQueryDto {
   @IsOptionalEmpty()
   take: number;
 
-  //   @ApiProperty()
-  //   @IsString()
-  //   @IsOptionalEmpty()
-  //   orderBy: string;
+  @ApiProperty()
+  @IsString()
+  @IsOptionalEmpty()
+  orderBy: string;
+
+  @ApiProperty()
+  @IsArray({ each: true })
+  @IsOptional()
+  @Type(() => String)
+  select: string[];
 
   @ApiProperty()
   @IsString()
