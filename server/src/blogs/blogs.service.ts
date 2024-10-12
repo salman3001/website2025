@@ -4,8 +4,7 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import slugify from 'slugify';
 import { CustomHttpException } from 'src/utils/Exceptions/CustomHttpException';
-import { MediaType, Prisma } from '@prisma/client';
-import { ImageUploadService } from 'src/media/imageUpload.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class BlogsService {
@@ -15,6 +14,7 @@ export class BlogsService {
     const { seo, blogCategorySlug, tagSlugs, mediaId, ...blogDto } = dto;
 
     const slug = slugify(blogDto.title, { lower: true, strict: true });
+
     const existBlog = await this.prisma.blog.findFirst({ where: { slug } });
     if (existBlog) {
       throw new CustomHttpException({
@@ -38,11 +38,13 @@ export class BlogsService {
         tags: {
           connect: tagSlugs ? tagSlugs.map((slug) => ({ slug })) : [],
         },
-        image: {
-          connect: {
-            id: mediaId,
-          },
-        },
+        image: mediaId
+          ? {
+              connect: {
+                id: mediaId,
+              },
+            }
+          : {},
       },
     });
 
@@ -72,9 +74,14 @@ export class BlogsService {
     return { count, blogs };
   }
 
-  findOne(where: Prisma.BlogWhereUniqueInput) {
+  findOne(params: {
+    where: Prisma.BlogWhereUniqueInput;
+    select: Prisma.BlogSelect;
+  }) {
+    const { where, select } = params;
     return this.prisma.blog.findUnique({
       where,
+      select,
     });
   }
 

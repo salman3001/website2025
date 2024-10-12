@@ -3,10 +3,12 @@ import { IsString } from 'class-validator';
 import { CommonQueryDto } from 'src/utils/dto/common-query.dto';
 import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
-export class BlogsQueryDto extends CommonQueryDto {
+export class DiscussionCommentQueryDto extends CommonQueryDto {
   @IsString()
   @IsOptionalEmpty()
-  blogCategorySlug: string;
+  discussionlug: string;
 }
 
-export class BlogsFindOneQuery extends PickType(CommonQueryDto, ['select']) {}
+export class DiscussionCommentFindOneQuery extends PickType(CommonQueryDto, [
+  'select',
+]) {}

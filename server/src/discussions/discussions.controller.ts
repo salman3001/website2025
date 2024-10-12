@@ -18,6 +18,11 @@ import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
 import CustomRes from 'src/utils/CustomRes';
 import { ApiTags } from '@nestjs/swagger';
+import {
+  DiscussionFindOneQuery,
+  DiscussionQueryDto,
+} from './dto/discussion-query.dto';
+import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrismaQuery';
 
 @ApiTags('Discusions')
 @Controller('discussions')
@@ -35,21 +40,34 @@ export class DiscussionsController {
   ) {
     this.policy.canCreate(authUser);
     const userId = authUser.id;
-    const discussion = this.discussionsService.create(dto, userId);
+    const discussion = await this.discussionsService.create(dto, userId);
 
     return CustomRes({
       code: HttpStatus.CREATED,
       success: true,
-      data: { discussion },
+      data: discussion,
       message: 'Discussion Category Created',
     });
   }
 
   @Get()
-  async findAll(@Query() qs: Record<string, any>) {
+  async findAll(@Query() qs: DiscussionQueryDto) {
     this.policy.canFindAll();
 
-    const { discussions, count } = await this.discussionsService.findAll(qs);
+    const { search, ...commonQueryDto } = qs;
+
+    const { selectQuery, orderByQuery, skip, take } =
+      generateCommonPrismaQuery(commonQueryDto);
+
+    const searchQuery = search ? { title: { contains: search } } : {};
+
+    const { discussions, count } = await this.discussionsService.findAll({
+      skip,
+      take,
+      where: { AND: { ...searchQuery } },
+      orderBy: orderByQuery,
+      select: selectQuery,
+    });
 
     return CustomRes({
       code: HttpStatus.OK,
@@ -59,14 +77,22 @@ export class DiscussionsController {
   }
 
   @Get(':slug')
-  async findOne(@Param('slug') slug: string) {
+  async findOne(
+    @Param('slug') slug: string,
+    @Query() qs: DiscussionFindOneQuery,
+  ) {
     this.policy.canFindOne();
 
-    const discussion = await this.discussionsService.findOne({ slug });
+    const { selectQuery } = generateCommonPrismaQuery(qs);
+
+    const discussion = await this.discussionsService.findOne({
+      where: { slug },
+      select: selectQuery,
+    });
     return CustomRes({
       code: HttpStatus.OK,
       success: true,
-      data: { discussion },
+      data: discussion,
     });
   }
 
@@ -82,7 +108,7 @@ export class DiscussionsController {
     return CustomRes({
       success: true,
       code: HttpStatus.CREATED,
-      data: { discussion },
+      data: discussion,
       message: 'Discussion Updated',
     });
   }
@@ -99,7 +125,7 @@ export class DiscussionsController {
     return CustomRes({
       success: true,
       code: HttpStatus.OK,
-      data: { discussion },
+      data: discussion,
       message: 'Discusssion deleted',
     });
   }

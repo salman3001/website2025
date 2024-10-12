@@ -13,6 +13,13 @@ export const apiRoutes = {
     update: (slug: string) => `/blogs/${slug}`,
     delete: (slug: string) => `/blogs/${slug}`,
   },
+  blogCategory: {
+    index: () => `/blog-categories`,
+    create: () => `/blog-categories`,
+    view: (slug: string) => `/blog-categories/${slug}`,
+    update: (slug: string) => `/blog-categories/${slug}`,
+    delete: (slug: string) => `/blog-categories/${slug}`,
+  },
   media: {
     index: () => `/media`,
     create: () => `/media`,
@@ -26,5 +33,12 @@ export const apiRoutes = {
     view: (id: number) => `/media-categories/${id}`,
     update: (id: number) => `/media-categories/${id}`,
     delete: (id: number) => `/media-categories/${id}`,
+  },
+  tags: {
+    index: () => `/tags`,
+    create: () => `/tags`,
+    view: (slug: string) => `/tags/${slug}`,
+    update: (slug: string) => `/tags/${slug}`,
+    delete: (slug: string) => `/tags/${slug}`,
   },
 };

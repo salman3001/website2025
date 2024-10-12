@@ -9,18 +9,16 @@ import {
   UploadedFile,
   HttpStatus,
   Query,
-  Inject,
 } from '@nestjs/common';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
-
 import { ApiTags } from '@nestjs/swagger';
 import { AuthUserType } from 'src/utils/types/common';
 import { BlogPolicy } from './blogs.policy';
 import CustomRes from 'src/utils/CustomRes';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
-import { BlogsQueryDto } from './dto/blogs-query.dto';
+import { BlogsFindOneQuery, BlogsQueryDto } from './dto/blogs-query.dto';
 import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrismaQuery';
 
 @ApiTags('blogs')
@@ -35,17 +33,16 @@ export class BlogsController {
   async create(
     @Body() createBlogDto: CreateBlogDto,
     @AuthUser() authUser: AuthUserType,
-    @UploadedFile() image?: Express.Multer.File,
   ) {
     this.blogPolicy.canCreate(authUser);
 
     const userId = authUser.id;
-    const blog = this.blogsService.create(createBlogDto, userId);
+    const blog = await this.blogsService.create(createBlogDto, userId);
 
     return CustomRes({
       code: HttpStatus.CREATED,
       success: true,
-      data: { blog },
+      data: blog,
       message: 'Blog Created',
     });
   }
@@ -56,13 +53,13 @@ export class BlogsController {
     @AuthUser() authUser: AuthUserType,
   ) {
     this.blogPolicy.canFindAll();
-    const { blogCategoryId, search, ...restQuery } = qs;
+    const { blogCategorySlug, search, ...restQuery } = qs;
     const { orderByQuery, selectQuery, skip, take } =
       generateCommonPrismaQuery(restQuery);
 
     const searchQuery = search ? { title: { contains: search } } : {};
-    const serachByCategoryQuery = blogCategoryId
-      ? { blogCategoryId: { eq: blogCategoryId } }
+    const serachByCategoryQuery = blogCategorySlug
+      ? { blogCategorySlug: { equals: blogCategorySlug } }
       : {};
 
     const { blogs, count } = await this.blogsService.findAll({
@@ -80,11 +77,17 @@ export class BlogsController {
   }
 
   @Get(':slug')
-  async findOne(@Param('slug') slug: string) {
+  async findOne(@Param('slug') slug: string, @Query() qs: BlogsFindOneQuery) {
     this.blogPolicy.canFindOne();
 
-    const blog = await this.blogsService.findOne({ slug });
-    return CustomRes({ code: HttpStatus.OK, success: true, data: { blog } });
+    const { selectQuery } = generateCommonPrismaQuery(qs);
+    console.log(selectQuery);
+
+    const blog = await this.blogsService.findOne({
+      where: { slug },
+      select: selectQuery,
+    });
+    return CustomRes({ code: HttpStatus.OK, success: true, data: blog });
   }
 
   @Patch(':slug')
@@ -99,7 +102,7 @@ export class BlogsController {
     return CustomRes({
       success: true,
       code: HttpStatus.CREATED,
-      data: { blog },
+      data: blog,
       message: 'Blog Updated',
     });
   }
@@ -114,7 +117,7 @@ export class BlogsController {
     return CustomRes({
       success: true,
       code: HttpStatus.OK,
-      data: { blog },
+      data: blog,
       message: 'Blog deleted',
     });
   }

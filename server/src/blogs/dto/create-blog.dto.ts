@@ -34,7 +34,7 @@ export class CreateBlogDto {
   @ApiProperty()
   @IsBoolean()
   @IsOptionalEmpty()
-  IsPublished: boolean;
+  isPublished: boolean;
 
   @ApiProperty()
   @IsString()

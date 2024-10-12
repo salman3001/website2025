@@ -49,9 +49,15 @@ export class DiscussionCommentsService {
     return { count, comments };
   }
 
-  findOne(where: Prisma.DiscussionCommentWhereUniqueInput) {
+  findOne(params: {
+    where: Prisma.DiscussionCommentWhereUniqueInput;
+    select: Prisma.DiscussionCommentSelect;
+  }) {
+    const { where, select } = params;
+
     return this.prisma.discussionComment.findUnique({
       where,
+      select,
     });
   }
 

@@ -6,29 +6,22 @@ import {
   Patch,
   Param,
   Delete,
-  UseInterceptors,
   UploadedFile,
   Query,
 } from '@nestjs/common';
 import { MediaService } from './media.service';
-
 import { UpdateMediaDto } from './dto/update-media.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { fileFilter } from './helpers/fileFIlter';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiTags,
-  IntersectionType,
-} from '@nestjs/swagger';
+
+import { ApiTags } from '@nestjs/swagger';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
 import CustomRes from 'src/utils/CustomRes';
 import { MediaPolicy } from './media.policy';
 import { UploadFileDto } from './dto/upload-file.dto';
-import { MediaQueryDto } from './dto/media-query.dto';
+import { MediaFindOneQuery, MediaQueryDto } from './dto/media-query.dto';
 import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrismaQuery';
+import { MultiPartFormData } from 'src/utils/decorators/combined/multi-part-formdata.decorator';
 
 @ApiTags('Media')
 @Controller('media')
@@ -39,20 +32,12 @@ export class MediaController {
   ) {}
 
   @Post()
-  @UseInterceptors(
-    FileInterceptor(
-      'file',
-      fileFilter({
-        maxSizeInMb: 5,
-        mimeType: ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
-      }),
-    ),
-  )
-  @ApiBody({
-    description: 'File image',
-    type: IntersectionType(UploadFileDto, CreateMediaDto),
+  @MultiPartFormData({
+    mimeType: ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
+    maxSizeInMb: 5,
+    dtos: [UploadFileDto, CreateMediaDto],
+    fileName: 'file',
   })
-  @ApiConsumes('multipart/form-data')
   async create(
     @Body() dto: CreateMediaDto,
     @AuthUser() authUser: AuthUserType,
@@ -67,12 +52,12 @@ export class MediaController {
 
   @Get()
   async findAll(
-    @Query() query: MediaQueryDto,
+    @Query() qs: MediaQueryDto,
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policyService.canFindAll();
 
-    const { mediaCategoryId, search, ...commonQueryDto } = query;
+    const { mediaCategoryId, search, ...commonQueryDto } = qs;
 
     const { selectQuery, orderByQuery, skip, take } =
       generateCommonPrismaQuery(commonQueryDto);
@@ -99,27 +84,28 @@ export class MediaController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @AuthUser() authUser: AuthUserType) {
+  async findOne(
+    @Param('id') id: string,
+    @AuthUser() authUser: AuthUserType,
+    @Query() qs: MediaFindOneQuery,
+  ) {
     this.policyService.canFindOne();
 
-    const media = await this.mediaService.findOne({ id: +id });
+    const { selectQuery } = generateCommonPrismaQuery(qs);
+
+    const media = await this.mediaService.findOne({
+      where: { id: +id },
+      select: selectQuery,
+    });
     return CustomRes({ code: 200, success: true, data: media });
   }
 
   @Patch(':id')
-  @UseInterceptors(
-    FileInterceptor(
-      'file',
-      fileFilter({
-        maxSizeInMb: 5,
-        mimeType: ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
-      }),
-    ),
-  )
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'File image',
-    type: IntersectionType(UploadFileDto, UpdateMediaDto),
+  @MultiPartFormData({
+    mimeType: ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
+    maxSizeInMb: 5,
+    dtos: [UploadFileDto, UpdateMediaDto],
+    fileName: 'file',
   })
   async update(
     @Param('id') id: string,

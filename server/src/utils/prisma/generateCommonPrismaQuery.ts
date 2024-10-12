@@ -1,10 +1,12 @@
 export const generateCommonPrismaQuery = (dto: {
-  select: string[];
-  orderBy: string;
-  skip: number;
-  take: number;
+  select?: string[];
+  orderBy?: string;
+  skip?: number;
+  take?: number;
 }) => {
   const { orderBy, select, skip, take } = dto;
+
+  console.log(orderBy);
 
   const [orderByKey, orderByDir] = orderBy
     ? orderBy.split(':')

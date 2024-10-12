@@ -18,6 +18,11 @@ import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import CustomRes from 'src/utils/CustomRes';
 import { DiscussionCommentsPolicy } from './discussion-comments.policy';
 import { ApiTags } from '@nestjs/swagger';
+import {
+  DiscussionCommentFindOneQuery,
+  DiscussionCommentQueryDto,
+} from './dto/discussion-comment-query.dto';
+import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrismaQuery';
 
 @ApiTags('Discusion Comments')
 @Controller('discussion-comments')
@@ -33,22 +38,38 @@ export class DiscussionCommentsController {
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policy.canCreate(authUser);
-    const tag = this.discussionCommentsService.create(dto);
+    const comment = await this.discussionCommentsService.create(dto);
 
     return CustomRes({
       code: HttpStatus.CREATED,
       success: true,
-      data: { tag },
+      data: comment,
       message: 'Comment Created',
     });
   }
 
   @Get()
-  async findAll(@Query() qs: Record<string, any>) {
+  async findAll(@Query() qs: DiscussionCommentQueryDto) {
     this.policy.canFindAll();
 
-    const { comments, count } =
-      await this.discussionCommentsService.findAll(qs);
+    const { discussionlug, search, ...commonQueryDto } = qs;
+
+    const { selectQuery, orderByQuery, skip, take } =
+      generateCommonPrismaQuery(commonQueryDto);
+
+    const searchQuery = search ? { name: { contains: search } } : {};
+
+    const queryByDiscussion = discussionlug
+      ? { discussionlug: { equals: discussionlug } }
+      : {};
+
+    const { comments, count } = await this.discussionCommentsService.findAll({
+      skip,
+      take,
+      where: { AND: { ...searchQuery, ...queryByDiscussion } },
+      orderBy: orderByQuery,
+      select: selectQuery,
+    });
 
     return CustomRes({
       code: HttpStatus.OK,
@@ -58,11 +79,19 @@ export class DiscussionCommentsController {
   }
 
   @Get(':id')
-  async findOne(@Param('slug') id: number) {
+  async findOne(
+    @Param('slug') id: number,
+    @Query() qs: DiscussionCommentFindOneQuery,
+  ) {
     this.policy.canFindAll();
 
-    const comment = await this.discussionCommentsService.findOne({ id });
-    return CustomRes({ code: HttpStatus.OK, success: true, data: { comment } });
+    const { selectQuery } = generateCommonPrismaQuery(qs);
+
+    const comment = await this.discussionCommentsService.findOne({
+      where: { id: +id },
+      select: selectQuery,
+    });
+    return CustomRes({ code: HttpStatus.OK, success: true, data: comment });
   }
 
   @Patch(':id')
@@ -78,7 +107,7 @@ export class DiscussionCommentsController {
     return CustomRes({
       success: true,
       code: HttpStatus.CREATED,
-      data: { comment },
+      data: comment,
       message: 'Comment Updated',
     });
   }
@@ -86,12 +115,12 @@ export class DiscussionCommentsController {
   @Delete(':id')
   async remove(@Param('id') id: number, @AuthUser() authUser: AuthUserType) {
     this.policy.canDelete(authUser);
-    const tag = await this.discussionCommentsService.remove(id);
+    const comment = await this.discussionCommentsService.remove(id);
 
     return CustomRes({
       success: true,
       code: HttpStatus.OK,
-      data: { tag },
+      data: comment,
       message: 'Comment deleted',
     });
   }

@@ -78,7 +78,7 @@ model Seo {
 
 model BlogCategory {
   slug        String              @id @unique
-  title       String
+  name        String
   desc        String?
   blogs       Blog[]
   subscribers EmailSubscription[]
@@ -88,7 +88,7 @@ model BlogCategory {
 
 model Tag {
   slug        String              @id
-  title       String
+  name        String
   desc        String?
   blogs       Blog[]
   discussions Discussion[]

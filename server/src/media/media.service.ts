@@ -57,9 +57,14 @@ export class MediaService {
     return { count, media };
   }
 
-  findOne(where: Prisma.MediaWhereUniqueInput) {
+  findOne(params: {
+    where: Prisma.MediaWhereUniqueInput;
+    select: Prisma.MediaSelect;
+  }) {
+    const { where, select } = params;
     return this.prisma.media.findUnique({
       where,
+      select,
     });
   }
 

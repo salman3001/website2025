@@ -18,6 +18,11 @@ import { AuthUserType } from 'src/utils/types/common';
 import { BlogCategoryPolicy } from './blog-category.policy';
 import CustomRes from 'src/utils/CustomRes';
 import { ApiTags } from '@nestjs/swagger';
+import {
+  BlogCategoryFindOneQuery,
+  BlogCategoryQueryDto,
+} from './dto/blog-category-query.dto';
+import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrismaQuery';
 
 @ApiTags('blog-categories')
 @Controller('blog-categories')
@@ -33,22 +38,34 @@ export class BlogCategoriesController {
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policy.canCreate(authUser);
-    const blogCategory = this.blogCategoriesService.create(dto);
+    const blogCategory = await this.blogCategoriesService.create(dto);
 
     return CustomRes({
       code: HttpStatus.CREATED,
       success: true,
-      data: { blogCategory },
+      data: blogCategory,
       message: 'Blog Category Created',
     });
   }
 
   @Get()
-  async findAll(@Query() qs: Record<string, any>) {
+  async findAll(@Query() qs: BlogCategoryQueryDto) {
     this.policy.canFindAll();
 
-    const { blogCategories, count } =
-      await this.blogCategoriesService.findAll(qs);
+    const { search, ...commonQueryDto } = qs;
+
+    const { selectQuery, orderByQuery, skip, take } =
+      generateCommonPrismaQuery(commonQueryDto);
+
+    const searchQuery = search ? { name: { contains: search } } : {};
+
+    const { blogCategories, count } = await this.blogCategoriesService.findAll({
+      skip,
+      take,
+      where: { AND: { ...searchQuery } },
+      orderBy: orderByQuery,
+      select: selectQuery,
+    });
 
     return CustomRes({
       code: HttpStatus.OK,
@@ -58,11 +75,23 @@ export class BlogCategoriesController {
   }
 
   @Get(':slug')
-  async findOne(@Param('slug') slug: string) {
+  async findOne(
+    @Param('slug') slug: string,
+    @Query() qs: BlogCategoryFindOneQuery,
+  ) {
     this.policy.canFindOne();
+    const { selectQuery } = generateCommonPrismaQuery(qs);
 
-    const blog = await this.blogCategoriesService.findOne({ slug });
-    return CustomRes({ code: HttpStatus.OK, success: true, data: { blog } });
+    const blogCategory = await this.blogCategoriesService.findOne({
+      where: { slug },
+      select: selectQuery,
+    });
+
+    return CustomRes({
+      code: HttpStatus.OK,
+      success: true,
+      data: blogCategory,
+    });
   }
 
   @Patch(':slug')
@@ -77,7 +106,7 @@ export class BlogCategoriesController {
     return CustomRes({
       success: true,
       code: HttpStatus.CREATED,
-      data: { blogCategory },
+      data: blogCategory,
       message: 'Blog Category Updated',
     });
   }
@@ -94,7 +123,7 @@ export class BlogCategoriesController {
     return CustomRes({
       success: true,
       code: HttpStatus.OK,
-      data: { blogCategory },
+      data: blogCategory,
       message: 'Blog Category deleted',
     });
   }

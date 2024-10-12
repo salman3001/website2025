@@ -39,9 +39,14 @@ export class ProjectsService {
     return { count, projects };
   }
 
-  findOne(where: Prisma.ProjectWhereUniqueInput) {
+  findOne(params: {
+    where: Prisma.ProjectWhereUniqueInput;
+    select: Prisma.ProjectSelect;
+  }) {
+    const { where, select } = params;
     return this.prisma.project.findUnique({
       where,
+      select,
     });
   }
 

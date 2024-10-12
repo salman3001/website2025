@@ -49,9 +49,14 @@ export class BlogCommentsService {
     return { count, comments };
   }
 
-  findOne(where: Prisma.BlogCommentWhereUniqueInput) {
+  findOne(params: {
+    where: Prisma.BlogCommentWhereUniqueInput;
+    select: Prisma.BlogCommentSelect;
+  }) {
+    const { where, select } = params;
     return this.prisma.blogComment.findUnique({
       where,
+      select,
     });
   }
 

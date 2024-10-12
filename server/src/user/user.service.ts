@@ -52,9 +52,15 @@ export class UserService {
     return { count, users };
   }
 
-  findOne(where: Prisma.UserWhereUniqueInput) {
+  findOne(params: {
+    where: Prisma.UserWhereUniqueInput;
+    select: Prisma.UserSelect;
+  }) {
+    const { where, select } = params;
+
     return this.prisma.user.findUnique({
       where,
+      select,
     });
   }
 

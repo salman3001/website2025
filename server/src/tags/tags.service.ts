@@ -11,7 +11,7 @@ export class TagsService {
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateTagDto) {
-    const slug = slugify(dto.title, { lower: true, strict: true });
+    const slug = slugify(dto.name, { lower: true, strict: true });
 
     const existTag = await this.prisma.tag.findFirst({
       where: { slug },
@@ -58,9 +58,15 @@ export class TagsService {
     return { count, tags };
   }
 
-  findOne(where: Prisma.BlogWhereUniqueInput) {
-    return this.prisma.blog.findUnique({
+  findOne(params: {
+    where: Prisma.TagWhereUniqueInput;
+    select: Prisma.TagSelect;
+  }) {
+    const { where, select } = params;
+
+    return this.prisma.tag.findUnique({
       where,
+      select,
     });
   }
 
@@ -78,8 +84,8 @@ export class TagsService {
     }
 
     const newSlug: string =
-      existTag.title !== dto.title
-        ? slugify(dto.title, { lower: true, strict: true })
+      existTag.name !== dto.name
+        ? slugify(dto.name, { lower: true, strict: true })
         : undefined;
 
     const tag = await this.prisma.blog.update({

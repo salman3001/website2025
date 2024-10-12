@@ -47,9 +47,15 @@ export class EmailSubscriptionsService {
     return { count, subscriptions };
   }
 
-  findOne(where: Prisma.EmailSubscriptionWhereUniqueInput) {
+  findOne(params: {
+    where: Prisma.EmailSubscriptionWhereUniqueInput;
+    select: Prisma.EmailSubscriptionSelect;
+  }) {
+    const { where, select } = params;
+
     return this.prisma.emailSubscription.findUnique({
       where,
+      select,
     });
   }
 

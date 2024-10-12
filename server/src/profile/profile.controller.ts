@@ -48,7 +48,7 @@ export class ProfileController {
       code: HttpStatus.OK,
       success: true,
       message: 'Profile Updated',
-      data: { profile },
+      data: profile,
     });
   }
 }

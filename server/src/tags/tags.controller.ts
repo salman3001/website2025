@@ -18,6 +18,8 @@ import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
 import CustomRes from 'src/utils/CustomRes';
 import { ApiTags } from '@nestjs/swagger';
+import { TagFindOneQuery, TagQueryDto } from './dto/tag-query.dto';
+import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrismaQuery';
 
 @ApiTags('Tags')
 @Controller('tags')
@@ -33,21 +35,34 @@ export class TagsController {
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policy.canCreate(authUser);
-    const tag = this.tagsService.create(createBlogDto);
+    const tag = await this.tagsService.create(createBlogDto);
 
     return CustomRes({
       code: HttpStatus.CREATED,
       success: true,
-      data: { tag },
+      data: tag,
       message: 'Tag Created',
     });
   }
 
   @Get()
-  async findAll(@Query() qs: Record<string, any>) {
+  async findAll(@Query() qs: TagQueryDto) {
     this.policy.canFindAll();
 
-    const { tags, count } = await this.tagsService.findAll(qs);
+    const { search, ...commonQueryDto } = qs;
+
+    const { selectQuery, orderByQuery, skip, take } =
+      generateCommonPrismaQuery(commonQueryDto);
+
+    const searchQuery = search ? { name: { contains: search } } : {};
+
+    const { tags, count } = await this.tagsService.findAll({
+      skip,
+      take,
+      where: { AND: { ...searchQuery } },
+      orderBy: orderByQuery,
+      select: selectQuery,
+    });
 
     return CustomRes({
       code: HttpStatus.OK,
@@ -57,11 +72,16 @@ export class TagsController {
   }
 
   @Get(':slug')
-  async findOne(@Param('slug') slug: string) {
+  async findOne(@Param('slug') slug: string, @Query() qs: TagFindOneQuery) {
     this.policy.canFindOne();
 
-    const tag = await this.tagsService.findOne({ slug });
-    return CustomRes({ code: HttpStatus.OK, success: true, data: { tag } });
+    const { selectQuery } = generateCommonPrismaQuery(qs);
+
+    const tag = await this.tagsService.findOne({
+      where: { slug },
+      select: selectQuery,
+    });
+    return CustomRes({ code: HttpStatus.OK, success: true, data: tag });
   }
 
   @Patch(':slug')
@@ -72,12 +92,12 @@ export class TagsController {
   ) {
     this.policy.canUpdate(authUser);
 
-    const blogCategory = await this.tagsService.update(slug, updateBlogDto);
+    const tag = await this.tagsService.update(slug, updateBlogDto);
 
     return CustomRes({
       success: true,
       code: HttpStatus.CREATED,
-      data: { blogCategory },
+      data: tag,
       message: 'Tag Updated',
     });
   }
@@ -94,7 +114,7 @@ export class TagsController {
     return CustomRes({
       success: true,
       code: HttpStatus.OK,
-      data: { tag },
+      data: tag,
       message: 'Tag deleted',
     });
   }

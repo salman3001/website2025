@@ -16,6 +16,8 @@ import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
 import CustomRes from 'src/utils/CustomRes';
 import { ApiTags } from '@nestjs/swagger';
+import { ContactMessageQueryDto } from './dto/contact-message-query.dto';
+import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrismaQuery';
 
 @ApiTags('Contact Messages')
 @Controller('contact-messages')
@@ -28,24 +30,32 @@ export class ContactMessagesController {
   @Post()
   async create(@Body() dto: CreateContactMessageDto) {
     this.policy.canCreate();
-    const message = this.contactMessagesService.create(dto);
+    const message = await this.contactMessagesService.create(dto);
 
     return CustomRes({
       code: HttpStatus.CREATED,
       success: true,
-      data: { message },
+      data: message,
       message: 'Contact Message Created',
     });
   }
 
   @Get()
   async findAll(
-    @Query() qs: Record<string, any>,
     @AuthUser() authUser: AuthUserType,
+    @Query() qs: ContactMessageQueryDto,
   ) {
     this.policy.canFindAll(authUser);
 
-    const { messages, count } = await this.contactMessagesService.findAll(qs);
+    const { selectQuery, orderByQuery, skip, take } =
+      generateCommonPrismaQuery(qs);
+
+    const { messages, count } = await this.contactMessagesService.findAll({
+      skip,
+      take,
+      orderBy: orderByQuery,
+      select: selectQuery,
+    });
 
     return CustomRes({
       code: HttpStatus.OK,
@@ -59,7 +69,7 @@ export class ContactMessagesController {
     this.policy.canFindOne(authUser);
 
     const message = await this.contactMessagesService.findOne({ id });
-    return CustomRes({ code: HttpStatus.OK, success: true, data: { message } });
+    return CustomRes({ code: HttpStatus.OK, success: true, data: message });
   }
 
   @Delete(':id')
@@ -70,7 +80,7 @@ export class ContactMessagesController {
     return CustomRes({
       success: true,
       code: HttpStatus.OK,
-      data: { message },
+      data: message,
       message: 'Comment deleted',
     });
   }

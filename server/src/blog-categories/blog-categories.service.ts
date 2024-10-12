@@ -11,7 +11,7 @@ export class BlogCategoriesService {
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateBlogCategoryDto) {
-    const slug = slugify(dto.title, { lower: true, strict: true });
+    const slug = slugify(dto.name, { lower: true, strict: true });
 
     const existBlogCetrgory = await this.prisma.blogCategory.findFirst({
       where: { slug },
@@ -57,9 +57,15 @@ export class BlogCategoriesService {
     return { count, blogCategories };
   }
 
-  findOne(where: Prisma.BlogCategoryWhereUniqueInput) {
+  findOne(params: {
+    where: Prisma.BlogCategoryWhereUniqueInput;
+    select: Prisma.BlogCategorySelect;
+  }) {
+    const { where, select } = params;
+
     return this.prisma.blogCategory.findUnique({
       where,
+      select,
     });
   }
 
@@ -77,8 +83,8 @@ export class BlogCategoriesService {
     }
 
     const newSlug: string =
-      existBlogCategory.title !== dto.title
-        ? slugify(dto.title, { lower: true, strict: true })
+      existBlogCategory.name !== dto.name
+        ? slugify(dto.name, { lower: true, strict: true })
         : undefined;
 
     const blogCategory = await this.prisma.blog.update({

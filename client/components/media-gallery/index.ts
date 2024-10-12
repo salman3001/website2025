@@ -1,3 +1,5 @@
+import type { Media as IMedia } from "~/utils/types/modals";
+
 export enum MediaWindow {
   MEDIA_LIST = "MEDIA_LIST",
   ADD_MEDIA = "ADD_MEDIA",
@@ -12,13 +14,7 @@ export enum MediaType {
   document = "document",
 }
 
-export interface Media {
-  id: number;
-  name: string;
-  type: MediaType;
-  url: string;
-  mediaCategoryId: number;
-}
+export interface Media extends IMedia {}
 
 export interface MediaCategory {
   id: number;

@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import { debouncedRef } from "@vueuse/core";
 import type { IResType } from "~/utils/types";
 import type { Blog } from "~/utils/types/modals";
 
 const config = useRuntimeConfig();
+const appConfig = useAppConfig();
 
 const search = ref("");
+const debaouncedSearch = debouncedRef(search, 1000);
 const perPage = ref(5);
 const page = ref(1);
 const skip = computed(() => perPage.value * (page.value - 1));
+const orderBy = ref<string>();
 
 const { data, execute } = await useFetch<
   IResType<{ data: Blog[]; count: number }>
@@ -15,7 +19,9 @@ const { data, execute } = await useFetch<
   query: {
     skip: skip,
     take: perPage,
-    search: search,
+    search: debaouncedSearch,
+    select: ["title", "slug", "isPublished", "createdAt", "image"],
+    orderBy: orderBy,
   },
 });
 
@@ -65,7 +71,6 @@ const headers = [
           </div>
         </div>
       </VCardText>
-
       <VDivider />
 
       <!-- 👉 Order Table -->
@@ -78,40 +83,89 @@ const headers = [
         :items-length="data?.data?.count || 0"
         show-select
         class="text-no-wrap"
+        @update:sort-by="
+          (v) => {
+            if (v?.length > 0) {
+              orderBy = `${v[0]['key']}:${v[0]['order']}`;
+            }
+          }
+        "
       >
         <!-- Title-->
-        <template #item.id="{ item }">
-          <NuxtLink :to="routes.admin.blogs.view(item.slug)" nuxt>
-            #{{ item.title }}
-          </NuxtLink>
+        <template #item.title="{ item }">
+          <v-card width="200" class="ma-2 ma-0" density="compact">
+            <v-card-text class="pa-0">
+              <VImg
+                v-if="item?.image?.url"
+                :src="config.public.uploadsPath + item?.image?.url"
+              />
+              <VImg v-else :src="appConfig.noImageUrl" />
+            </v-card-text>
+            <v-card-title class="text-body-2" style="height: 50px">
+              {{ item.title }}
+            </v-card-title>
+          </v-card>
         </template>
 
         <!-- Date -->
-        <template #item.created_at="{ item }">
+        <template #item.createdAt="{ item }">
           {{ new Date(item.createdAt).toDateString() }}
         </template>
 
         <!-- Status -->
-        <template #item.status="{ item }">
-          <VChip v-if="item.isPublished" label size="small" title="Published" />
-          <VChip v-else label size="small" title="Draft" />
+        <template #item.isPublished="{ item }">
+          <VChip
+            v-if="item.isPublished"
+            label
+            size="small"
+            text="Published"
+            color="success"
+          />
+          <VChip v-else label size="small" text="Draft" color="warning" />
         </template>
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn>
-            <VIcon icon="tabler-dots-vertical" />
-            <VMenu activator="parent">
-              <VList>
-                <VListItem
-                  value="view"
-                  :to="routes.admin.blogs.view(item.slug)"
-                  nuxt
-                >
-                  View
-                </VListItem>
-              </VList>
-            </VMenu>
-          </IconBtn>
+          <VIcon icon="tabler-dots-vertical" />
+          <VMenu activator="parent">
+            <template #activator="{ props }">
+              <VBtn
+                size="small"
+                variant="text"
+                v-bind="props"
+                icon="mdi-dots-vertical"
+              >
+              </VBtn>
+            </template>
+            <VList density="compact" slim>
+              <VListItem
+                slim
+                value="view"
+                prepend-icon="mdi-eye"
+                :to="routes.admin.blogs.view(item.slug)"
+                nuxt
+              >
+                View
+              </VListItem>
+              <VListItem
+                slim
+                value="Edit"
+                prepend-icon="mdi-pencil"
+                :to="routes.admin.blogs.edit(item.slug)"
+                nuxt
+              >
+                Edit
+              </VListItem>
+              <VListItem
+                slim
+                value="Delete"
+                prepend-icon="mdi-delete"
+                :to="routes.admin.blogs.edit(item.slug)"
+                nuxt
+              >
+                Delete
+              </VListItem>
+            </VList>
+          </VMenu>
         </template>
 
         <!-- pagination -->

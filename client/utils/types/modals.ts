@@ -60,7 +60,7 @@ export interface Seo {
 
 export interface Tag {
   slug: string;
-  title: string;
+  name: string;
   desc: string | undefined;
   blogs: Blog[];
   discussions: Discussion[];

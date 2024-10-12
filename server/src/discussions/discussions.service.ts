@@ -64,9 +64,15 @@ export class DiscussionsService {
     return { count, discussions };
   }
 
-  findOne(where: Prisma.DiscussionWhereUniqueInput) {
+  findOne(params: {
+    where: Prisma.DiscussionWhereUniqueInput;
+    select: Prisma.DiscussionSelect;
+  }) {
+    const { where, select } = params;
+
     return this.prisma.discussion.findUnique({
       where,
+      select,
     });
   }
 

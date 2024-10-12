@@ -38,12 +38,12 @@ export class MediaCategoriesController {
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policy.canCreate(authUser);
-    const mediaCategory = this.mediaCategoriesService.create(dto);
+    const mediaCategory = await this.mediaCategoriesService.create(dto);
 
     return CustomRes({
       code: HttpStatus.CREATED,
       success: true,
-      data: { mediaCategory },
+      data: mediaCategory,
       message: 'Media Category Created',
     });
   }
@@ -94,7 +94,7 @@ export class MediaCategoriesController {
     return CustomRes({
       code: HttpStatus.OK,
       success: true,
-      data: { mediaCategory },
+      data: mediaCategory,
     });
   }
 
@@ -110,7 +110,7 @@ export class MediaCategoriesController {
     return CustomRes({
       success: true,
       code: HttpStatus.CREATED,
-      data: { mediaCategory },
+      data: mediaCategory,
       message: 'Media Category Updated',
     });
   }
@@ -124,7 +124,7 @@ export class MediaCategoriesController {
     return CustomRes({
       success: true,
       code: HttpStatus.OK,
-      data: { mediaCategory },
+      data: mediaCategory,
       message: 'Media Category deleted',
     });
   }

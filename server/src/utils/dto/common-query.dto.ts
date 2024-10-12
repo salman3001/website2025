@@ -26,7 +26,7 @@ export class CommonQueryDto {
   orderBy: string;
 
   @ApiProperty()
-  @IsArray({ each: true })
+  @IsArray()
   @IsOptional()
   @Type(() => String)
   select: string[];

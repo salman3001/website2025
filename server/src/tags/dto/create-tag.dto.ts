@@ -7,7 +7,7 @@ export class CreateTagDto {
   @IsString()
   @IsNotEmpty()
   @Length(1, 256)
-  title: string;
+  name: string;
 
   @ApiProperty()
   @IsString()

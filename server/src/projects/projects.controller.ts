@@ -18,6 +18,8 @@ import { AuthUserType } from 'src/utils/types/common';
 import CustomRes from 'src/utils/CustomRes';
 import { ProjectPolicy } from './project.policy';
 import { ApiTags } from '@nestjs/swagger';
+import { ProjectFindOneQuery, ProjectQueryDto } from './dto/project-query.dto';
+import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrismaQuery';
 
 @ApiTags('Projects')
 @Controller('projects')
@@ -33,21 +35,34 @@ export class ProjectsController {
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policy.canCreate(authUser);
-    const project = this.projectsService.create(dto);
+    const project = await this.projectsService.create(dto);
 
     return CustomRes({
       code: HttpStatus.CREATED,
       success: true,
-      data: { project },
+      data: project,
       message: 'Project Message Created',
     });
   }
 
   @Get()
-  async findAll(@Query() qs: Record<string, any>) {
+  async findAll(@Query() qs: ProjectQueryDto) {
     this.policy.canFindAll();
 
-    const { projects, count } = await this.projectsService.findAll(qs);
+    const { search, ...commonQueryDto } = qs;
+
+    const { selectQuery, orderByQuery, skip, take } =
+      generateCommonPrismaQuery(commonQueryDto);
+
+    const searchQuery = search ? { title: { contains: search } } : {};
+
+    const { projects, count } = await this.projectsService.findAll({
+      skip,
+      take,
+      where: { AND: { ...searchQuery } },
+      orderBy: orderByQuery,
+      select: selectQuery,
+    });
 
     return CustomRes({
       code: HttpStatus.OK,
@@ -57,11 +72,16 @@ export class ProjectsController {
   }
 
   @Get(':id')
-  async findOne(@Param('slug') id: number) {
+  async findOne(@Param('slug') id: number, @Query() qs: ProjectFindOneQuery) {
     this.policy.canFindOne();
 
-    const project = await this.projectsService.findOne({ id });
-    return CustomRes({ code: HttpStatus.OK, success: true, data: { project } });
+    const { selectQuery } = generateCommonPrismaQuery(qs);
+
+    const project = await this.projectsService.findOne({
+      where: { id: +id },
+      select: selectQuery,
+    });
+    return CustomRes({ code: HttpStatus.OK, success: true, data: project });
   }
 
   @Patch(':id')
@@ -71,12 +91,13 @@ export class ProjectsController {
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policy.canUpdate(authUser);
+
     const project = await this.projectsService.update(id, dto);
 
     return CustomRes({
       success: true,
       code: HttpStatus.OK,
-      data: { project },
+      data: project,
       message: 'Project Updated',
     });
   }
@@ -89,7 +110,7 @@ export class ProjectsController {
     return CustomRes({
       success: true,
       code: HttpStatus.OK,
-      data: { project },
+      data: project,
       message: 'Project deleted',
     });
   }

@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Inject,
   HttpStatus,
   Query,
 } from '@nestjs/common';
@@ -18,6 +17,11 @@ import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { BlogCommentPolicy } from './blog-comment.policy';
 import CustomRes from 'src/utils/CustomRes';
 import { ApiTags } from '@nestjs/swagger';
+import {
+  BlogCommentFindOneQuery,
+  BlogCommentQueryDto,
+} from './dto/blog-comment-query.dto';
+import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrismaQuery';
 
 @ApiTags('blog-comments')
 @Controller('blog-comments')
@@ -33,21 +37,38 @@ export class BlogCommentsController {
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policy.canCreate(authUser);
-    const tag = this.blogCommentsService.create(dto);
+    const comment = await this.blogCommentsService.create(dto);
 
     return CustomRes({
       code: HttpStatus.CREATED,
       success: true,
-      data: { tag },
+      data: comment,
       message: 'Comment Created',
     });
   }
 
   @Get()
-  async findAll(@Query() qs: Record<string, any>) {
+  async findAll(@Query() qs: BlogCommentQueryDto) {
     this.policy.canFindAll();
 
-    const { comments, count } = await this.blogCommentsService.findAll(qs);
+    const { blogSlug, search, ...commonQueryDto } = qs;
+
+    const { selectQuery, orderByQuery, skip, take } =
+      generateCommonPrismaQuery(commonQueryDto);
+
+    const searchQuery = search ? { name: { contains: search } } : {};
+
+    const commentsByBlogSlugQuery = blogSlug
+      ? { blogSlug: { equals: blogSlug } }
+      : {};
+
+    const { comments, count } = await this.blogCommentsService.findAll({
+      skip,
+      take,
+      where: { AND: { ...searchQuery, ...commentsByBlogSlugQuery } },
+      orderBy: orderByQuery,
+      select: selectQuery,
+    });
 
     return CustomRes({
       code: HttpStatus.OK,
@@ -57,11 +78,19 @@ export class BlogCommentsController {
   }
 
   @Get(':id')
-  async findOne(@Param('slug') id: number) {
+  async findOne(
+    @Param('slug') id: number,
+    @Query() qs: BlogCommentFindOneQuery,
+  ) {
     this.policy.canFindOne();
 
-    const comment = await this.blogCommentsService.findOne({ id });
-    return CustomRes({ code: HttpStatus.OK, success: true, data: { comment } });
+    const { selectQuery } = generateCommonPrismaQuery(qs);
+
+    const comment = await this.blogCommentsService.findOne({
+      where: { id: +id },
+      select: selectQuery,
+    });
+    return CustomRes({ code: HttpStatus.OK, success: true, data: comment });
   }
 
   @Patch(':id')
@@ -77,7 +106,7 @@ export class BlogCommentsController {
     return CustomRes({
       success: true,
       code: HttpStatus.CREATED,
-      data: { comment },
+      data: comment,
       message: 'Comment Updated',
     });
   }
@@ -91,7 +120,7 @@ export class BlogCommentsController {
     return CustomRes({
       success: true,
       code: HttpStatus.OK,
-      data: { comments },
+      data: comments,
       message: 'Comment deleted',
     });
   }

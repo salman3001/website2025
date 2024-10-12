@@ -18,6 +18,11 @@ import { AuthUserType } from 'src/utils/types/common';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import CustomRes from 'src/utils/CustomRes';
 import { ApiTags } from '@nestjs/swagger';
+import {
+  EmailSubscriptionFindOneQuery,
+  EmailSubscriptionQueryDto,
+} from './dto/email-subscription-query.dto';
+import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrismaQuery';
 
 @ApiTags('Email Subscriptions')
 @Controller('email-subscriptions')
@@ -30,25 +35,35 @@ export class EmailSubscriptionsController {
   @Post()
   async create(@Body() dto: CreateEmailSubscriptionDto) {
     this.policy.canCreate();
-    const subscription = this.emailSubscriptionsService.create(dto);
+    const subscription = await this.emailSubscriptionsService.create(dto);
 
     return CustomRes({
       code: HttpStatus.CREATED,
       success: true,
-      data: { subscription },
+      data: subscription,
       message: 'Subscription Created',
     });
   }
 
   @Get()
   async findAll(
-    @Query() qs: Record<string, any>,
+    @Query() qs: EmailSubscriptionQueryDto,
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policy.canFindAll(authUser);
 
+    const { search, ...commonQueryDto } = qs;
+
+    const { selectQuery, orderByQuery, skip, take } =
+      generateCommonPrismaQuery(commonQueryDto);
+
     const { subscriptions, count } =
-      await this.emailSubscriptionsService.findAll(qs);
+      await this.emailSubscriptionsService.findAll({
+        skip,
+        take,
+        orderBy: orderByQuery,
+        select: selectQuery,
+      });
 
     return CustomRes({
       code: HttpStatus.OK,
@@ -61,16 +76,21 @@ export class EmailSubscriptionsController {
   async findOne(
     @Param('email') email: string,
     @AuthUser() authUser: AuthUserType,
+    @Query() qs: EmailSubscriptionFindOneQuery,
   ) {
+    const { selectQuery } = generateCommonPrismaQuery(qs);
+
     const subscription = await this.emailSubscriptionsService.findOne({
-      email,
+      where: { email },
+      select: selectQuery,
     });
+
     this.policy.canFindOne(authUser, subscription.email);
 
     return CustomRes({
       code: HttpStatus.OK,
       success: true,
-      data: { subscription },
+      data: subscription,
     });
   }
 
@@ -90,7 +110,7 @@ export class EmailSubscriptionsController {
     return CustomRes({
       success: true,
       code: HttpStatus.CREATED,
-      data: { subscription },
+      data: subscription,
       message: 'Subscription Updated',
     });
   }
@@ -106,7 +126,7 @@ export class EmailSubscriptionsController {
     return CustomRes({
       success: true,
       code: HttpStatus.OK,
-      data: { subscription },
+      data: subscription,
       message: 'Subscription deleted',
     });
   }

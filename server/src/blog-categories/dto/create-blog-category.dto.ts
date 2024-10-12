@@ -7,7 +7,7 @@ export class CreateBlogCategoryDto {
   @IsString()
   @IsNotEmpty()
   @Length(1, 256)
-  title: string;
+  name: string;
 
   @ApiProperty()
   @IsString()
