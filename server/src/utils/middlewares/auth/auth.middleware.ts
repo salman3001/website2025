@@ -34,8 +34,6 @@ export class AuthMiddleware implements NestMiddleware {
       );
       return payload;
     } catch (error) {
-      console.log(error);
-
       return null;
     }
   }

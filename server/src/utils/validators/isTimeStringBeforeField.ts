@@ -37,8 +37,6 @@ export function isTimeStringBeforeField(
         },
 
         defaultMessage(args: ValidationArguments) {
-          console.log(args);
-
           return `"${args.property}" should be valid and should be before "${field}"!`;
         },
       },

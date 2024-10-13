@@ -59,7 +59,9 @@ export class DiscussionsController {
     const { selectQuery, orderByQuery, skip, take } =
       generateCommonPrismaQuery(commonQueryDto);
 
-    const searchQuery = search ? { title: { contains: search } } : {};
+    const searchQuery = search
+      ? { title: { contains: search, mode: 'insensitive' as any } }
+      : {};
 
     const { discussions, count } = await this.discussionsService.findAll({
       skip,

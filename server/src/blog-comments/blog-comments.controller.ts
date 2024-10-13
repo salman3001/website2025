@@ -56,7 +56,9 @@ export class BlogCommentsController {
     const { selectQuery, orderByQuery, skip, take } =
       generateCommonPrismaQuery(commonQueryDto);
 
-    const searchQuery = search ? { name: { contains: search } } : {};
+    const searchQuery = search
+      ? { name: { contains: search, mode: 'insensitive' as any } }
+      : {};
 
     const commentsByBlogSlugQuery = blogSlug
       ? { blogSlug: { equals: blogSlug } }

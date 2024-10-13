@@ -60,7 +60,9 @@ export class MediaCategoriesController {
     const { orderByQuery, skip, take, selectQuery } =
       generateCommonPrismaQuery(commonQueryDto);
 
-    const searchQuery = search ? { name: { contains: search } } : {};
+    const searchQuery = search
+      ? { name: { contains: search, mode: 'insensitive' as any } }
+      : {};
 
     const { mediaCategories, count } =
       await this.mediaCategoriesService.findAll({

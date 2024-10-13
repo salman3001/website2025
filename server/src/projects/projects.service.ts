@@ -9,8 +9,13 @@ export class ProjectsService {
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateProjectDto) {
+    const { mediaIds, tagSlugs, ...restDto } = dto;
     const project = await this.prisma.project.create({
-      data: dto,
+      data: {
+        ...restDto,
+        images: { connect: mediaIds ? mediaIds.map((id) => ({ id })) : [] },
+        tags: { connect: tagSlugs ? tagSlugs.map((slug) => ({ slug })) : [] },
+      },
     });
 
     return project;
@@ -54,10 +59,15 @@ export class ProjectsService {
     await this.prisma.project.findFirstOrThrow({
       where: { id },
     });
+    const { mediaIds, tagSlugs, ...restDto } = dto;
 
     const project = await this.prisma.project.update({
       where: { id },
-      data: dto,
+      data: {
+        ...restDto,
+        images: { set: mediaIds ? mediaIds.map((id) => ({ id })) : [] },
+        tags: { set: tagSlugs ? tagSlugs.map((slug) => ({ slug })) : [] },
+      },
     });
 
     return project;

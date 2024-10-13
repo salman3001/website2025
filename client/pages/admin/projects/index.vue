@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { debouncedRef } from "@vueuse/core";
 import type { IResType } from "~/utils/types";
-import type { Blog } from "~/utils/types/modals";
+import type { Project } from "~/utils/types/modals";
 
 const config = useRuntimeConfig();
 const appConfig = useAppConfig();
@@ -13,22 +13,14 @@ const page = ref(1);
 const skip = computed(() => perPage.value * (page.value - 1));
 const orderBy = ref<string>();
 
-const { data, refresh: refreshBlogs } = await useFetch<
-  IResType<{ data: Blog[]; count: number }>
->(config.public.baseApi + apiRoutes.blogs.index(), {
+const { data, refresh: refreshProjects } = await useFetch<
+  IResType<{ data: Project[]; count: number }>
+>(config.public.baseApi + apiRoutes.projects.index(), {
   query: {
     skip: skip,
     take: perPage,
     search: debaouncedSearch,
-    select: [
-      "title",
-      "slug",
-      "isPublished",
-      "blogCategory",
-      "tags",
-      "createdAt",
-      "image",
-    ],
+    select: ["id", "title", "images", "tags", "isPublished"],
     orderBy: orderBy,
   },
 });
@@ -38,8 +30,6 @@ const { exec: destroy } = useFetcher();
 // Data table Headers
 const headers = [
   { title: "Title", key: "title" },
-  { title: "Date", key: "createdAt" },
-  { title: "Category", key: "blogCategory", sortable: false },
   { title: "Tags", key: "tags", sortable: false },
   { title: "Status", key: "isPublished" },
   { title: "Action", key: "actions", sortable: false },
@@ -69,13 +59,13 @@ const headers = [
         "
       >
         <template #top>
-          <h1 class="pa-4 text-h5">Blogs</h1>
+          <h1 class="pa-4 text-h5">Projects</h1>
           <div
             class="d-flex justify-sm-space-between justify-start flex-wrap ga-2 pa-4"
           >
             <v-text-field
               v-model="search"
-              placeholder="Search Blogs"
+              placeholder="Search Projects"
               style="max-inline-size: 200px; min-inline-size: 200px"
               hide-details
             />
@@ -90,8 +80,8 @@ const headers = [
               <VBtn variant="tonal" prepend-icon="mdi-upload" text="Export" />
               <VBtn
                 prepend-icon="mdi-plus"
-                text="Create Blog"
-                :to="routes.admin.blogs.create()"
+                text="Create Project"
+                :to="routes.admin.projects.create()"
                 nuxt
               />
             </div>
@@ -102,8 +92,8 @@ const headers = [
           <v-card width="200" class="ma-2 ma-0" density="compact">
             <v-card-text class="pa-0">
               <VImg
-                v-if="item?.image?.url"
-                :src="config.public.uploadsPath + item?.image?.url"
+                v-if="item?.images && item?.images.length > 0"
+                :src="config.public.uploadsPath + item?.images[0].url"
               />
               <VImg v-else :src="appConfig.noImageUrl" />
             </v-card-text>
@@ -111,16 +101,6 @@ const headers = [
               {{ item.title }}
             </v-card-title>
           </v-card>
-        </template>
-
-        <!-- Category-->
-        <template #item.blogCategory="{ item }">
-          {{ item?.blogCategory?.name }}
-        </template>
-
-        <!-- Date -->
-        <template #item.createdAt="{ item }">
-          {{ new Date(item.createdAt).toDateString() }}
         </template>
 
         <!-- Tags -->
@@ -165,7 +145,7 @@ const headers = [
                 slim
                 value="view"
                 prepend-icon="mdi-eye"
-                :to="routes.admin.blogs.view(item.slug)"
+                :to="routes.admin.projects.view(item.id)"
                 nuxt
               >
                 View
@@ -174,7 +154,7 @@ const headers = [
                 slim
                 value="Edit"
                 prepend-icon="mdi-pencil"
-                :to="routes.admin.blogs.edit(item.slug)"
+                :to="routes.admin.projects.edit(item.id)"
                 nuxt
               >
                 Edit
@@ -182,10 +162,10 @@ const headers = [
               <DialogsConfirm
                 @confirm="
                   async () => {
-                    await destroy(apiRoutes.blogs.delete(item.slug), {
+                    await destroy(apiRoutes.projects.delete(item.id), {
                       method: 'delete',
                     });
-                    refreshBlogs();
+                    refreshProjects();
                   }
                 "
               >

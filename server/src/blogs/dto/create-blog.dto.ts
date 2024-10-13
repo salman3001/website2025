@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsObject,
+  IsOptional,
   IsString,
   Length,
   ValidateNested,
@@ -43,9 +44,7 @@ export class CreateBlogDto {
 
   @ApiProperty()
   @IsArray()
-  @Type(() => String)
-  @ValidateNested({ each: true })
-  @IsOptionalEmpty()
+  @IsOptional()
   tagSlugs?: string[];
 
   @ApiProperty()

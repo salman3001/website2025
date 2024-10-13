@@ -70,9 +70,9 @@ model Seo {
   title          String?
   keyword        String?
   desc           String?
-  Blog           Blog?       @relation(fields: [blogSlug], references: [slug])
+  Blog           Blog?       @relation(fields: [blogSlug], references: [slug], onDelete: Cascade)
   blogSlug       String?     @unique
-  Discussion     Discussion? @relation(fields: [discussionSlug], references: [slug])
+  Discussion     Discussion? @relation(fields: [discussionSlug], references: [slug], onDelete: Cascade)
   discussionSlug String?     @unique
 }
 
@@ -103,7 +103,7 @@ model BlogComment {
   message    String
   isApproved Boolean
   createdAt  DateTime @default(now())
-  blog       Blog     @relation(fields: [blogSlug], references: [slug])
+  blog       Blog     @relation(fields: [blogSlug], references: [slug], onDelete: Cascade)
   blogSlug   String
 
   // Self-referencing relation for replies
@@ -133,7 +133,7 @@ model DiscussionComment {
   message       String
   isApproved    Boolean
   createdAt     DateTime   @default(now())
-  discussion    Discussion @relation(fields: [discussionlug], references: [slug])
+  discussion    Discussion @relation(fields: [discussionlug], references: [slug], onDelete: Cascade)
   discussionlug String
 
   // Self-referencing relation for replies
@@ -160,12 +160,12 @@ model EmailSubscription {
 }
 
 model Project {
-  id          Int      @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   title       String
   shortDesc   String
   desc        String?
-  isPublished Boolean  @default(false)
-  images      String[]
+  isPublished Boolean @default(false)
+  images      Media[]
   video       String?
   tags        Tag[]
 }
@@ -184,7 +184,8 @@ model Media {
   url             String
   MediaCategory   MediaCategory? @relation(fields: [mediaCategoryId], references: [id])
   mediaCategoryId Int?
-  Blog            Blog?
+  Blog            Blog[]
+  Project         Project[]
 }
 
 model MediaCategory {

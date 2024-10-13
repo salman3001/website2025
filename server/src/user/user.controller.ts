@@ -54,7 +54,9 @@ export class UserController {
     const { selectQuery, orderByQuery, skip, take } =
       generateCommonPrismaQuery(commonQueryDto);
 
-    const searchQuery = search ? { fullName: { contains: search } } : {};
+    const searchQuery = search
+      ? { fullName: { contains: search, mode: 'insensitive' as any } }
+      : {};
     const { count, users } = await this.userService.findAll({
       skip,
       take,

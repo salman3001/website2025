@@ -8,11 +8,11 @@
         variant="tonal"
         size="small"
         prepend-icon="mdi-arrow-left"
-        :to="routes.admin.blogs.index()"
+        :to="routes.admin.projects.index()"
       />
-      <h1 class="text-h6">Create Blog</h1>
+      <h1 class="text-h6">Create Project</h1>
     </div>
     <br />
-    <FormsBlogCreateUpdate type="create" />
+    <FormsProjectCreateUpdate type="create" />
   </v-container>
 </template>

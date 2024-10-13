@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { debouncedRef } from "@vueuse/core";
 import type { IResType } from "~/utils/types";
-import type { Blog } from "~/utils/types/modals";
+import type { Tag } from "~/utils/types/modals";
 
 const config = useRuntimeConfig();
-const appConfig = useAppConfig();
 
 const search = ref("");
 const debaouncedSearch = debouncedRef(search, 1000);
@@ -13,22 +12,14 @@ const page = ref(1);
 const skip = computed(() => perPage.value * (page.value - 1));
 const orderBy = ref<string>();
 
-const { data, refresh: refreshBlogs } = await useFetch<
-  IResType<{ data: Blog[]; count: number }>
->(config.public.baseApi + apiRoutes.blogs.index(), {
+const { data, refresh: refreshTags } = await useFetch<
+  IResType<{ data: Tag[]; count: number }>
+>(config.public.baseApi + apiRoutes.tags.index(), {
   query: {
     skip: skip,
     take: perPage,
     search: debaouncedSearch,
-    select: [
-      "title",
-      "slug",
-      "isPublished",
-      "blogCategory",
-      "tags",
-      "createdAt",
-      "image",
-    ],
+    select: ["name", "slug"],
     orderBy: orderBy,
   },
 });
@@ -37,11 +28,7 @@ const { exec: destroy } = useFetcher();
 
 // Data table Headers
 const headers = [
-  { title: "Title", key: "title" },
-  { title: "Date", key: "createdAt" },
-  { title: "Category", key: "blogCategory", sortable: false },
-  { title: "Tags", key: "tags", sortable: false },
-  { title: "Status", key: "isPublished" },
+  { title: "Name", key: "name" },
   { title: "Action", key: "actions", sortable: false },
 ];
 </script>
@@ -50,8 +37,11 @@ const headers = [
   <VContainer>
     <br />
     <VCard>
+      <VDivider />
+
       <!-- 👉 Order Table -->
       <VDataTableServer
+        title="Tags"
         v-model:items-per-page="perPage"
         v-model:page="page"
         :headers="headers"
@@ -69,18 +59,18 @@ const headers = [
         "
       >
         <template #top>
-          <h1 class="pa-4 text-h5">Blogs</h1>
+          <h1 class="pa-4 text-h5">Tags</h1>
           <div
             class="d-flex justify-sm-space-between justify-start flex-wrap ga-2 pa-4"
           >
             <v-text-field
               v-model="search"
-              placeholder="Search Blogs"
+              placeholder="Search Tags"
               style="max-inline-size: 200px; min-inline-size: 200px"
               hide-details
             />
 
-            <div class="d-flex ga-2 align-center flex-wrap">
+            <div class="d-flex ga-2 align-center">
               <v-select
                 v-model="perPage"
                 style="min-inline-size: 6.25rem"
@@ -90,63 +80,19 @@ const headers = [
               <VBtn variant="tonal" prepend-icon="mdi-upload" text="Export" />
               <VBtn
                 prepend-icon="mdi-plus"
-                text="Create Blog"
-                :to="routes.admin.blogs.create()"
+                text="Create Tag"
+                :to="routes.admin.tags.create()"
                 nuxt
               />
             </div>
           </div>
         </template>
-        <!-- Title-->
-        <template #item.title="{ item }">
-          <v-card width="200" class="ma-2 ma-0" density="compact">
-            <v-card-text class="pa-0">
-              <VImg
-                v-if="item?.image?.url"
-                :src="config.public.uploadsPath + item?.image?.url"
-              />
-              <VImg v-else :src="appConfig.noImageUrl" />
-            </v-card-text>
-            <v-card-title class="text-body-2" style="height: 50px">
-              {{ item.title }}
-            </v-card-title>
-          </v-card>
+
+        <!-- Name-->
+        <template #item.name="{ item }">
+          {{ item.name }}
         </template>
 
-        <!-- Category-->
-        <template #item.blogCategory="{ item }">
-          {{ item?.blogCategory?.name }}
-        </template>
-
-        <!-- Date -->
-        <template #item.createdAt="{ item }">
-          {{ new Date(item.createdAt).toDateString() }}
-        </template>
-
-        <!-- Tags -->
-        <template #item.tags="{ item }">
-          <div class="d-flex ga-1">
-            <VChip
-              v-for="tag in item.tags"
-              label
-              size="small"
-              :text="tag.name"
-              color="info"
-            />
-          </div>
-        </template>
-
-        <!-- Status -->
-        <template #item.isPublished="{ item }">
-          <VChip
-            v-if="item.isPublished"
-            label
-            size="small"
-            text="Published"
-            color="success"
-          />
-          <VChip v-else label size="small" text="Draft" color="warning" />
-        </template>
         <!-- Actions -->
         <template #item.actions="{ item }">
           <VIcon icon="tabler-dots-vertical" />
@@ -165,7 +111,7 @@ const headers = [
                 slim
                 value="view"
                 prepend-icon="mdi-eye"
-                :to="routes.admin.blogs.view(item.slug)"
+                :to="routes.admin.tags.view(item.slug)"
                 nuxt
               >
                 View
@@ -174,7 +120,7 @@ const headers = [
                 slim
                 value="Edit"
                 prepend-icon="mdi-pencil"
-                :to="routes.admin.blogs.edit(item.slug)"
+                :to="routes.admin.tags.edit(item.slug)"
                 nuxt
               >
                 Edit
@@ -182,10 +128,10 @@ const headers = [
               <DialogsConfirm
                 @confirm="
                   async () => {
-                    await destroy(apiRoutes.blogs.delete(item.slug), {
+                    await destroy(apiRoutes.tags.delete(item.slug), {
                       method: 'delete',
                     });
-                    refreshBlogs();
+                    refreshTags();
                   }
                 "
               >

@@ -6,8 +6,6 @@ export const generateCommonPrismaQuery = (dto: {
 }) => {
   const { orderBy, select, skip, take } = dto;
 
-  console.log(orderBy);
-
   const [orderByKey, orderByDir] = orderBy
     ? orderBy.split(':')
     : [undefined, undefined];

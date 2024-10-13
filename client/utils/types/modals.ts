@@ -82,7 +82,7 @@ export interface BlogComment {
 
 export interface BlogCategory {
   slug: string;
-  title: string;
+  name: string;
   desc: string | undefined;
   blogs: Blog[];
   subscribers: EmailSubscription[];
@@ -128,6 +128,8 @@ export interface Media {
   MediaCategory: MediaCategory;
   mediaCategoryId: number | undefined;
   Blog: Blog | undefined;
+  Project: Project;
+  projectId: number | undefined;
 }
 
 export interface MediaCategory {
@@ -159,7 +161,7 @@ export interface Project {
   shortDesc: string;
   desc: string | undefined;
   isPublished: Boolean;
-  images: string[];
+  images: Media[];
   video: string | undefined;
   tags: Tag[];
 }

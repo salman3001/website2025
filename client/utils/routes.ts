@@ -1,3 +1,5 @@
+import { categories } from "@vueuse/core/metadata.cjs";
+
 export const routes = {
   web: {
     home: () => "/",
@@ -23,6 +25,24 @@ export const routes = {
       view: (slug: string) => `/admin/blogs/${slug}`,
       create: () => "/admin/blogs/create",
       edit: (slug: string) => `/admin/blogs/${slug}/edit`,
+    },
+    blogCategories: {
+      index: () => "/admin/blog-categories",
+      view: (slug: string) => `/admin/blog-categories/${slug}`,
+      create: () => "/admin/blog-categories/create",
+      edit: (slug: string) => `/admin/blog-categories/${slug}/edit`,
+    },
+    tags: {
+      index: () => "/admin/tags",
+      view: (slug: string) => `/admin/tags/${slug}`,
+      create: () => "/admin/tags/create",
+      edit: (slug: string) => `/admin/tags/${slug}/edit`,
+    },
+    projects: {
+      index: () => "/admin/projects",
+      view: (id: number) => `/admin/projects/${id}`,
+      create: () => "/admin/projects/create",
+      edit: (id: number) => `/admin/projects/${id}/edit`,
     },
   },
 };

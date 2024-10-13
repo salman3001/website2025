@@ -54,7 +54,9 @@ export class TagsController {
     const { selectQuery, orderByQuery, skip, take } =
       generateCommonPrismaQuery(commonQueryDto);
 
-    const searchQuery = search ? { name: { contains: search } } : {};
+    const searchQuery = search
+      ? { name: { contains: search, mode: 'insensitive' as any } }
+      : {};
 
     const { tags, count } = await this.tagsService.findAll({
       skip,

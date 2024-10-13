@@ -19,6 +19,9 @@ export const NavMenus: INavMenu[] = [
     child: [
       { name: "Dashboard", href: routes.admin.dashboard() },
       { name: "Blogs", href: routes.admin.blogs.index() },
+      { name: "Blog Categories", href: routes.admin.blogCategories.index() },
+      { name: "Tags", href: routes.admin.tags.index() },
+      { name: "Projects", href: routes.admin.projects.index() },
     ],
   },
   {

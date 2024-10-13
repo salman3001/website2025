@@ -4,6 +4,7 @@ import {
   IsArray,
   IsBoolean,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Length,
   ValidateNested,
@@ -35,11 +36,15 @@ export class CreateProjectDto {
 
   @ApiProperty()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => String)
-  images: string[];
+  @IsOptional()
+  mediaIds: number[];
 
   @ApiProperty()
   @IsString()
   video?: string;
+
+  @ApiProperty()
+  @IsArray()
+  @IsOptional()
+  tagSlugs?: string[];
 }

@@ -87,7 +87,7 @@ export class BlogCategoriesService {
         ? slugify(dto.name, { lower: true, strict: true })
         : undefined;
 
-    const blogCategory = await this.prisma.blog.update({
+    const blogCategory = await this.prisma.blogCategory.update({
       where: { slug },
       data: {
         ...dto,

@@ -54,7 +54,9 @@ export class ProjectsController {
     const { selectQuery, orderByQuery, skip, take } =
       generateCommonPrismaQuery(commonQueryDto);
 
-    const searchQuery = search ? { title: { contains: search } } : {};
+    const searchQuery = search
+      ? { title: { contains: search, mode: 'insensitive' as any } }
+      : {};
 
     const { projects, count } = await this.projectsService.findAll({
       skip,
@@ -72,7 +74,7 @@ export class ProjectsController {
   }
 
   @Get(':id')
-  async findOne(@Param('slug') id: number, @Query() qs: ProjectFindOneQuery) {
+  async findOne(@Param('id') id: number, @Query() qs: ProjectFindOneQuery) {
     this.policy.canFindOne();
 
     const { selectQuery } = generateCommonPrismaQuery(qs);
@@ -87,7 +89,7 @@ export class ProjectsController {
   @Patch(':id')
   async update(
     @Param('id') id: number,
-    dto: UpdateProjectDto,
+    @Body() dto: UpdateProjectDto,
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policy.canUpdate(authUser);

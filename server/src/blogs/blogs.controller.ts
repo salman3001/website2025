@@ -57,7 +57,9 @@ export class BlogsController {
     const { orderByQuery, selectQuery, skip, take } =
       generateCommonPrismaQuery(restQuery);
 
-    const searchQuery = search ? { title: { contains: search } } : {};
+    const searchQuery = search
+      ? { title: { contains: search, mode: 'insensitive' as any } }
+      : {};
     const serachByCategoryQuery = blogCategorySlug
       ? { blogCategorySlug: { equals: blogCategorySlug } }
       : {};
@@ -81,7 +83,6 @@ export class BlogsController {
     this.blogPolicy.canFindOne();
 
     const { selectQuery } = generateCommonPrismaQuery(qs);
-    console.log(selectQuery);
 
     const blog = await this.blogsService.findOne({
       where: { slug },

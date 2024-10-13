@@ -1,25 +1,23 @@
 <script setup lang="ts">
 import type { IResType } from "~/utils/types";
-import type { Blog } from "~/utils/types/modals";
+import type { Blog, Project } from "~/utils/types/modals";
 
-const { slug } = useRoute().params;
+const { id } = useRoute().params;
 const config = useRuntimeConfig();
 
-const { data } = await useFetch<IResType<Blog>>(
-  config.public.baseApi + apiRoutes.blogs.view(slug as string),
+const { data } = await useFetch<IResType<Project>>(
+  config.public.baseApi + apiRoutes.projects.view(Number(id)),
   {
     query: {
       select: [
+        "id",
         "title",
-        "slug",
         "shortDesc",
-        "longDesc",
+        "desc",
         "isPublished",
-        "blogCategorySlug",
-        "image",
-        "blogCategory",
+        "images",
+        "video",
         "tags",
-        "seo",
       ],
     },
   },
@@ -34,11 +32,11 @@ const { data } = await useFetch<IResType<Blog>>(
         variant="tonal"
         size="small"
         prepend-icon="mdi-arrow-left"
-        :to="routes.admin.blogs.index()"
+        :to="routes.admin.projects.index()"
       />
-      <h1 class="text-h6">Edit Blog</h1>
+      <h1 class="text-h6">Edit Project</h1>
     </div>
     <br />
-    <FormsBlogCreateUpdate :blog="data?.data" type="update" />
+    <FormsProjectCreateUpdate :project="data?.data" type="update" />
   </v-container>
 </template>

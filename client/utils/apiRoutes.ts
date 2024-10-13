@@ -41,4 +41,11 @@ export const apiRoutes = {
     update: (slug: string) => `/tags/${slug}`,
     delete: (slug: string) => `/tags/${slug}`,
   },
+  projects: {
+    index: () => `/projects`,
+    create: () => `/projects`,
+    view: (id: number) => `/projects/${id}`,
+    update: (id: number) => `/projects/${id}`,
+    delete: (id: number) => `/projects/${id}`,
+  },
 };

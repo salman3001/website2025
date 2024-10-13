@@ -57,7 +57,9 @@ export class DiscussionCommentsController {
     const { selectQuery, orderByQuery, skip, take } =
       generateCommonPrismaQuery(commonQueryDto);
 
-    const searchQuery = search ? { name: { contains: search } } : {};
+    const searchQuery = search
+      ? { name: { contains: search, mode: 'insensitive' as any } }
+      : {};
 
     const queryByDiscussion = discussionlug
       ? { discussionlug: { equals: discussionlug } }

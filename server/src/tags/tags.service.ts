@@ -88,7 +88,7 @@ export class TagsService {
         ? slugify(dto.name, { lower: true, strict: true })
         : undefined;
 
-    const tag = await this.prisma.blog.update({
+    const tag = await this.prisma.tag.update({
       where: { slug },
       data: {
         ...dto,

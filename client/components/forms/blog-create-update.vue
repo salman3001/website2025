@@ -5,6 +5,7 @@ import type { Blog, BlogCategory, Tag } from "~/utils/types/modals";
 
 const props = defineProps<{
   blog?: Blog;
+  type: "update" | "create";
 }>();
 
 const { errors, exec, loading } = useFetcher();
@@ -45,9 +46,11 @@ const form = reactive({
 
 const createBlog = async () => {
   exec(
-    apiRoutes.blogs.create(),
+    props.type === "create"
+      ? apiRoutes.blogs.create()
+      : apiRoutes.blogs.update(props.blog?.slug!),
     {
-      method: "post",
+      method: props.type === "create" ? "post" : "patch",
       body: {
         ...toRaw(form),
         mediaId: media.value ? media.value[0]?.id : undefined,
@@ -167,7 +170,7 @@ const createBlog = async () => {
       <!-- create Blog -->
       <VCol cols="12" class="text-end">
         <VBtn type="submit" color="primary" :disabled="loading">
-          Create Blog
+          {{ type === "create" ? "Create Blog" : "Update Blog" }}
         </VBtn>
       </VCol>
     </VRow>

@@ -9,6 +9,12 @@ export default defineNuxtPlugin((app) => {
         variant: "outlined",
         density: "compact",
       },
+      VCheckbox: {
+        color: "primary",
+      },
+      VRadio: {
+        color: "primary",
+      },
       VTextarea: {
         variant: "outlined",
         density: "compact",
