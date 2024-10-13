@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { debouncedRef } from "@vueuse/core";
 import type { IResType } from "~/utils/types";
-import type { Tag } from "~/utils/types/modals";
-
-const config = useRuntimeConfig();
+import type { ContactMessage } from "~/utils/types/modals";
 
 const search = ref("");
 const debaouncedSearch = debouncedRef(search, 1000);
@@ -12,14 +10,14 @@ const page = ref(1);
 const skip = computed(() => perPage.value * (page.value - 1));
 const orderBy = ref<string>();
 
-const { data, refresh: refreshTags } = await useFetcherGet<
-  IResType<{ data: Tag[]; count: number }>
->(apiRoutes.tags.index(), {
+const { data, refresh: refreshMessages } = await useFetcherGet<
+  IResType<{ data: ContactMessage[]; count: number }>
+>(apiRoutes.contactMessage.index(), {
   query: {
     skip: skip,
     take: perPage,
     search: debaouncedSearch,
-    select: ["name", "slug"],
+    select: ["id", "email", "phone", "message", "createdAt"],
     orderBy: orderBy,
   },
 });
@@ -28,7 +26,10 @@ const { exec: destroy } = useFetcher();
 
 // Data table Headers
 const headers = [
-  { title: "Name", key: "name" },
+  { title: "Email", key: "email", sortable: false },
+  { title: "Phone", key: "phone", sortable: false },
+  { title: "Message", key: "message", sortable: false },
+  { title: "Date", key: "createdAt" },
   { title: "Action", key: "actions", sortable: false },
 ];
 </script>
@@ -41,7 +42,6 @@ const headers = [
 
       <!-- 👉 Order Table -->
       <VDataTableServer
-        title="Tags"
         v-model:items-per-page="perPage"
         v-model:page="page"
         :headers="headers"
@@ -59,7 +59,7 @@ const headers = [
         "
       >
         <template #top>
-          <h1 class="pa-4 text-h5">Tags</h1>
+          <h1 class="pa-4 text-h5">Contact Messages</h1>
           <div
             class="d-flex justify-sm-space-between justify-start flex-wrap ga-2 pa-4"
           >
@@ -78,19 +78,28 @@ const headers = [
                 hide-details
               />
               <VBtn variant="tonal" prepend-icon="mdi-upload" text="Export" />
-              <VBtn
-                prepend-icon="mdi-plus"
-                text="Create Tag"
-                :to="routes.admin.tags.create()"
-                nuxt
-              />
             </div>
           </div>
         </template>
 
         <!-- Name-->
-        <template #item.name="{ item }">
-          {{ item.name }}
+        <template #item.email="{ item }">
+          {{ item.email }}
+        </template>
+
+        <!-- Phone-->
+        <template #item.phone="{ item }">
+          {{ item.phone }}
+        </template>
+
+        <!-- Message-->
+        <template #item.message="{ item }">
+          {{ item.message }}
+        </template>
+
+        <!-- Date Time-->
+        <template #item.createdAt="{ item }">
+          {{ new Date(item.createdAt).toString() }}
         </template>
 
         <!-- Actions -->
@@ -107,31 +116,13 @@ const headers = [
               </VBtn>
             </template>
             <VList density="compact" slim>
-              <VListItem
-                slim
-                value="view"
-                prepend-icon="mdi-eye"
-                :to="routes.admin.tags.view(item.slug)"
-                nuxt
-              >
-                View
-              </VListItem>
-              <VListItem
-                slim
-                value="Edit"
-                prepend-icon="mdi-pencil"
-                :to="routes.admin.tags.edit(item.slug)"
-                nuxt
-              >
-                Edit
-              </VListItem>
               <DialogsConfirm
                 @confirm="
                   async () => {
-                    await destroy(apiRoutes.tags.delete(item.slug), {
+                    await destroy(apiRoutes.contactMessage.delete(item.id), {
                       method: 'delete',
                     });
-                    refreshTags();
+                    refreshMessages();
                   }
                 "
               >

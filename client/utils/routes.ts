@@ -44,5 +44,8 @@ export const routes = {
       create: () => "/admin/projects/create",
       edit: (id: number) => `/admin/projects/${id}/edit`,
     },
+    contactMessage: {
+      index: () => `/admin/contact-messages`,
+    },
   },
 };

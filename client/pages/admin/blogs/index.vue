@@ -3,7 +3,6 @@ import { debouncedRef } from "@vueuse/core";
 import type { IResType } from "~/utils/types";
 import type { Blog } from "~/utils/types/modals";
 
-const config = useRuntimeConfig();
 const appConfig = useAppConfig();
 
 const search = ref("");
@@ -13,9 +12,9 @@ const page = ref(1);
 const skip = computed(() => perPage.value * (page.value - 1));
 const orderBy = ref<string>();
 
-const { data, refresh: refreshBlogs } = await useFetch<
+const { data, refresh: refreshBlogs } = await useFetcherGet<
   IResType<{ data: Blog[]; count: number }>
->(config.public.baseApi + apiRoutes.blogs.index(), {
+>(apiRoutes.blogs.index(), {
   query: {
     skip: skip,
     take: perPage,
@@ -103,7 +102,7 @@ const headers = [
             <v-card-text class="pa-0">
               <VImg
                 v-if="item?.image?.url"
-                :src="config.public.uploadsPath + item?.image?.url"
+                :src="$config.public.uploadsPath + item?.image?.url"
               />
               <VImg v-else :src="appConfig.noImageUrl" />
             </v-card-text>

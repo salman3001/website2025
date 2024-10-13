@@ -3,8 +3,6 @@ import { debouncedRef } from "@vueuse/core";
 import type { IResType } from "~/utils/types";
 import type { BlogCategory } from "~/utils/types/modals";
 
-const config = useRuntimeConfig();
-
 const search = ref("");
 const debaouncedSearch = debouncedRef(search, 1000);
 const perPage = ref(10);
@@ -12,9 +10,9 @@ const page = ref(1);
 const skip = computed(() => perPage.value * (page.value - 1));
 const orderBy = ref<string>();
 
-const { data, refresh: refreshBlogCategories } = await useFetch<
+const { data, refresh: refreshBlogCategories } = await useFetcherGet<
   IResType<{ data: BlogCategory[]; count: number }>
->(config.public.baseApi + apiRoutes.blogCategory.index(), {
+>(apiRoutes.blogCategory.index(), {
   query: {
     skip: skip,
     take: perPage,

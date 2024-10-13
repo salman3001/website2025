@@ -3,7 +3,6 @@ import { debouncedRef } from "@vueuse/core";
 import type { IResType } from "~/utils/types";
 import type { Project } from "~/utils/types/modals";
 
-const config = useRuntimeConfig();
 const appConfig = useAppConfig();
 
 const search = ref("");
@@ -13,9 +12,9 @@ const page = ref(1);
 const skip = computed(() => perPage.value * (page.value - 1));
 const orderBy = ref<string>();
 
-const { data, refresh: refreshProjects } = await useFetch<
+const { data, refresh: refreshProjects } = await useFetcherGet<
   IResType<{ data: Project[]; count: number }>
->(config.public.baseApi + apiRoutes.projects.index(), {
+>(apiRoutes.projects.index(), {
   query: {
     skip: skip,
     take: perPage,
@@ -93,7 +92,7 @@ const headers = [
             <v-card-text class="pa-0">
               <VImg
                 v-if="item?.images && item?.images.length > 0"
-                :src="config.public.uploadsPath + item?.images[0].url"
+                :src="$config.public.uploadsPath + item?.images[0].url"
               />
               <VImg v-else :src="appConfig.noImageUrl" />
             </v-card-text>

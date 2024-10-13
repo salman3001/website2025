@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import type { IResType } from "~/utils/types";
-import type { Blog, Project } from "~/utils/types/modals";
+import type { Project } from "~/utils/types/modals";
 
 const { id } = useRoute().params;
-const config = useRuntimeConfig();
 
-const { data } = await useFetch<IResType<Project>>(
-  config.public.baseApi + apiRoutes.projects.view(Number(id)),
+const { data } = await useFetcherGet<IResType<Project>>(
+  apiRoutes.projects.view(Number(id)),
   {
     query: {
       select: [
@@ -15,6 +14,7 @@ const { data } = await useFetch<IResType<Project>>(
         "shortDesc",
         "desc",
         "isPublished",
+        "thumbnail",
         "images",
         "video",
         "tags",

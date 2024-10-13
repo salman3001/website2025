@@ -44,7 +44,7 @@ export interface Blog {
   seo: Seo | undefined;
   author: User;
   userId: number;
-  Comment: BlogComment[];
+  comment: BlogComment[];
 }
 
 export interface Seo {
@@ -52,9 +52,9 @@ export interface Seo {
   title: string | undefined;
   keyword: string | undefined;
   desc: string | undefined;
-  Blog: Blog | undefined;
+  blog: Blog | undefined;
   blogSlug: string | undefined;
-  Discussion: Discussion | undefined;
+  discussion: Discussion | undefined;
   discussionSlug: string | undefined;
 }
 
@@ -125,10 +125,10 @@ export interface Media {
   name: string;
   type: MediaType;
   url: string;
-  MediaCategory: MediaCategory;
+  mediaCategory: MediaCategory;
   mediaCategoryId: number | undefined;
-  Blog: Blog | undefined;
-  Project: Project;
+  blog: Blog | undefined;
+  project: Project;
   projectId: number | undefined;
 }
 
@@ -161,6 +161,8 @@ export interface Project {
   shortDesc: string;
   desc: string | undefined;
   isPublished: Boolean;
+  thumbnail: Media | undefined;
+  thumbnailId: number | undefined;
   images: Media[];
   video: string | undefined;
   tags: Tag[];

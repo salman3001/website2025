@@ -3,10 +3,9 @@ import type { IResType } from "~/utils/types";
 import type { Tag } from "~/utils/types/modals";
 
 const { slug } = useRoute().params;
-const config = useRuntimeConfig();
 
-const { data } = await useFetch<IResType<Tag>>(
-  config.public.baseApi + apiRoutes.tags.view(slug as string),
+const { data } = await useFetcherGet<IResType<Tag>>(
+  apiRoutes.tags.view(slug as string),
   {
     query: {
       select: ["name", "slug", "desc"],

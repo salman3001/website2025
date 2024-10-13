@@ -3,10 +3,9 @@ import type { IResType } from "~/utils/types";
 import type { BlogCategory } from "~/utils/types/modals";
 
 const { slug } = useRoute().params;
-const config = useRuntimeConfig();
 
-const { data } = await useFetch<IResType<BlogCategory>>(
-  config.public.baseApi + apiRoutes.blogCategory.view(slug as string),
+const { data } = await useFetcherGet<IResType<BlogCategory>>(
+  apiRoutes.blogCategory.view(slug as string),
   {
     query: {
       select: ["name", "slug", "desc"],

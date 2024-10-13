@@ -22,6 +22,7 @@ export const NavMenus: INavMenu[] = [
       { name: "Blog Categories", href: routes.admin.blogCategories.index() },
       { name: "Tags", href: routes.admin.tags.index() },
       { name: "Projects", href: routes.admin.projects.index() },
+      { name: "Contact Messages", href: routes.admin.contactMessage.index() },
     ],
   },
   {

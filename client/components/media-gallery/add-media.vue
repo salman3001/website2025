@@ -2,11 +2,9 @@
 import { MediaType, MediaWindow, type MediaCategory } from ".";
 import type { IResType } from "~/utils/types";
 
-const config = useRuntimeConfig();
-
-const { data: categories, execute: getCategories } = useFetch<
+const { data: categories, execute: getCategories } = useFetcherGet<
   IResType<{ data: MediaCategory[]; count: number }>
->(config.public.baseApi + apiRoutes.mediaCategory.index(), {
+>(apiRoutes.mediaCategory.index(), {
   immediate: false,
   server: false,
   lazy: true,

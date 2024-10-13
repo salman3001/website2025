@@ -9,19 +9,21 @@ const props = defineProps<{
 }>();
 
 const { errors, exec, loading } = useFetcher();
-const config = useRuntimeConfig();
 
-const { data: tags } = await useFetch<IResType<{ data: Tag[]; count: number }>>(
-  config.public.baseApi + apiRoutes.tags.index(),
-  {
-    query: {
-      take: 1000,
-    },
+const { data: tags } = await useFetcherGet<
+  IResType<{ data: Tag[]; count: number }>
+>(apiRoutes.tags.index(), {
+  query: {
+    take: 1000,
   },
+});
+
+const images = ref<Media[]>(
+  props?.project?.images ? props?.project?.images : [],
 );
 
-const media = ref<Media[]>(
-  props?.project?.images ? props?.project?.images : [],
+const thumbnails = ref<Media[]>(
+  props?.project?.thumbnail ? [props?.project?.thumbnail] : [],
 );
 
 const form = reactive({
@@ -42,7 +44,9 @@ const createProject = async () => {
       method: props.type === "create" ? "post" : "patch",
       body: {
         ...toRaw(form),
-        mediaIds: media.value ? media.value.map((m) => m.id) : [],
+        imagesIds: images.value ? images.value.map((m) => m.id) : [],
+        thumbnailId:
+          thumbnails.value.length > 0 ? thumbnails.value[0]?.id : undefined,
       },
     },
     {
@@ -63,9 +67,16 @@ const createProject = async () => {
     "
   >
     <VRow>
-      <!-- Thumbnail -->
+      <!-- Thumbnails -->
       <VCol cols="12">
-        <MediaGalleryModal name="mediaIds" v-model="media" />
+        <div class="pb-1">Thumbnail</div>
+        <MediaGalleryModal name="thumbnailId" v-model="thumbnails" />
+      </VCol>
+
+      <!-- Images -->
+      <VCol cols="12">
+        <div class="pb-1">Images</div>
+        <MediaGalleryModal name="imagesIds" v-model="images" />
       </VCol>
 
       <!-- Title -->

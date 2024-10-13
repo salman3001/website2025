@@ -9,11 +9,12 @@ export class ProjectsService {
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateProjectDto) {
-    const { mediaIds, tagSlugs, ...restDto } = dto;
+    const { imagesIds, thumbnailId, tagSlugs, ...restDto } = dto;
     const project = await this.prisma.project.create({
       data: {
         ...restDto,
-        images: { connect: mediaIds ? mediaIds.map((id) => ({ id })) : [] },
+        images: { connect: imagesIds ? imagesIds.map((id) => ({ id })) : [] },
+        thumbnail: thumbnailId ? { connect: { id: thumbnailId } } : {},
         tags: { connect: tagSlugs ? tagSlugs.map((slug) => ({ slug })) : [] },
       },
     });
@@ -59,13 +60,14 @@ export class ProjectsService {
     await this.prisma.project.findFirstOrThrow({
       where: { id },
     });
-    const { mediaIds, tagSlugs, ...restDto } = dto;
+    const { imagesIds, thumbnailId, tagSlugs, ...restDto } = dto;
 
     const project = await this.prisma.project.update({
       where: { id },
       data: {
         ...restDto,
-        images: { set: mediaIds ? mediaIds.map((id) => ({ id })) : [] },
+        images: { set: imagesIds ? imagesIds.map((id) => ({ id })) : [] },
+        thumbnail: thumbnailId ? { connect: { id: thumbnailId } } : {},
         tags: { set: tagSlugs ? tagSlugs.map((slug) => ({ slug })) : [] },
       },
     });

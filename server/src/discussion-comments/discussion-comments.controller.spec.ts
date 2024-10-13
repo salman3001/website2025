@@ -11,7 +11,9 @@ describe('DiscussionCommentsController', () => {
       providers: [DiscussionCommentsService],
     }).compile();
 
-    controller = module.get<DiscussionCommentsController>(DiscussionCommentsController);
+    controller = module.get<DiscussionCommentsController>(
+      DiscussionCommentsController,
+    );
   });
 
   it('should be defined', () => {

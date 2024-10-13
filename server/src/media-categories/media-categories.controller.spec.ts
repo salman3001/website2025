@@ -11,7 +11,9 @@ describe('MediaCategoriesController', () => {
       providers: [MediaCategoriesService],
     }).compile();
 
-    controller = module.get<MediaCategoriesController>(MediaCategoriesController);
+    controller = module.get<MediaCategoriesController>(
+      MediaCategoriesController,
+    );
   });
 
   it('should be defined', () => {

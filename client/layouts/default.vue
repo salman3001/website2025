@@ -117,8 +117,11 @@ const { user } = useAuth();
       </v-list>
     </v-navigation-drawer>
 
-    <v-main style="height: 500px">
-      <slot />
+    <v-main>
+      <div style="min-height: 70vh">
+        <slot />
+      </div>
+      <Footer />
     </v-main>
   </v-layout>
 </template>

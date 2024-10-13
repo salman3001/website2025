@@ -2,13 +2,11 @@
 import { MediaType, MediaWindow, type Media, type MediaCategory } from ".";
 import type { IResType } from "~/utils/types";
 
-const config = useRuntimeConfig();
-
 const props = defineProps<{ media: Media }>();
 
-const { data: categories, execute: getCategories } = useFetch<
+const { data: categories, execute: getCategories } = useFetcherGet<
   IResType<{ data: MediaCategory[]; count: number }>
->(config.public.baseApi + apiRoutes.mediaCategory.index(), {
+>(apiRoutes.mediaCategory.index(), {
   immediate: false,
   server: false,
   lazy: true,
@@ -81,7 +79,7 @@ onMounted(() => {
             v-if="media.type === MediaType.Image"
             class="bg-grey-lighten-2"
             height="125"
-            :src="config.public.uploadsPath + media.url"
+            :src="$config.public.uploadsPath + media.url"
             cover
           ></v-img>
           <div v-if="media.type === MediaType.document">Document</div>

@@ -48,4 +48,11 @@ export const apiRoutes = {
     update: (id: number) => `/projects/${id}`,
     delete: (id: number) => `/projects/${id}`,
   },
+  contactMessage: {
+    index: () => `/contact-messages`,
+    create: () => `/contact-messages`,
+    view: (id: number) => `/contact-messages/${id}`,
+    update: (id: number) => `/contact-messages/${id}`,
+    delete: (id: number) => `/contact-messages/${id}`,
+  },
 };

@@ -5,11 +5,9 @@ import MediaCard from "./media-card.vue";
 import type { IResType } from "~/utils/types";
 import { refDebounced } from "@vueuse/core";
 
-const config = useRuntimeConfig();
-
-const { data: categories, execute: getCategories } = useFetch<
+const { data: categories, execute: getCategories } = useFetcherGet<
   IResType<{ data: MediaCategory[]; count: number }>
->(config.public.baseApi + apiRoutes.mediaCategory.index(), {
+>(apiRoutes.mediaCategory.index(), {
   immediate: false,
   server: false,
   lazy: true,
@@ -22,9 +20,9 @@ const perPage = ref(5);
 const page = ref(1);
 const skip = computed(() => perPage.value * (page.value - 1));
 
-const { data: medias, execute: getMedias } = useFetch<
+const { data: medias, execute: getMedias } = useFetcherGet<
   IResType<{ data: Media[]; count: number }>
->(config.public.baseApi + apiRoutes.media.index(), {
+>(apiRoutes.media.index(), {
   immediate: false,
   server: false,
   lazy: true,

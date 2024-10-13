@@ -9,24 +9,22 @@ const props = defineProps<{
 }>();
 
 const { errors, exec, loading } = useFetcher();
-const config = useRuntimeConfig();
 
-const { data: categories } = await useFetch<
+const { data: categories } = await useFetcherGet<
   IResType<{ data: BlogCategory[]; count: number }>
->(config.public.baseApi + apiRoutes.blogCategory.index(), {
+>(apiRoutes.blogCategory.index(), {
   query: {
     take: 1000,
   },
 });
 
-const { data: tags } = await useFetch<IResType<{ data: Tag[]; count: number }>>(
-  config.public.baseApi + apiRoutes.tags.index(),
-  {
-    query: {
-      take: 1000,
-    },
+const { data: tags } = await useFetcherGet<
+  IResType<{ data: Tag[]; count: number }>
+>(apiRoutes.tags.index(), {
+  query: {
+    take: 1000,
   },
-);
+});
 
 const media = ref<Media[]>(props?.blog?.image ? [props?.blog?.image] : []);
 

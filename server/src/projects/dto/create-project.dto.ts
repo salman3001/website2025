@@ -4,6 +4,7 @@ import {
   IsArray,
   IsBoolean,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   Length,
@@ -35,9 +36,14 @@ export class CreateProjectDto {
   isPublished: boolean;
 
   @ApiProperty()
+  @IsNumber()
+  @IsOptionalEmpty()
+  thumbnailId: number;
+
+  @ApiProperty()
   @IsArray()
   @IsOptional()
-  mediaIds: number[];
+  imagesIds: number[];
 
   @ApiProperty()
   @IsString()
