@@ -71,6 +71,7 @@ const { user } = useAuth();
       <template v-if="$vuetify.display.mdAndUp">
         <v-btn icon="mdi-magnify" variant="text" color="none"></v-btn>
       </template>
+      <ThemeSwitcher />
       <AuthMenu />
     </v-app-bar>
 
