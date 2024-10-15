@@ -3,7 +3,7 @@ const links = ["Home", "About Us", "Team", "Services", "Blog", "Contact Us"];
 </script>
 
 <template>
-  <v-footer class="bg-grey-lighten-1 pa-5">
+  <v-footer class="bg-grey-800 pa-5">
     <v-row justify="center">
       <v-col class="d-flex flex-column" cols="6" sm="4" md="3">
         <h6 class="footer-title text-h6">Services</h6>
@@ -32,15 +32,21 @@ const links = ["Home", "About Us", "Team", "Services", "Blog", "Contact Us"];
           prepend-inner-icon="mdi-email-outline"
           variant="outlined"
         >
-          <template #append-inner>
-            <v-btn icon="mdi-send" size="small" variant="text"></v-btn>
+          <template #append>
+            <v-btn>Submit</v-btn>
           </template>
         </v-text-field>
       </v-col>
       <v-divider></v-divider>
-      <div class="text-grey-darken-2 pt-1">
-        {{ new Date().getFullYear() }} —
-        <strong>{{ $config.public.appName }}</strong>
+      <div class="pt-1 d-flex justify-space-between ga-2 flex-wrap w-100">
+        <div>
+          <strong>{{ $config.public.appName }}</strong>
+        </div>
+        <div>
+          © {{ new Date().getFullYear() }} {{ $config.public.appName }}. All
+          Rights Reserved.
+        </div>
+        <div>Social Links</div>
       </div>
     </v-row>
   </v-footer>

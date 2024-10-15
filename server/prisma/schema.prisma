@@ -49,6 +49,7 @@ model Blog {
   shortDesc        String
   longDesc         String?
   isPublished      Boolean       @default(false)
+  isFeatured       Boolean       @default(false)
   views            Int           @default(0)
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
@@ -82,6 +83,8 @@ model BlogCategory {
   desc        String?
   blogs       Blog[]
   subscribers EmailSubscription[]
+  icon        Media?              @relation(fields: [mediaId], references: [id])
+  mediaId     Int?
 
   @@index([slug])
 }
@@ -94,6 +97,8 @@ model Tag {
   discussions Discussion[]
   subscribers EmailSubscription[]
   proejct     Project[]
+  icon        Media?              @relation(fields: [mediaId], references: [id])
+  mediaId     Int?
 
   @@index([slug])
 }
@@ -189,6 +194,8 @@ model Media {
   blog               Blog[]
   projects           Project[]      @relation("images")
   thumbnailOfProject Project[]      @relation("thumbnail")
+  blogCategories     BlogCategory[]
+  tags               Tag[]
 }
 
 model MediaCategory {

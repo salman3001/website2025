@@ -42,15 +42,11 @@ watch(
 </script>
 
 <template>
-  <v-btn
-    icon
-    size="small"
-    color="rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity))"
-  >
+  <v-btn icon size="small" color="primary">
     <VIcon
       :icon="themes.find((t) => t.name === theme)?.icon"
       size="24"
-      color="white"
+      color="primary"
     />
 
     <VTooltip activator="parent" open-delay="1000" scroll-strategy="close">

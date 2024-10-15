@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Tag } from "~/utils/types/modals";
+import type { Media } from "../media-gallery";
 
 const props = defineProps<{
   tag?: Tag;
@@ -7,6 +8,8 @@ const props = defineProps<{
 }>();
 
 const { errors, exec, loading } = useFetcher();
+
+const media = ref<Media[]>(props?.tag?.icon ? [props?.tag?.icon] : []);
 
 const form = reactive({
   name: props?.tag?.name || "",
@@ -20,7 +23,10 @@ const createTag = async () => {
       : apiRoutes.tags.update(props.tag?.slug!),
     {
       method: props.type === "create" ? "post" : "patch",
-      body: toRaw(form),
+      body: {
+        ...toRaw(form),
+        iconsMediaId: media.value ? media.value[0]?.id : undefined,
+      },
     },
     {
       onSuccess: (res) => {
@@ -40,6 +46,11 @@ const createTag = async () => {
     "
   >
     <VRow>
+      <!-- Icon -->
+      <VCol cols="12">
+        <MediaGalleryModal name="mediaIconId" v-model="media" />
+      </VCol>
+
       <!-- Name -->
       <VCol cols="12" md="6">
         <VTextField

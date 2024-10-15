@@ -38,6 +38,11 @@ export class CreateBlogDto {
   isPublished: boolean;
 
   @ApiProperty()
+  @IsBoolean()
+  @IsOptionalEmpty()
+  isFeatured: boolean;
+
+  @ApiProperty()
   @IsString()
   @IsOptionalEmpty()
   blogCategorySlug?: string;

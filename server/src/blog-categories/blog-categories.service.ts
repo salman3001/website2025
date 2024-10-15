@@ -16,6 +16,7 @@ export class BlogCategoriesService {
     const existBlogCetrgory = await this.prisma.blogCategory.findFirst({
       where: { slug },
     });
+
     if (existBlogCetrgory) {
       throw new CustomHttpException({
         code: HttpStatus.CONFLICT,
@@ -24,10 +25,19 @@ export class BlogCategoriesService {
       });
     }
 
+    const { iconsMediaId, ...restDto } = dto;
+
     const blogCategory = await this.prisma.blogCategory.create({
       data: {
-        ...dto,
+        ...restDto,
         slug,
+        icon: iconsMediaId
+          ? {
+              connect: {
+                id: iconsMediaId,
+              },
+            }
+          : {},
       },
     });
 
@@ -87,11 +97,20 @@ export class BlogCategoriesService {
         ? slugify(dto.name, { lower: true, strict: true })
         : undefined;
 
+    const { iconsMediaId, ...restDto } = dto;
+
     const blogCategory = await this.prisma.blogCategory.update({
       where: { slug },
       data: {
-        ...dto,
+        ...restDto,
         slug: newSlug ? newSlug : existBlogCategory.slug,
+        icon: iconsMediaId
+          ? {
+              connect: {
+                id: iconsMediaId,
+              },
+            }
+          : {},
       },
     });
 

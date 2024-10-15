@@ -28,5 +28,5 @@ const { user, setAuth } = useAuth();
       </v-list-item>
     </v-list>
   </v-menu>
-  <v-btn v-else :to="routes.auth.signin()" color="none" nuxt>Login</v-btn>
+  <v-btn v-else :to="routes.auth.signin()" color="primary" nuxt>Login</v-btn>
 </template>

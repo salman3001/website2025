@@ -3,7 +3,7 @@ import { debouncedRef } from "@vueuse/core";
 import type { IResType } from "~/utils/types";
 import type { Tag } from "~/utils/types/modals";
 
-const config = useRuntimeConfig();
+const appConfig = useAppConfig();
 
 const search = ref("");
 const debaouncedSearch = debouncedRef(search, 1000);
@@ -19,7 +19,7 @@ const { data, refresh: refreshTags } = await useFetcherGet<
     skip: skip,
     take: perPage,
     search: debaouncedSearch,
-    select: ["name", "slug"],
+    select: ["name", "slug", "icon", "count:blogs"],
     orderBy: orderBy,
   },
 });
@@ -29,6 +29,7 @@ const { exec: destroy } = useFetcher();
 // Data table Headers
 const headers = [
   { title: "Name", key: "name" },
+  { title: "Total Blogs", key: "totalBlogs" },
   { title: "Action", key: "actions", sortable: false },
 ];
 </script>
@@ -90,7 +91,22 @@ const headers = [
 
         <!-- Name-->
         <template #item.name="{ item }">
-          {{ item.name }}
+          <v-card width="200" class="ma-2 ma-0" density="compact">
+            <v-card-text class="pa-0">
+              <VImg
+                v-if="item?.icon?.url"
+                :src="$config.public.uploadsPath + item?.icon?.url"
+              />
+              <VImg v-else :src="appConfig.noImageUrl" />
+            </v-card-text>
+            <v-card-title class="text-body-2" style="height: 50px">
+              {{ item.name }}
+            </v-card-title>
+          </v-card>
+        </template>
+
+        <template #item.totalBlogs="{ item }">
+          {{ item?._count?.blogs }}
         </template>
 
         <!-- Actions -->

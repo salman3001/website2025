@@ -1,17 +1,21 @@
+interface BaseModel {
+  _count: any;
+}
+
 export enum UserType {
   Admin = "Admin",
   User = "User",
 }
 
-export interface User {
+export interface User extends BaseModel {
   id: number;
   fullName: string;
   email: string;
   password: string;
   phone: string | undefined;
   userType: UserType;
-  isActive: Boolean;
-  emailVerified: Boolean;
+  isActive: boolean;
+  emailVerified: boolean;
   createdAt: string;
   updatedAt: string;
   profile: Profile | undefined;
@@ -20,19 +24,20 @@ export interface User {
   subscription: EmailSubscription | undefined;
 }
 
-export interface Profile {
+export interface Profile extends BaseModel {
   id: number;
   avatar: string | undefined;
   user: User;
   userId: number;
 }
 
-export interface Blog {
+export interface Blog extends BaseModel {
   slug: string;
   title: string;
   shortDesc: string;
   longDesc: string | undefined;
-  isPublished: Boolean;
+  isPublished: boolean;
+  isFeatured: boolean;
   views: number | undefined;
   createdAt: string;
   updatedAt: string;
@@ -47,7 +52,7 @@ export interface Blog {
   comment: BlogComment[];
 }
 
-export interface Seo {
+export interface Seo extends BaseModel {
   id: number;
   title: string | undefined;
   keyword: string | undefined;
@@ -58,20 +63,21 @@ export interface Seo {
   discussionSlug: string | undefined;
 }
 
-export interface Tag {
+export interface Tag extends BaseModel {
   slug: string;
   name: string;
   desc: string | undefined;
+  icon: Media | undefined;
   blogs: Blog[];
   discussions: Discussion[];
   subscribers: EmailSubscription[];
   proejct: Project[];
 }
 
-export interface BlogComment {
+export interface BlogComment extends BaseModel {
   id: number;
   message: string;
-  isApproved: Boolean;
+  isApproved: boolean;
   createdAt: string;
   blog: Blog;
   blogSlug: string;
@@ -80,19 +86,20 @@ export interface BlogComment {
   replies: BlogComment[];
 }
 
-export interface BlogCategory {
+export interface BlogCategory extends BaseModel {
   slug: string;
   name: string;
   desc: string | undefined;
+  icon: Media | undefined;
   blogs: Blog[];
   subscribers: EmailSubscription[];
 }
 
-export interface Discussion {
+export interface Discussion extends BaseModel {
   slug: string;
   title: string;
   desc: string | undefined;
-  isPublished: Boolean;
+  isPublished: boolean;
   views: number;
   createdAt: string;
   user: User;
@@ -102,10 +109,10 @@ export interface Discussion {
   tags: Tag[];
 }
 
-export interface DiscussionComment {
+export interface DiscussionComment extends BaseModel {
   id: number;
   message: string;
-  isApproved: Boolean;
+  isApproved: boolean;
   createdAt: string;
   discussion: Discussion;
   discussionlug: string;
@@ -120,7 +127,7 @@ export enum MediaType {
   document = "document",
 }
 
-export interface Media {
+export interface Media extends BaseModel {
   id: number;
   name: string;
   type: MediaType;
@@ -132,13 +139,13 @@ export interface Media {
   projectId: number | undefined;
 }
 
-export interface MediaCategory {
+export interface MediaCategory extends BaseModel {
   id: number;
   name: string;
   medias: Media[];
 }
 
-export interface ContactMessage {
+export interface ContactMessage extends BaseModel {
   id: number;
   email: string;
   phone: string | undefined;
@@ -146,7 +153,7 @@ export interface ContactMessage {
   createdAt: string;
 }
 
-export interface EmailSubscription {
+export interface EmailSubscription extends BaseModel {
   id: number;
   email: string;
   categories: BlogCategory[];
@@ -155,12 +162,12 @@ export interface EmailSubscription {
   userId: number | undefined;
 }
 
-export interface Project {
+export interface Project extends BaseModel {
   id: number;
   title: string;
   shortDesc: string;
   desc: string | undefined;
-  isPublished: Boolean;
+  isPublished: boolean;
   thumbnail: Media | undefined;
   thumbnailId: number | undefined;
   images: Media[];

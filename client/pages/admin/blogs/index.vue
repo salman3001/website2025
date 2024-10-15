@@ -23,6 +23,7 @@ const { data, refresh: refreshBlogs } = await useFetcherGet<
       "title",
       "slug",
       "isPublished",
+      "isFeatured",
       "blogCategory",
       "tags",
       "createdAt",
@@ -40,6 +41,7 @@ const headers = [
   { title: "Date", key: "createdAt" },
   { title: "Category", key: "blogCategory", sortable: false },
   { title: "Tags", key: "tags", sortable: false },
+  { title: "Featured", key: "isFeatured" },
   { title: "Status", key: "isPublished" },
   { title: "Action", key: "actions", sortable: false },
 ];
@@ -135,6 +137,18 @@ const headers = [
           </div>
         </template>
 
+        <!-- Featured -->
+        <template #item.isFeatured="{ item }">
+          <VChip
+            v-if="item.isFeatured"
+            label
+            size="small"
+            text="Featured"
+            color="info"
+          />
+          <!-- <VChip v-else label size="small" text="" color="warning" /> -->
+        </template>
+
         <!-- Status -->
         <template #item.isPublished="{ item }">
           <VChip
@@ -146,6 +160,7 @@ const headers = [
           />
           <VChip v-else label size="small" text="Draft" color="warning" />
         </template>
+
         <!-- Actions -->
         <template #item.actions="{ item }">
           <VIcon icon="tabler-dots-vertical" />

@@ -53,24 +53,49 @@ export class BlogsController {
     @AuthUser() authUser: AuthUserType,
   ) {
     this.blogPolicy.canFindAll();
-    const { blogCategorySlug, search, ...restQuery } = qs;
+
+    const {
+      blogCategorySlug,
+      tagSlug,
+      isFeatured,
+      isPublished,
+      search,
+      ...restQuery
+    } = qs;
     const { orderByQuery, selectQuery, skip, take } =
       generateCommonPrismaQuery(restQuery);
 
     const searchQuery = search
       ? { title: { contains: search, mode: 'insensitive' as any } }
       : {};
+
     const serachByCategoryQuery = blogCategorySlug
       ? { blogCategorySlug: { equals: blogCategorySlug } }
+      : {};
+
+    const serachByTagQuery = tagSlug
+      ? { tags: { some: { slug: tagSlug } } }
+      : {};
+
+    const isFeaturedQuery = isFeatured ? { isFeatured: { equals: true } } : {};
+    const isPublishedQuery = isFeatured
+      ? { isPublished: { equals: true } }
       : {};
 
     const { blogs, count } = await this.blogsService.findAll({
       skip,
       take,
-      where: { ...searchQuery, ...serachByCategoryQuery },
+      where: {
+        ...searchQuery,
+        ...serachByCategoryQuery,
+        ...isFeaturedQuery,
+        ...isPublishedQuery,
+        ...serachByTagQuery,
+      },
       orderBy: orderByQuery,
       select: selectQuery,
     });
+
     return CustomRes({
       code: HttpStatus.OK,
       success: true,

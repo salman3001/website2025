@@ -9,10 +9,16 @@ const { user } = useAuth();
 
 <template>
   <v-layout>
-    <v-app-bar color="primary" prominent density="compact" class="pr-2">
+    <v-app-bar
+      color="primary"
+      class="pr-2 app-bar-blur"
+      scroll-behavior="elevated fade-image"
+      scroll-threshold="200"
+      image="~/assets/images/bg/bg-3.jpg"
+      floating
+    >
       <v-app-bar-nav-icon
-        variant="text"
-        color="none"
+        color="primary"
         @click.stop="drawer = !drawer"
         v-if="$vuetify.display.smAndDown"
       ></v-app-bar-nav-icon>
@@ -23,12 +29,7 @@ const { user } = useAuth();
 
       <!-- <v-spacer></v-spacer> -->
 
-      <v-row
-        style="max-width: max-content"
-        class="px-2"
-        no-gutters
-        v-if="$vuetify.display.mdAndUp"
-      >
+      <v-row style="max-width: max-content" v-if="$vuetify.display.mdAndUp">
         <v-col v-for="(menu, i) in NavMenus">
           <v-menu
             open-on-hover
@@ -38,7 +39,12 @@ const { user } = useAuth();
             "
           >
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" append-icon="mdi-chevron-down" color="none">
+              <v-btn
+                v-bind="props"
+                append-icon="mdi-chevron-down"
+                color="primary"
+                variant="flat"
+              >
                 {{ menu.name }}
               </v-btn>
             </template>
@@ -62,14 +68,15 @@ const { user } = useAuth();
             v-else-if="menu?.userAllowed ? menu?.userAllowed(user) : true"
             :to="menu.href"
             nuxt
-            color="none"
+            color="primary"
+            variant="tonal"
             >{{ menu.name }}</v-btn
           >
         </v-col>
       </v-row>
 
       <template v-if="$vuetify.display.mdAndUp">
-        <v-btn icon="mdi-magnify" variant="text" color="none"></v-btn>
+        <v-btn icon="mdi-magnify" color="primary"></v-btn>
       </template>
       <ThemeSwitcher />
       <AuthMenu />
@@ -118,7 +125,7 @@ const { user } = useAuth();
       </v-list>
     </v-navigation-drawer>
 
-    <v-main>
+    <v-main max-height="100vh">
       <div style="min-height: 70vh">
         <slot />
       </div>
@@ -126,3 +133,10 @@ const { user } = useAuth();
     </v-main>
   </v-layout>
 </template>
+
+<style scoped>
+.app-bar-blur {
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(10px) !important;
+}
+</style>

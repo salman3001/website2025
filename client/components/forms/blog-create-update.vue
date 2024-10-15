@@ -33,6 +33,7 @@ const form = reactive({
   shortDesc: props?.blog?.shortDesc || "",
   longDesc: props?.blog?.longDesc || "",
   isPublished: props?.blog?.isPublished || false,
+  isFeatured: props?.blog?.isFeatured || false,
   blogCategorySlug: props?.blog?.blogCategorySlug || "",
   tagSlugs: props?.blog?.tags?.map((t) => t.slug) || [],
   seo: {
@@ -121,6 +122,15 @@ const createBlog = async () => {
           v-model="form.isPublished"
           :error-messages="errors?.isPublished?.errors"
           label="Pusblish"
+        />
+      </VCol>
+
+      <!-- Featured -->
+      <VCol cols="12" md="6">
+        <VCheckbox
+          v-model="form.isFeatured"
+          :error-messages="errors?.isFeatured?.errors"
+          label="Featured"
         />
       </VCol>
 

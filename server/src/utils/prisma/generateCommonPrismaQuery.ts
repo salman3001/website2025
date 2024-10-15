@@ -17,11 +17,22 @@ export const generateCommonPrismaQuery = (dto: {
 
   if (select) {
     const query = {};
+    const _count = { select: {} };
+    let anythingToCount = false;
+
     select.forEach((sel) => {
-      query[sel] = true;
+      if (sel.startsWith('count')) {
+        anythingToCount = true;
+        const toBeCounted = sel.split(':')[1];
+        _count.select[toBeCounted] = true;
+      } else {
+        query[sel] = true;
+      }
     });
 
-    selectQuery = query;
+    const countQuery = anythingToCount ? { _count } : {};
+
+    selectQuery = { ...query, ...countQuery };
   }
 
   return {

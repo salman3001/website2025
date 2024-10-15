@@ -10,9 +10,9 @@ withDefaults(
 <template>
   <NuxtLink :to="routes.web.home()">
     <VBtn
-      variant="text"
+      variant="flat"
       class="text-h5"
-      :color="color === 'light' ? 'white' : 'primary'"
+      :color="color === 'light' ? 'primary' : 'primary'"
     >
       {{ $config.public.appName }}
     </VBtn>

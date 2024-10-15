@@ -25,10 +25,19 @@ export class TagsService {
       });
     }
 
+    const { iconsMediaId, ...restDto } = dto;
+
     const tag = await this.prisma.tag.create({
       data: {
-        ...dto,
+        ...restDto,
         slug,
+        icon: iconsMediaId
+          ? {
+              connect: {
+                id: iconsMediaId,
+              },
+            }
+          : {},
       },
     });
 
@@ -88,11 +97,20 @@ export class TagsService {
         ? slugify(dto.name, { lower: true, strict: true })
         : undefined;
 
+    const { iconsMediaId, ...restDto } = dto;
+
     const tag = await this.prisma.tag.update({
       where: { slug },
       data: {
-        ...dto,
+        ...restDto,
         slug: newSlug ? newSlug : existTag.slug,
+        icon: iconsMediaId
+          ? {
+              connect: {
+                id: iconsMediaId,
+              },
+            }
+          : {},
       },
     });
 

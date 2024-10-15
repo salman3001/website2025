@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { BlogCategory, Tag } from "~/utils/types/modals";
+import type { BlogCategory } from "~/utils/types/modals";
+import type { Media } from "../media-gallery";
 
 const props = defineProps<{
   blogCategory?: BlogCategory;
@@ -7,6 +8,10 @@ const props = defineProps<{
 }>();
 
 const { errors, exec, loading } = useFetcher();
+
+const media = ref<Media[]>(
+  props?.blogCategory?.icon ? [props?.blogCategory?.icon] : [],
+);
 
 const form = reactive({
   name: props?.blogCategory?.name || "",
@@ -20,7 +25,10 @@ const createBlogCategory = async () => {
       : apiRoutes.blogCategory.update(props.blogCategory?.slug!),
     {
       method: props.type === "create" ? "post" : "patch",
-      body: toRaw(form),
+      body: {
+        ...toRaw(form),
+        iconsMediaId: media.value ? media.value[0]?.id : undefined,
+      },
     },
     {
       onSuccess: (res) => {
@@ -40,6 +48,11 @@ const createBlogCategory = async () => {
     "
   >
     <VRow>
+      <!-- Icon -->
+      <VCol cols="12">
+        <MediaGalleryModal name="mediaIconId" v-model="media" />
+      </VCol>
+
       <!-- Name -->
       <VCol cols="12" md="6">
         <VTextField
