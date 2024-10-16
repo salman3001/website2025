@@ -3,7 +3,11 @@ const { user } = useAuth();
 </script>
 
 <template>
-  <v-parallax src="~/assets/images/bg/bg-3.jpg" style="height: 80vh">
+  <v-parallax
+    src="~/assets/images/bg/bg-3.jpg"
+    style="height: 90vh"
+    class="pa-2"
+  >
     <div
       class="d-flex flex-column fill-height justify-center align-center pa-1 text-white text-center"
     >
@@ -22,11 +26,15 @@ const { user } = useAuth();
         <v-btn
           color="primary"
           variant="outlined"
-          :to="routes.web.tutorials()"
+          :to="routes.web.tutorials.index()"
           nuxt
           >Explore Tutorials</v-btn
         >
-        <v-btn color="primary" variant="outlined" :to="routes.web.blogs()" nuxt
+        <v-btn
+          color="primary"
+          variant="outlined"
+          :to="routes.web.blogs.index()"
+          nuxt
           >View Blogs</v-btn
         >
         <v-btn v-if="!user" color="primary" :to="routes.auth.signup()" nuxt

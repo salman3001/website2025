@@ -3,7 +3,7 @@ const links = ["Home", "About Us", "Team", "Services", "Blog", "Contact Us"];
 </script>
 
 <template>
-  <v-footer class="bg-grey-800 pa-5">
+  <v-footer class="bg-grey-400 pa-5 rounded-t-xl">
     <v-row justify="center">
       <v-col class="d-flex flex-column" cols="6" sm="4" md="3">
         <h6 class="footer-title text-h6">Services</h6>
@@ -19,18 +19,19 @@ const links = ["Home", "About Us", "Team", "Services", "Blog", "Contact Us"];
         <a>Jobs</a>
         <a>Press kit</a>
       </v-col>
-      <v-col class="d-flex flex-column" cols="6" sm="4" md="3">
+      <v-col class="d-flex flex-column" cols="12" sm="4" md="3">
         <h6 class="footer-title text-h6">Legal</h6>
         <a>Terms of use</a>
         <a>Privacy policy</a>
         <a>Cookie policy</a>
       </v-col>
-      <v-col cols="6" sm="4" md="3">
+      <v-col cols="12" sm="4" md="3">
         <h6 class="footer-title text-h6">Newsletter</h6>
         <v-text-field
           placeholder="Subscribe "
           prepend-inner-icon="mdi-email-outline"
           variant="outlined"
+          rounded="lg"
         >
           <template #append>
             <v-btn>Submit</v-btn>

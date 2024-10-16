@@ -11,8 +11,9 @@ export interface INavMenu {
 
 export const NavMenus: INavMenu[] = [
   { name: "Home", href: routes.web.home() },
-  { name: "Blogs", href: routes.web.blogs() },
-  { name: "Courses", href: routes.web.tutorials() },
+  { name: "Blogs", href: routes.web.blogs.index() },
+  { name: "Tutorials", href: routes.web.tutorials.index() },
+  { name: "Discussions", href: routes.web.discussions.index() },
   {
     name: "Admin",
     userAllowed: (user) => user?.userType === UserType.Admin,
@@ -29,7 +30,6 @@ export const NavMenus: INavMenu[] = [
     name: "More",
     child: [
       { name: "Contact", href: routes.web.contact() },
-      { name: "Discussion", href: routes.web.discussions() },
       { name: "Portfolio", href: routes.web.portfolio() },
     ],
   },

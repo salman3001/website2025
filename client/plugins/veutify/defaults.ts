@@ -12,7 +12,6 @@ export default {
   },
   VAvatar: {
     // ℹ️ Remove after next release
-    variant: "flat",
   },
   VBadge: {
     // set v-badge default color to primary
@@ -21,9 +20,11 @@ export default {
   VBtn: {
     // set v-btn default color to primary
     color: "primary",
+    elevation: "0",
   },
   VChip: {
     label: true,
+    rounded: "xl",
   },
   VDataTable: {
     VPagination: {
@@ -103,6 +104,7 @@ export default {
     color: "primary",
     density: "compact",
     hideDetails: "auto",
+    rounded: "lg",
     VChip: {
       label: true,
     },
@@ -140,6 +142,7 @@ export default {
     density: "compact",
     color: "primary",
     hideDetails: "auto",
+    rounded: "lg",
   },
   VAutocomplete: {
     variant: "outlined",
@@ -173,6 +176,7 @@ export default {
     density: "compact",
     color: "primary",
     hideDetails: "auto",
+    rounded: "lg",
   },
   VSnackbar: {
     VBtn: {
@@ -188,5 +192,13 @@ export default {
   },
   VNavigationDrawer: {
     touchless: true,
+  },
+  VCard: {
+    rounded: "xl",
+    variant: "outlined",
+    class: "border-sm",
+  },
+  VContainer: {
+    class: "rounded-xl",
   },
 };

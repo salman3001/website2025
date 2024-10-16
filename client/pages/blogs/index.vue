@@ -1,3 +1,78 @@
+<script setup lang="ts">
+import type { IResType } from "~/utils/types";
+import type { BlogCategory, Tag } from "~/utils/types/modals";
+
+const search = ref("");
+const topic = ref("");
+const category = ref("");
+
+const { data: tags } = await useFetcherGet<
+  IResType<{ count: number; data: Tag[] }>
+>(apiRoutes.tags.index(), {
+  query: {
+    select: ["name", "slug"],
+    orderBy: "name:asc",
+    take: 1000,
+    skip: 0,
+  },
+});
+
+const { data: categories } = await useFetcherGet<
+  IResType<{ count: number; data: BlogCategory[] }>
+>(apiRoutes.blogCategory.index(), {
+  query: {
+    select: ["name", "slug", "icon", "count:blogs"],
+    orderBy: "name:asc",
+    take: 1000,
+    skip: 0,
+  },
+});
+</script>
 <template>
-  <v-container> Blogs </v-container>
+  <br />
+  <v-container>
+    <div class="d-flex justify-space-between align-center">
+      <h1>Blogs</h1>
+
+      <div class="d-flex ga-2 align-center flex-wrap">
+        <v-text-field
+          v-model="search"
+          placeholder="Search Blogs"
+          style="max-inline-size: 200px; min-inline-size: 200px"
+          hide-details
+        />
+        <v-select
+          style="min-inline-size: 150px"
+          placeholder="Category"
+          v-model="category"
+          :items="
+            (categories?.data?.data || []).concat([{ name: 'All', slug: '' } as any])
+          "
+          item-value="slug"
+          item-title="name"
+          hide-details
+        />
+
+        <v-select
+          style="min-inline-size: 150px"
+          placeholder="Topics"
+          v-model="topic"
+          :items="(tags?.data?.data || []).concat([{ name: 'All', slug: '' } as any])"
+          item-value="slug"
+          item-title="name"
+          hide-details
+        />
+      </div>
+    </div>
+    <br />
+    <br />
+    <ListsBlogs
+      :per-page="10"
+      :is-published="true"
+      show-pagination
+      v-model:search="search"
+      :tag-slug="topic"
+      :blog-category-slug="category"
+    />
+  </v-container>
 </template>

@@ -1,5 +1,5 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 import { CommonQueryDto } from 'src/utils/dto/common-query.dto';
 import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
@@ -15,12 +15,12 @@ export class BlogsQueryDto extends CommonQueryDto {
   tagSlug: string;
 
   @ApiProperty()
-  @IsString()
+  @IsBoolean()
   @IsOptionalEmpty()
   isFeatured: boolean;
 
   @ApiProperty()
-  @IsString()
+  @IsBoolean()
   @IsOptionalEmpty()
   isPublished: boolean;
 }

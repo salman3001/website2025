@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Tag } from "~/utils/types/modals";
+import type { BlogCategory } from "~/utils/types/modals";
 
-defineProps<{ tag: Tag }>();
+defineProps<{ category: BlogCategory }>();
 const appConfig = useAppConfig();
 </script>
 
@@ -9,14 +9,14 @@ const appConfig = useAppConfig();
   <v-card
     class="mx-auto"
     :min-width="220"
-    :to="routes.web.topics.view(tag?.slug)"
+    :to="routes.web.categories.view(category?.slug)"
     nuxt
   >
     <template #prepend>
       <v-img
         :src="
-          tag.icon
-            ? $config.public.uploadsPath + tag?.icon?.url
+          category.icon
+            ? $config.public.uploadsPath + category?.icon?.url
             : appConfig.noImageUrl
         "
         height="70"
@@ -24,10 +24,10 @@ const appConfig = useAppConfig();
       ></v-img>
     </template>
     <template #title>
-      <span class="ml-4"> {{ tag.name }} </span>
+      <span class="ml-4"> {{ category.name }} </span>
     </template>
     <template #subtitle>
-      <span class="ml-4"> {{ tag?._count?.blogs }} Articals </span>
+      <span class="ml-4"> {{ category?._count?.blogs }} Articals </span>
     </template>
   </v-card>
 </template>

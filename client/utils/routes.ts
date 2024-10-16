@@ -1,15 +1,27 @@
-import { categories } from "@vueuse/core/metadata.cjs";
-
 export const routes = {
   web: {
     home: () => "/",
     contact: () => "/contact",
-    blogs: () => "/blogs",
-    tutorials: () => "/tutorials",
-    discussions: () => "/discussions",
     portfolio: () => "/portfolio",
     profile: () => "/profile",
     privacy: () => "/privacy-policy",
+    tutorials: {
+      index: () => "/tutorials",
+      view: (slug: string) => `/tutorials/${slug}`,
+    },
+    discussions: {
+      index: () => "/discussions",
+      view: (id: number) => `/discussions/${id}`,
+    },
+    blogs: { index: () => "/blogs", view: (slug: string) => `/blogs/${slug}` },
+    categories: {
+      index: () => "/categories",
+      view: (slug: string) => `/categories/${slug}`,
+    },
+    topics: {
+      index: () => "/topics",
+      view: (slug: string) => `/topics/${slug}`,
+    },
   },
   auth: {
     signin: () => "/auth/login",

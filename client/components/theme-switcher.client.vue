@@ -42,12 +42,8 @@ watch(
 </script>
 
 <template>
-  <v-btn icon size="small" color="primary">
-    <VIcon
-      :icon="themes.find((t) => t.name === theme)?.icon"
-      size="24"
-      color="primary"
-    />
+  <v-btn icon size="small" color="none">
+    <VIcon :icon="themes.find((t) => t.name === theme)?.icon" size="24" />
 
     <VTooltip activator="parent" open-delay="1000" scroll-strategy="close">
       <span class="text-capitalize">{{ theme }}</span>

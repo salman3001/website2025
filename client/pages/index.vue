@@ -5,6 +5,9 @@
 
   <v-container fluid>
     <ViewsHomeFeaturedTutorials />
+    <ViewsHomeTopics />
     <ViewsHomeFeaturedBlogs />
+    <ViewsHomeCategories />
+    <ViewsHomeDiscussions />
   </v-container>
 </template>

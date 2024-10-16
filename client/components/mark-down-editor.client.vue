@@ -6,5 +6,5 @@ const model = defineModel<string>({ required: true });
 </script>
 
 <template>
-  <MdEditor v-model="model" language="en" />
+  <MdEditor preview v-model="model" language="en" />
 </template>

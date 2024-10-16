@@ -1,10 +1,17 @@
+<script setup lang="ts"></script>
+
 <template>
   <v-container class="my-5">
-    <h2 class="text-h5 py-5">Featured Blogs</h2>
-    <v-row>
-      <v-col v-for="b in [1, 2, 3, 4, 5, 6]" cols="12" sm="6" md="4" lg="3">
-        <BlogCard />
-      </v-col>
-    </v-row>
+    <div class="d-flex align-center justify-space-between">
+      <h2 class="text-h5 py-5">Featured Blogs</h2>
+      <div>
+        <NuxtLink
+          :to="routes.web.blogs.index()"
+          class="text-subtitle-1 text-decoration-none text-primsary"
+          >View All Blogs <v-icon icon="mdi-arrow-right"></v-icon
+        ></NuxtLink>
+      </div>
+    </div>
+    <ListsBlogs :per-page="10" :is-featured="true" :is-published="true" />
   </v-container>
 </template>

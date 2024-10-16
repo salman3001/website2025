@@ -14,6 +14,7 @@ const { data } = await useFetcherGet<IResType<Blog>>(
         "shortDesc",
         "longDesc",
         "isPublished",
+        "isFeatured",
         "blogCategorySlug",
         "image",
         "blogCategory",
