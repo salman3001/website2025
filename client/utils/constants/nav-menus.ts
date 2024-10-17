@@ -30,7 +30,7 @@ export const NavMenus: INavMenu[] = [
     name: "More",
     child: [
       { name: "Contact", href: routes.web.contact() },
-      { name: "Portfolio", href: routes.web.portfolio() },
+      { name: "Portfolio", href: routes.web.portfolio.index() },
     ],
   },
 ];

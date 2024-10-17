@@ -42,7 +42,10 @@ watch(
 </script>
 
 <template>
-  <v-btn icon size="small" color="none">
+  <v-btn
+    icon
+    :color="$vuetify.theme.global.name === 'dark' ? 'white' : 'grey-700'"
+  >
     <VIcon :icon="themes.find((t) => t.name === theme)?.icon" size="24" />
 
     <VTooltip activator="parent" open-delay="1000" scroll-strategy="close">

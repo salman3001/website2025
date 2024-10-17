@@ -39,6 +39,15 @@ const { data, status, refresh } = await useFetcherGet<
 
 <template>
   <div class="d-flex flex-column ga-4" v-if="data">
+    <v-card
+      v-if="data.data?.data.length === 0 && !parentId"
+      class="bg-background py-8 text-center"
+    >
+      <v-card-item>
+        <v-icon icon="mdi-message" size="64" color="primary"></v-icon>
+      </v-card-item>
+      <v-card-item>Be the first to Comment!</v-card-item>
+    </v-card>
     <CommentCard
       v-for="comment in data.data?.data"
       :comment="comment"
@@ -55,5 +64,6 @@ const { data, status, refresh } = await useFetcherGet<
       @success="() => refresh()"
     />
   </div>
+
   <Loader v-else type="card" />
 </template>

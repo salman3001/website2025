@@ -17,7 +17,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   const vuetify = createVuetify({
     ssr: true,
     defaults,
-    blueprint: md3,
     theme: {
       defaultTheme: resolveVuetifyTheme(appConfig.theme, storedTheme),
       themes,

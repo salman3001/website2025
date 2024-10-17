@@ -8,13 +8,15 @@ defineProps<{
   blogSlug?: string;
   discussionSlug?: string;
 }>();
+
+const { exec: deleteComment, loading: isDeleting } = useFetcher();
 </script>
 <template>
   <v-card
     class="bg-background"
     border="none"
     style="min-width: 200px"
-    :style="{ overflow: $vuetify.display.mdAndDown ? 'scroll' : 'auto' }"
+    :style="{ overflow: $vuetify.display.smAndDown ? 'scroll' : 'auto' }"
   >
     <VCardItem>
       <div class="d-flex ga-4">
@@ -57,12 +59,19 @@ defineProps<{
         {{ comment?._count?.replies }}
       </v-btn>
       <v-btn
-        color="primary"
+        icon="mdi-delete"
+        color="error"
         variant="text"
         size="small"
-        @click="() => (showReplies = !showReplies)"
+        @click="
+          async () => {
+            await deleteComment(apiRoutes.blogComments.delete(comment.id), {
+              method: 'delete',
+            });
+          }
+        "
+        :disabled="isDeleting"
       >
-        View
       </v-btn>
     </VCardActions>
   </v-card>

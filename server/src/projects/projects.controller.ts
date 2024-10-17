@@ -49,10 +49,14 @@ export class ProjectsController {
   async findAll(@Query() qs: ProjectQueryDto) {
     this.policy.canFindAll();
 
-    const { search, ...commonQueryDto } = qs;
+    const { search, tagSlug, ...commonQueryDto } = qs;
 
     const { selectQuery, orderByQuery, skip, take } =
       generateCommonPrismaQuery(commonQueryDto);
+
+    const serachByTagQuery = tagSlug
+      ? { tags: { some: { slug: tagSlug } } }
+      : {};
 
     const searchQuery = search
       ? { title: { contains: search, mode: 'insensitive' as any } }
@@ -61,7 +65,7 @@ export class ProjectsController {
     const { projects, count } = await this.projectsService.findAll({
       skip,
       take,
-      where: { AND: { ...searchQuery } },
+      where: { AND: { ...searchQuery, ...serachByTagQuery } },
       orderBy: orderByQuery,
       select: selectQuery,
     });

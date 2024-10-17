@@ -1,5 +1,5 @@
 a {
-  color: var(--v-theme-primary);
+  color: rgba(var(--v-theme-primary));
 }
 
 .line-clamp-1 {

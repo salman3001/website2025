@@ -10,7 +10,7 @@ withDefaults(
 <template>
   <NuxtLink :to="routes.web.home()">
     <VBtn
-      variant="flat"
+      variant="text"
       class="text-h5"
       :color="color === 'light' ? 'primary' : 'primary'"
     >

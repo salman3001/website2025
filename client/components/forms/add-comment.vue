@@ -46,10 +46,11 @@ const createComment = async () => {
   <v-form v-if="user" @submit.prevent="createComment">
     <div class="d-flex flex-column ga-4">
       <v-textarea
-        :placeholder="placeholder ?? 'Add a Comment'"
+        placeholder="Comment"
         v-model="form.message"
         :error-messages="errors?.message?.errors"
         :rows="rows"
+        class="bg-surface"
       >
       </v-textarea>
       <v-btn :disabled="loading" class="align-self-end" type="submit">

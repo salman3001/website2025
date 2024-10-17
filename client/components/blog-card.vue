@@ -10,11 +10,15 @@ defineProps<{
 </script>
 
 <template>
-  <v-card class="border-none" :to="routes.web.blogs.view(blog.slug)">
+  <v-card
+    class="border-none bg-background pa-4"
+    :to="routes.web.blogs.view(blog.slug)"
+  >
     <v-row no-gutters :class="{ 'flex-column': horzontal ? false : true }">
       <v-col :cols="horzontal ? 6 : 12">
         <v-img
           height="200px"
+          class="rounded-xl elevation-10"
           :src="
             blog?.image
               ? $config.public.uploadsPath + blog?.image?.url
@@ -26,7 +30,7 @@ defineProps<{
       <v-col :cols="horzontal ? 6 : 12">
         <div>
           <v-card-item>
-            <v-chip v-if="blog?.blogCategory" color="info" size="small">
+            <v-chip v-if="blog?.blogCategory" size="small">
               {{ blog?.blogCategory?.name }}
             </v-chip>
           </v-card-item>

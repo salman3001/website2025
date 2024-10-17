@@ -7,21 +7,13 @@ const drawer = ref(false);
 const sideMenuGroups = ref([]);
 const { user } = useAuth();
 const theme = useTheme();
-
-console.log(theme.global.name.value);
 </script>
 
 <template>
   <v-layout>
-    <v-app-bar
-      color="primary"
-      class="pr-2"
-      scroll-behavior="elevated fade-image"
-      scroll-threshold="200"
-      floating
-    >
+    <v-app-bar color="primary" class="pr-2 glass border-b-md">
       <v-app-bar-nav-icon
-        color="none"
+        :color="$vuetify.theme.global.name === 'dark' ? 'white' : 'black'"
         @click.stop="drawer = !drawer"
         v-if="$vuetify.display.smAndDown"
       ></v-app-bar-nav-icon>
@@ -49,8 +41,11 @@ console.log(theme.global.name.value);
               <v-btn
                 v-bind="props"
                 append-icon="mdi-chevron-down"
-                color="primary"
-                variant="flat"
+                :color="
+                  $vuetify.theme.global.name === 'dark' ? 'white' : 'black'
+                "
+                variant="text"
+                active-color="primary-darken-1"
               >
                 {{ menu.name }}
               </v-btn>
@@ -75,18 +70,25 @@ console.log(theme.global.name.value);
             v-else-if="menu?.userAllowed ? menu?.userAllowed(user) : true"
             :to="menu.href"
             nuxt
-            color="none"
+            :color="$vuetify.theme.global.name === 'dark' ? 'white' : 'black'"
             variant="text"
-            >{{ menu.name }}</v-btn
+            active-color="primary"
           >
+            {{ menu.name }}
+          </v-btn>
         </v-col>
       </v-row>
-
-      <template v-if="$vuetify.display.mdAndUp">
-        <v-btn icon="mdi-magnify" color="none"></v-btn>
-      </template>
-      <ThemeSwitcher />
-      <AuthMenu />
+      <div class="d-flex ga-1 align-center">
+        <template v-if="$vuetify.display.mdAndUp">
+          <v-btn
+            icon="mdi-magnify"
+            :color="$vuetify.theme.global.name === 'dark' ? 'white' : 'black'"
+            class="text-black"
+          ></v-btn>
+        </template>
+        <ThemeSwitcher />
+        <AuthMenu />
+      </div>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" temporary>
@@ -140,3 +142,14 @@ console.log(theme.global.name.value);
     </v-main>
   </v-layout>
 </template>
+
+<style>
+.glass {
+  background: rgba(var(--v-theme-primary) 0.4) !important;
+  /* border-radius: 16px !important; */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+</style>
