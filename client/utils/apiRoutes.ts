@@ -13,6 +13,27 @@ export const apiRoutes = {
     update: (slug: string) => `/blogs/${slug}`,
     delete: (slug: string) => `/blogs/${slug}`,
   },
+  blogComments: {
+    index: () => `/blog-comments`,
+    create: () => `/blog-comments`,
+    view: (id: number) => `/blog-comments/${id}`,
+    update: (id: number) => `/blog-comments/${id}`,
+    delete: (id: number) => `/blog-comments/${id}`,
+  },
+  discussions: {
+    index: () => `/discussions`,
+    create: () => `/discussions`,
+    view: (slug: string) => `/discussions/${slug}`,
+    update: (slug: string) => `/discussions/${slug}`,
+    delete: (slug: string) => `/discussions/${slug}`,
+  },
+  discussionComments: {
+    index: () => `/discussion-comments`,
+    create: () => `/discussion-comments`,
+    view: (id: number) => `/discussion-comments/${id}`,
+    update: (id: number) => `/discussion-comments/${id}`,
+    delete: (id: number) => `/discussion-comments/${id}`,
+  },
   blogCategory: {
     index: () => `/blog-categories`,
     create: () => `/blog-categories`,

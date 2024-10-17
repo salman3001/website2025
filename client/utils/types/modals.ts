@@ -22,6 +22,8 @@ export interface User extends BaseModel {
   blogs: Blog[];
   Discussion: Discussion[];
   subscription: EmailSubscription | undefined;
+  blogComment: BlogComment[];
+  discussionComment: DiscussionComment[];
 }
 
 export interface Profile extends BaseModel {
@@ -84,6 +86,8 @@ export interface BlogComment extends BaseModel {
   parentId: number | undefined;
   parent: BlogComment | undefined;
   replies: BlogComment[];
+  user: User;
+  userId: number;
 }
 
 export interface BlogCategory extends BaseModel {
@@ -115,9 +119,12 @@ export interface DiscussionComment extends BaseModel {
   isApproved: boolean;
   createdAt: string;
   discussion: Discussion;
-  discussionlug: string;
+  discussionSlug: string;
+  parentId: number;
   parent: DiscussionComment | undefined;
   replies: DiscussionComment[];
+  user: User;
+  userId: number;
 }
 
 export enum MediaType {

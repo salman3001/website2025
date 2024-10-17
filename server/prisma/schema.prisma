@@ -20,20 +20,22 @@ enum UserType {
 }
 
 model User {
-  id            Int                @id @default(autoincrement())
-  fullName      String
-  email         String             @unique
-  password      String
-  phone         String?
-  userType      UserType
-  isActive      Boolean            @default(false)
-  emailVerified Boolean
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
-  profile       Profile?
-  blogs         Blog[]
-  discussion    Discussion[]
-  subscription  EmailSubscription?
+  id                Int                 @id @default(autoincrement())
+  fullName          String
+  email             String              @unique
+  password          String
+  phone             String?
+  userType          UserType
+  isActive          Boolean             @default(false)
+  emailVerified     Boolean
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  profile           Profile?
+  blogs             Blog[]
+  discussion        Discussion[]
+  subscription      EmailSubscription?
+  blogComment       BlogComment[]
+  discussionComment DiscussionComment[]
 }
 
 model Profile {
@@ -115,6 +117,8 @@ model BlogComment {
   parentId Int? // Nullable parentId field (top-level comments will have null)
   parent   BlogComment?  @relation("replies", fields: [parentId], references: [id])
   replies  BlogComment[] @relation("replies")
+  user     User          @relation(fields: [userId], references: [id])
+  userId   Int
 }
 
 model Discussion {
@@ -134,17 +138,19 @@ model Discussion {
 }
 
 model DiscussionComment {
-  id            Int        @id @default(autoincrement())
-  message       String
-  isApproved    Boolean
-  createdAt     DateTime   @default(now())
-  discussion    Discussion @relation(fields: [discussionlug], references: [slug], onDelete: Cascade)
-  discussionlug String
+  id             Int        @id @default(autoincrement())
+  message        String
+  isApproved     Boolean
+  createdAt      DateTime   @default(now())
+  discussion     Discussion @relation(fields: [discussionSlug], references: [slug], onDelete: Cascade)
+  discussionSlug String
 
   // Self-referencing relation for replies
   parentId Int? // Nullable parentId field (top-level comments will have null)
   parent   DiscussionComment?  @relation("replies", fields: [parentId], references: [id])
   replies  DiscussionComment[] @relation("replies")
+  user     User                @relation(fields: [userId], references: [id])
+  userId   Int
 }
 
 model ContactMessage {

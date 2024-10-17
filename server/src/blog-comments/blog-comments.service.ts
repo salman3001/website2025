@@ -4,22 +4,24 @@ import { UpdateBlogCommentDto } from './dto/update-blog-comment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { CustomHttpException } from 'src/utils/Exceptions/CustomHttpException';
+import { AuthUserType } from 'src/utils/types/common';
 
 @Injectable()
 export class BlogCommentsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateBlogCommentDto) {
+  async create(dto: CreateBlogCommentDto, user: AuthUserType) {
     const comment = await this.prisma.blogComment.create({
       data: {
         message: dto.message,
-        isApproved: false,
+        isApproved: true,
         blog: { connect: { slug: dto.blogSlug } },
         parent: dto.parentId
           ? {
               connect: { id: dto.parentId },
             }
           : {},
+        user: { connect: { id: user.id } },
       },
     });
 

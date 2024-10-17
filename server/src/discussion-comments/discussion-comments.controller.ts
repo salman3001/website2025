@@ -38,7 +38,7 @@ export class DiscussionCommentsController {
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policy.canCreate(authUser);
-    const comment = await this.discussionCommentsService.create(dto);
+    const comment = await this.discussionCommentsService.create(dto, authUser);
 
     return CustomRes({
       code: HttpStatus.CREATED,
@@ -52,7 +52,7 @@ export class DiscussionCommentsController {
   async findAll(@Query() qs: DiscussionCommentQueryDto) {
     this.policy.canFindAll();
 
-    const { discussionlug, search, ...commonQueryDto } = qs;
+    const { discussionSlug, parentId, search, ...commonQueryDto } = qs;
 
     const { selectQuery, orderByQuery, skip, take } =
       generateCommonPrismaQuery(commonQueryDto);
@@ -61,14 +61,18 @@ export class DiscussionCommentsController {
       ? { name: { contains: search, mode: 'insensitive' as any } }
       : {};
 
-    const queryByDiscussion = discussionlug
-      ? { discussionlug: { equals: discussionlug } }
+    const queryByDiscussion = discussionSlug
+      ? { discussionSlug: { equals: discussionSlug } }
       : {};
+
+    const queryByParentId = parentId ? { parentId: { equals: parentId } } : {};
 
     const { comments, count } = await this.discussionCommentsService.findAll({
       skip,
       take,
-      where: { AND: { ...searchQuery, ...queryByDiscussion } },
+      where: {
+        AND: { ...searchQuery, ...queryByDiscussion, ...queryByParentId },
+      },
       orderBy: orderByQuery,
       select: selectQuery,
     });
@@ -82,7 +86,7 @@ export class DiscussionCommentsController {
 
   @Get(':id')
   async findOne(
-    @Param('slug') id: number,
+    @Param('id') id: number,
     @Query() qs: DiscussionCommentFindOneQuery,
   ) {
     this.policy.canFindAll();

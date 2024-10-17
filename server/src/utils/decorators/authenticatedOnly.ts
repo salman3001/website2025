@@ -18,8 +18,8 @@ export function AuthenticatedOnly(opt?: { allowedUserTypes?: UserType[] }) {
       }
 
       if (
-        opt.allowedUserTypes &&
-        !opt.allowedUserTypes.includes(user.userType)
+        opt?.allowedUserTypes &&
+        !opt?.allowedUserTypes.includes(user.userType)
       ) {
         throw new CustomHttpException({
           code: 403,

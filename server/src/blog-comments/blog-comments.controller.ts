@@ -37,7 +37,7 @@ export class BlogCommentsController {
     @AuthUser() authUser: AuthUserType,
   ) {
     this.policy.canCreate(authUser);
-    const comment = await this.blogCommentsService.create(dto);
+    const comment = await this.blogCommentsService.create(dto, authUser);
 
     return CustomRes({
       code: HttpStatus.CREATED,
@@ -51,7 +51,7 @@ export class BlogCommentsController {
   async findAll(@Query() qs: BlogCommentQueryDto) {
     this.policy.canFindAll();
 
-    const { blogSlug, search, ...commonQueryDto } = qs;
+    const { blogSlug, parentId, search, ...commonQueryDto } = qs;
 
     const { selectQuery, orderByQuery, skip, take } =
       generateCommonPrismaQuery(commonQueryDto);
@@ -64,10 +64,16 @@ export class BlogCommentsController {
       ? { blogSlug: { equals: blogSlug } }
       : {};
 
+    const queryByParentId = parentId
+      ? { parentId: { equals: parentId } }
+      : { parentId: { equals: null } };
+
     const { comments, count } = await this.blogCommentsService.findAll({
       skip,
       take,
-      where: { AND: { ...searchQuery, ...commentsByBlogSlugQuery } },
+      where: {
+        AND: { ...searchQuery, ...commentsByBlogSlugQuery, ...queryByParentId },
+      },
       orderBy: orderByQuery,
       select: selectQuery,
     });
@@ -80,10 +86,7 @@ export class BlogCommentsController {
   }
 
   @Get(':id')
-  async findOne(
-    @Param('slug') id: number,
-    @Query() qs: BlogCommentFindOneQuery,
-  ) {
+  async findOne(@Param('id') id: number, @Query() qs: BlogCommentFindOneQuery) {
     this.policy.canFindOne();
 
     const { selectQuery } = generateCommonPrismaQuery(qs);

@@ -4,12 +4,13 @@ import { UpdateDiscussionCommentDto } from './dto/update-discussion-comment.dto'
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { CustomHttpException } from 'src/utils/Exceptions/CustomHttpException';
+import { AuthUserType } from 'src/utils/types/common';
 
 @Injectable()
 export class DiscussionCommentsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(dto: CreateDiscussionCommentDto) {
+  async create(dto: CreateDiscussionCommentDto, user: AuthUserType) {
     const comment = await this.prisma.discussionComment.create({
       data: {
         message: dto.message,
@@ -20,6 +21,7 @@ export class DiscussionCommentsService {
               connect: { id: dto.parentId },
             }
           : {},
+        user: { connect: { id: user.id } },
       },
     });
 

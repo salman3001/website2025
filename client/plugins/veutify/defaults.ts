@@ -143,6 +143,7 @@ export default {
     color: "primary",
     hideDetails: "auto",
     rounded: "lg",
+    class: "bg-surface",
   },
   VAutocomplete: {
     variant: "outlined",
@@ -177,6 +178,7 @@ export default {
     color: "primary",
     hideDetails: "auto",
     rounded: "lg",
+    class: "bg-surface",
   },
   VSnackbar: {
     VBtn: {
