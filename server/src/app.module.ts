@@ -17,6 +17,7 @@ import { ContactMessagesModule } from './contact-messages/contact-messages.modul
 import { EmailSubscriptionsModule } from './email-subscriptions/email-subscriptions.module';
 import { MediaCategoriesModule } from './media-categories/media-categories.module';
 import { ProjectsModule } from './projects/projects.module';
+import { ExportImportModule } from './export-import/export-import.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ProjectsModule } from './projects/projects.module';
     EmailSubscriptionsModule,
     MediaCategoriesModule,
     ProjectsModule,
+    ExportImportModule,
   ],
   controllers: [],
   providers: [SeoService],

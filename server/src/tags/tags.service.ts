@@ -5,6 +5,7 @@ import slugify from 'slugify';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CustomHttpException } from 'src/utils/Exceptions/CustomHttpException';
 import { Prisma } from '@prisma/client';
+import { ExportImportService } from 'src/export-import/export-import.service';
 
 @Injectable()
 export class TagsService {
