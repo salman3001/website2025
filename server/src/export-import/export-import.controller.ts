@@ -16,6 +16,7 @@ import { MediaCategoryImportDto } from './dto/media-category-import.dto';
 import { ProjectImportDto } from './dto/project-import.dto';
 import { SeoImportDto } from './dto/seo-import.dto';
 import { UserImportDto } from './dto/user-import.dto';
+import { ProfileImportDto } from './dto/profiles-import.dto';
 
 @ApiTags('export-import')
 @ApiBearerAuth()
@@ -278,7 +279,7 @@ export class ExportImportController {
     );
   }
 
-  // Seo
+  // users
   @Get('users')
   async exportUsers() {
     return await this.exportImportService.export('user', 'users');
@@ -295,6 +296,26 @@ export class ExportImportController {
       'users',
       file,
       UserImportDto,
+    );
+  }
+
+  // profiles
+  @Get('profiles')
+  async exportProfiles() {
+    return await this.exportImportService.export('user', 'users');
+  }
+
+  @ImportPost('profiles')
+  async importProfiles(
+    @UploadedFile()
+    file?: Express.Multer.File,
+  ) {
+    return await this.exportImportService.import(
+      'profile',
+      'id',
+      'profiles',
+      file,
+      ProfileImportDto,
     );
   }
 }
