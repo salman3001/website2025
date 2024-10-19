@@ -6,4 +6,5 @@ export const swaggerConfig = (appName: string) =>
     .setDescription('All server apis documented here')
     .setVersion('1.0')
     .addTag(appName)
+    .addBearerAuth()
     .build();

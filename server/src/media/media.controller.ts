@@ -12,7 +12,7 @@ import {
 import { MediaService } from './media.service';
 import { UpdateMediaDto } from './dto/update-media.dto';
 
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { AuthUser } from 'src/utils/decorators/authUser.decorator';
 import { AuthUserType } from 'src/utils/types/common';
@@ -24,6 +24,7 @@ import { generateCommonPrismaQuery } from 'src/utils/prisma/generateCommonPrisma
 import { MultiPartFormData } from 'src/utils/decorators/combined/multi-part-formdata.decorator';
 
 @ApiTags('Media')
+@ApiBearerAuth()
 @Controller('media')
 export class MediaController {
   constructor(

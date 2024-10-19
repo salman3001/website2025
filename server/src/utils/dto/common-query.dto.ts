@@ -10,28 +10,28 @@ import {
 import { IsOptionalEmpty } from 'src/utils/validators/IsOptionalEmpty';
 
 export class CommonQueryDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsNumber()
   @IsOptionalEmpty()
   skip: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsNumber()
   @IsOptionalEmpty()
   take: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsString()
   @IsOptionalEmpty()
   orderBy: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsArray()
   @IsOptional()
   @Type(() => String)
   select: string[];
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsString()
   @IsOptionalEmpty()
   search: string;

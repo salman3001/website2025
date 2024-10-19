@@ -1,11 +1,12 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, StreamableFile } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { existsSync, mkdirSync } from 'fs';
+import { createReadStream, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { IAppConfig } from 'src/config/app.config';
 import { PrismaService } from 'src/prisma/prisma.service';
+import CustomRes from 'src/utils/CustomRes';
 import { CustomHttpException } from 'src/utils/Exceptions/CustomHttpException';
 import { generateClassValidatorErrors } from 'src/utils/helpers';
 import * as XLSX from 'xlsx';
@@ -22,15 +23,17 @@ export class ExportImportService {
     const dataTobeExported = [];
 
     records.forEach((r: any) => {
+      const newObj = {};
       for (const [key, value] of Object.entries(r)) {
         if (
           typeof value === 'string' ||
           typeof value === 'boolean' ||
           typeof value === 'number'
         ) {
-          dataTobeExported.push({ [key]: value });
+          newObj[key] = value;
         }
       }
+      dataTobeExported.push(newObj);
     });
 
     const workbook = XLSX.utils.book_new();
@@ -39,8 +42,8 @@ export class ExportImportService {
     XLSX.utils.book_append_sheet(workbook, worksheet, fileName);
 
     const exportDir = join(
-      this.config.get<IAppConfig>('App').appPath,
-      'public',
+      this.config.get<IAppConfig>('app').appPath,
+      'temp',
       'exports',
     );
 
@@ -55,32 +58,43 @@ export class ExportImportService {
       type: 'file',
     });
 
-    return filePath;
+    const streamFile = createReadStream(filePath);
+    return new StreamableFile(streamFile, {
+      disposition: `attachment; filename="${fileName}.xlsx"`,
+    });
   }
 
   public async import<T>(
-    file: Express.Multer.File,
-    workSheetName: string,
-    validationDto: T,
+    modelName: string,
     uniqueKey: string,
+    workSheetName: string,
+    file: Express.Multer.File,
+    validationDto: T,
   ) {
     const book = XLSX.readFile(file.path);
     const sheet = book.Sheets[workSheetName];
-    const json = XLSX.utils.sheet_to_json(sheet) as unknown as string;
+    const data = XLSX.utils.sheet_to_json(sheet) as unknown as object[];
 
-    const objArray = JSON.parse(json);
+    const validateData = [];
 
-    const validateData = objArray.map((obj: any) => {
-      return this.validate(obj, validationDto);
-    });
+    for (const row of data) {
+      const validatedRow = await this.validate(row, validationDto);
+      validateData.push(validatedRow);
+    }
 
     for (const entry of validateData) {
-      await this.prisma.tag.upsert({
+      await this.prisma[modelName].upsert({
         where: { [uniqueKey]: entry[uniqueKey] },
-        update: { ...entry, uniqueKey: undefined },
+        update: { ...entry, [uniqueKey]: undefined },
         create: entry,
       });
     }
+
+    return CustomRes({
+      code: 200,
+      success: true,
+      message: 'Data imported successfully',
+    });
   }
 
   async validate(value: any, metaType: any) {

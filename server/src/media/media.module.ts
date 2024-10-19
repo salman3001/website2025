@@ -12,6 +12,7 @@ import { join } from 'path';
 @Module({
   imports: [
     MulterModule.register({
+      preservePath: true,
       storage: multer.diskStorage({
         destination: (req, file, cb) => {
           cb(null, join(process.cwd(), 'temp'));
