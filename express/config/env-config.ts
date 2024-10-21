@@ -21,8 +21,7 @@ export class EnvConfig {
       smtpPass: process.env.SMTP_PASS,
       resendKey: process.env.RESEND_KEY,
       uploadsPath: process.env.UPLOADS_PATH,
-      mongoUri: process.env.MONGO_URI,
-      mongoDbName: process.env.MONGO_DB_NAME,
+      pgConnString: process.env.PG_CONN_STRING,
     };
   }
 

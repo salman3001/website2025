@@ -1,4 +1,4 @@
-import { UserSchema } from "common/models/index.js";
+import { UserSchema } from "common/models/user.js";
 import { z } from "zod";
 
 export const createUserDtoSchema = UserSchema.pick({

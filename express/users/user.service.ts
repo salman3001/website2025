@@ -1,6 +1,6 @@
-import { IuserRepository } from "modules/users/interfaces/IuserRepository.js";
 import { CreateUserDto } from "./dto/create-user.dto.js";
 import { UpdateUserDto } from "./dto/update-user.dto.js";
+import { IuserRepository } from "./interfaces/IuserRepository.js";
 
 export class UserService {
   constructor(private userRepo: IuserRepository) {}

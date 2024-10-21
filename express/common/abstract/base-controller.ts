@@ -9,10 +9,32 @@ export type BaseControllerHandlers = {
 
 export abstract class BaseController {
   router: Router;
-  abstract handlers: BaseControllerHandlers;
-  abstract controllerMiddlewares: Handler[];
+  protected abstract get handlers(): BaseControllerHandlers;
+  protected get controllerMiddlewares(): Handler[] {
+    console.log("called from base controller");
+
+    return [];
+  }
 
   constructor() {
     this.router = Router();
+    this.applyControllerMiddlerwares();
+    this.mapControllerHandlers();
+  }
+
+  private applyControllerMiddlerwares() {
+    this.controllerMiddlewares.forEach((mw) => {
+      this.router.use(mw);
+    });
+  }
+
+  private mapControllerHandlers() {
+    this.handlers.forEach((handler) => {
+      this.router[handler.method](
+        handler.path,
+        ...(handler.middlewares || []),
+        handler.handler,
+      );
+    });
   }
 }

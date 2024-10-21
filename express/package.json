@@ -6,7 +6,10 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch index.ts",
-    "test": "tsx --test"
+    "test": "tsx --test",
+    "pg:migrate": "tsx ./database/postgres/run-migrations.ts",
+    "pg:migrate-reset-last": "tsx ./database/postgres/reset-last-migration.ts",
+    "pg:reset-db": "tsx ./database/postgres/reset-db.ts"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +17,7 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.7",
     "@types/express": "^5.0.0",
+    "@types/pg": "^8.11.10",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3"
   },
@@ -24,6 +28,7 @@
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.2",
     "multer": "1.4.5-lts.1",
+    "pg": "^8.13.0",
     "zod": "^3.23.8"
   }
 }

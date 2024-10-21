@@ -1,4 +1,4 @@
-import { configModule } from "modules/config/config.module.js";
+import { configModule } from "config/config.module.js";
 import { Collection, Db, MongoClient } from "mongodb";
 
 export class MongoDb {
