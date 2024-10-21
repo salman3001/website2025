@@ -1,10 +1,27 @@
-import { IuserRepository } from "./interfaces/IuserRepository.js";
-import { UserRepository } from "./user.repository.js";
+import { IuserRepository } from "modules/users/interfaces/IuserRepository.js";
+import { CreateUserDto } from "./dto/create-user.dto.js";
+import { UpdateUserDto } from "./dto/update-user.dto.js";
 
 export class UserService {
   constructor(private userRepo: IuserRepository) {}
 
-  getUsers() {
+  async find() {
     return this.userRepo.find();
+  }
+
+  async findOne(id: string) {
+    return this.userRepo.findOne(id);
+  }
+
+  async create(dto: CreateUserDto) {
+    return this.userRepo.create(dto);
+  }
+
+  async update(id: string, dto: UpdateUserDto) {
+    return this.userRepo.update(id, dto);
+  }
+
+  async delete(id: string) {
+    return this.userRepo.delete(id);
   }
 }

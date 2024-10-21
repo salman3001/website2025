@@ -1,0 +1,27 @@
+### get all user
+Get http://localhost:4000/users HTTP/1.1
+
+### get one user
+Get http://localhost:4000/users/671580e7ab77fa38abe94dcc HTTP/1.1
+
+### create User
+Post http://localhost:4000/users HTTP/1.1
+content-type: application/json
+
+{
+  "fullName":"salman",
+  "email":"salman@gmail.com",
+  "password": "123456789",
+  "phone": "9876543210",
+  "isActive": true,
+  "emailVerified": true,
+  "userType": "Admin"   
+}
+
+###update user
+PATCH  http://localhost:4000/users/671580e7ab77fa38abe94dcc HTTP/1.1
+content-type: application/json
+
+{
+  "fullName":"salman khan"
+}

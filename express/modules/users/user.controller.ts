@@ -1,21 +1,68 @@
-import { Handler, Router } from "express";
-import { IUserService } from "./interfaces/IUserService.js";
-import { BaseController } from "utils/base-classes/base-controller.js";
-import { defineAsyncHandler } from "utils/defineAsyncHandler.js";
+import { Handler } from "express";
+import { UserService } from "./user.service.js";
+import { createUserDtoSchema } from "./dto/create-user.dto.js";
+import { updateUserDtoSchema } from "./dto/update-user.dto.js";
+import {
+  BaseController,
+  BaseControllerHandlers,
+} from "common/abstract/base-controller.js";
 
 export class UserController extends BaseController {
-  constructor(private userService: IUserService) {
+  constructor(private userService: UserService) {
     super();
-    this.mapHandler();
   }
 
-  private mapHandler() {
-    this.router.get("/users", this.get);
-  }
+  controllerMiddlewares: Handler[] = [];
 
-  get: Handler = async (_req, res, next) => {
-    const users = this.userService.getUsers();
+  handlers: BaseControllerHandlers = [
+    {
+      path: "/users",
+      method: "get",
+      handler: async (_req, res) => {
+        const users = await this.userService.find();
+        res.send(users);
+      },
+    },
+    {
+      path: "/users",
+      method: "post",
+      handler: async (req, res) => {
+        console.log(req.body);
 
-    res.send(users);
-  };
+        const dto = createUserDtoSchema.parse(req.body);
+        const users = await this.userService.create(dto);
+        res.send(users);
+      },
+    },
+    {
+      path: "/users/:id",
+      method: "get",
+      handler: async (req, res) => {
+        const id = req.params.id;
+        const users = await this.userService.findOne(id);
+        res.send(users);
+      },
+    },
+
+    {
+      path: "/users/:id",
+      method: "patch",
+      handler: async (req, res) => {
+        const id = req.params.id;
+        const dto = updateUserDtoSchema.parse(req.body);
+        const users = await this.userService.update(id, dto);
+        res.send(users);
+      },
+    },
+
+    {
+      path: "/users/:id",
+      method: "delete",
+      handler: async (req, res) => {
+        const id = req.params.id;
+        const users = await this.userService.delete(id);
+        res.send(users);
+      },
+    },
+  ];
 }
