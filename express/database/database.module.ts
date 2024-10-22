@@ -1,7 +1,10 @@
 import { configModule } from "config/config.module.js";
 import { PgPool } from "./postgres/pgPool.js";
 import { PgMigrator } from "./postgres/pg-migrator.js";
-import migrations from "./postgres/migrations/index.js";
+import pgMigrations from "./postgres/migrations/index.js";
+import mongoMigrations from "./mongodb/migrations/index.js";
+import { Migrator } from "./interfaces/Migrator.js";
+import { MongoMigrator } from "./mongodb/mongoMigrator.js";
 
 class DataBaseModule {
   private _pgPool: PgPool;
@@ -12,12 +15,15 @@ class DataBaseModule {
     return this._pgPool;
   }
 
-  private _pgMigrator: PgMigrator;
-  get PgMigrator() {
-    if (!this._pgMigrator) {
-      this._pgMigrator = new PgMigrator(this.PgPool, migrations);
+  private _migrator: Migrator;
+  get Migrator() {
+    if (!this._migrator) {
+      this._migrator =
+        configModule.EnvConfig.envs.dbAdapter === "mongodb"
+          ? new MongoMigrator(mongoMigrations)
+          : new PgMigrator(this.PgPool, pgMigrations);
     }
-    return this._pgMigrator;
+    return this._migrator;
   }
 }
 

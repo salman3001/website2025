@@ -1,8 +1,9 @@
+import { Migrator } from "database/interfaces/Migrator.js";
 import { PgPool } from "./pgPool.js";
-import { PgMigration } from "./types/index.js";
+import { Migration } from "database/interfaces/Migration.js";
 
-export class PgMigrator {
-  constructor(private pgPool: PgPool, private migrations: PgMigration[]) {}
+export class PgMigrator implements Migrator {
+  constructor(private pgPool: PgPool, private migrations: Migration[]) {}
 
   async run() {
     await this.createMigrationTableIfNotExits();
@@ -22,6 +23,7 @@ export class PgMigrator {
         }
       }
     });
+    this.pgPool.end();
   }
 
   async resetLast() {
@@ -55,6 +57,7 @@ export class PgMigrator {
     } else {
       console.log("No migration to reset");
     }
+    this.pgPool.end();
   }
 
   async resetDb() {
@@ -66,6 +69,7 @@ export class PgMigrator {
       await this.pgPool.query(query);
       console.log("Db Reset Successfully");
     }
+    this.pgPool.end();
   }
 
   private async createMigrationTableIfNotExits() {
@@ -87,21 +91,21 @@ export class PgMigrator {
     `;
 
     const results = await this.pgPool.transaction(async (client) => {
-      const results = await client.query<PgMigration>(query);
+      const results = await client.query<Migration>(query);
       return results;
     });
 
     return results;
   }
 
-  private async addMigrationToDb(migration: PgMigration) {
+  private async addMigrationToDb(migration: Migration) {
     const query = `
     INSERT INTO migrations (name)
     VALUES ($1)
     `;
 
     await this.pgPool.transaction(async (client) => {
-      await client.query<PgMigration>(query, [migration.name]);
+      await client.query<Migration>(query, [migration.name]);
     });
   }
 

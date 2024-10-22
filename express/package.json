@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "tsx watch index.ts",
     "test": "tsx --test",
-    "pg:migrate": "tsx ./database/postgres/run-migrations.ts",
-    "pg:migrate-reset-last": "tsx ./database/postgres/reset-last-migration.ts",
-    "pg:reset-db": "tsx ./database/postgres/reset-db.ts"
+    "pg:migrate": "tsx ./database/run-migrations.ts",
+    "pg:migrate-reset-last": "tsx ./database/reset-last-migration.ts",
+    "pg:reset-db": "tsx ./database/reset-db.ts"
   },
   "keywords": [],
   "author": "",

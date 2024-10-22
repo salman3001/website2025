@@ -1,6 +1,6 @@
-import { PgMigration } from "../types/index.js";
+import { Migration } from "database/interfaces/Migration.js";
 
-export const migrationOne: PgMigration = {
+export const migrationOne: Migration = {
   name: "migrationOne",
   query: `
         CREATE TABLE IF NOT EXISTS users (
