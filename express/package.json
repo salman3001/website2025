@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "tsx watch index.ts",
     "test": "tsx --test",
-    "pg:migrate": "tsx ./database/run-migrations.ts",
-    "pg:migrate-reset-last": "tsx ./database/reset-last-migration.ts",
-    "pg:reset-db": "tsx ./database/reset-db.ts"
+    "migrate:latest": "tsx ./database/run-migrations.ts",
+    "migrate:reset-last": "tsx ./database/reset-last-migration.ts",
+    "migrate:reset-all": "tsx ./database/reset-db.ts"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +25,7 @@
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.5",
     "express": "^5.0.1",
+    "kysely": "^0.27.4",
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.2",
     "multer": "1.4.5-lts.1",

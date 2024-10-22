@@ -15,6 +15,5 @@
     "baseUrl": "./",
     "strictPropertyInitialization": false,
     "typeRoots": ["./global.d.ts"]
-    
   },
 }

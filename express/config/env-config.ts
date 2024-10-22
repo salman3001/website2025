@@ -24,6 +24,7 @@ export class EnvConfig {
       dbAdapter: process.env.DB_ADAPTER,
       pgConnString: process.env.PG_CONN_STRING,
       mongoUri: process.env.MONGO_URI,
+      mongoDbName: process.env.MONGO_DB_NAME,
     };
   }
 

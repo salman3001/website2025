@@ -1,3 +1,3 @@
-import { Migration } from "database/interfaces/Migration.js";
+import { MongoMigration } from "database/interfaces/MongoMigration.js";
 
-export default [] as Migration[];
+export default [] as MongoMigration[];

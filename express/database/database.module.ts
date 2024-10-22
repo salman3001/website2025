@@ -1,18 +1,27 @@
-import { configModule } from "config/config.module.js";
-import { PgPool } from "./postgres/pgPool.js";
-import { PgMigrator } from "./postgres/pg-migrator.js";
-import pgMigrations from "./postgres/migrations/index.js";
+import { SqlDb } from "./sql/sql-db.js";
+import { SqlMigrator } from "./sql/sql-migrator.js";
+
 import mongoMigrations from "./mongodb/migrations/index.js";
 import { Migrator } from "./interfaces/Migrator.js";
 import { MongoMigrator } from "./mongodb/mongoMigrator.js";
+import { configModule } from "../config/config.module.js";
+import { MongoDb } from "./mongodb/mongodb.js";
 
 class DataBaseModule {
-  private _pgPool: PgPool;
-  get PgPool() {
-    if (!this._pgPool) {
-      this._pgPool = new PgPool(configModule.EnvConfig);
+  private _sqlDb: SqlDb;
+  get SqlDb() {
+    if (!this._sqlDb) {
+      this._sqlDb = new SqlDb(configModule.EnvConfig);
     }
-    return this._pgPool;
+    return this._sqlDb;
+  }
+
+  private _mongoDb: MongoDb;
+  get MongoDb() {
+    if (!this._mongoDb) {
+      this._mongoDb = new MongoDb(configModule.EnvConfig);
+    }
+    return this._mongoDb;
   }
 
   private _migrator: Migrator;
@@ -21,7 +30,7 @@ class DataBaseModule {
       this._migrator =
         configModule.EnvConfig.envs.dbAdapter === "mongodb"
           ? new MongoMigrator(mongoMigrations)
-          : new PgMigrator(this.PgPool, pgMigrations);
+          : new SqlMigrator(this.SqlDb);
     }
     return this._migrator;
   }
