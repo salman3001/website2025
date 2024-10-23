@@ -2,36 +2,31 @@ import { Kysely, Migration, sql } from "kysely";
 
 export const firstMigration: Migration = {
   async up(db: Kysely<any>): Promise<void> {
+    await db.schema.createType("userType").asEnum(["Admin", "User"]).execute();
+
     await db.schema
-      .createTable("person")
-      .addColumn("id", "serial", (col) => col.primaryKey())
-      .addColumn("first_name", "varchar", (col) => col.notNull())
-      .addColumn("last_name", "varchar")
-      .addColumn("gender", "varchar(50)", (col) => col.notNull())
-      .addColumn("created_at", "timestamp", (col) =>
+      .createTable("users")
+      .addColumn("id", "serial", (col) => col.primaryKey().autoIncrement())
+      .addColumn("fullName", "varchar", (col) => col.notNull())
+      .addColumn("email", "varchar", (col) => col.notNull().unique())
+      .addColumn("userType", sql`userType`, (col) =>
+        col.notNull().defaultTo("User"),
+      )
+      .addColumn("isActive", "boolean", (col) => col.notNull().defaultTo(false))
+      .addColumn("emailVerified", "boolean", (col) =>
+        col.notNull().defaultTo(false),
+      )
+      .addColumn("createdAt", "timestamp", (col) =>
         col.defaultTo(sql`now()`).notNull(),
       )
-      .execute();
-
-    await db.schema
-      .createTable("pet")
-      .addColumn("id", "serial", (col) => col.primaryKey())
-      .addColumn("name", "varchar", (col) => col.notNull().unique())
-      .addColumn("owner_id", "integer", (col) =>
-        col.references("person.id").onDelete("cascade").notNull(),
+      .addColumn("updatedAt", "timestamp", (col) =>
+        col.defaultTo(sql`now()`).notNull(),
       )
-      .addColumn("species", "varchar", (col) => col.notNull())
-      .execute();
-
-    await db.schema
-      .createIndex("pet_owner_id_index")
-      .on("pet")
-      .column("owner_id")
       .execute();
   },
 
   async down(db: Kysely<any>): Promise<void> {
-    await db.schema.dropTable("pet").execute();
     await db.schema.dropTable("person").execute();
+    await db.schema.dropType("userType").execute();
   },
 };

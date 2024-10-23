@@ -5,11 +5,11 @@ import { IuserRepository } from "./interfaces/IuserRepository.js";
 export class UserService {
   constructor(private userRepo: IuserRepository) {}
 
-  async find() {
-    return this.userRepo.find();
+  async findAll() {
+    return this.userRepo.findAll();
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     return this.userRepo.findOne(id);
   }
 
@@ -17,11 +17,11 @@ export class UserService {
     return this.userRepo.create(dto);
   }
 
-  async update(id: string, dto: UpdateUserDto) {
+  async update(id: number, dto: UpdateUserDto) {
     return this.userRepo.update(id, dto);
   }
 
-  async delete(id: string) {
+  async delete(id: number) {
     return this.userRepo.delete(id);
   }
 }

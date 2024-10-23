@@ -1,8 +1,9 @@
 import { UserService } from "./user.service.js";
 import { UserController } from "./user.controller.js";
 import { IuserRepository } from "./interfaces/IuserRepository.js";
-import { UserRepository } from "./user.repository.js";
 import { BaseController } from "common/abstract/base-controller.js";
+import { UserRepositorySql } from "./user.repository.sql.js";
+import { databaseModule } from "database/database.module.js";
 
 class UserModule {
   // controller
@@ -25,7 +26,8 @@ class UserModule {
   // user repository
   private _userRepository: IuserRepository;
   get UserRepository() {
-    if (!this._userRepository) this._userRepository = new UserRepository();
+    if (!this._userRepository)
+      this._userRepository = new UserRepositorySql(databaseModule.SqlDb);
     return this._userRepository;
   }
 }

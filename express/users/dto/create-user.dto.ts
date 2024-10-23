@@ -1,14 +1,14 @@
-import { UserSchema } from "common/models/user.js";
+import { UserType } from "common/models/enums/UserType.js";
 import { z } from "zod";
 
-export const createUserDtoSchema = UserSchema.pick({
-  fullName: true,
-  email: true,
-  password: true,
-  phone: true,
-  isActive: true,
-  emailVerified: true,
-  userType: true,
+export const createUserDtoSchema = z.object({
+  fullName: z.string().min(2),
+  email: z.string().email(),
+  password: z.string().min(8),
+  phone: z.string().min(10).optional(),
+  userType: z.enum(["Admin", "User"]),
+  isActive: z.boolean(),
+  emailVerified: z.boolean(),
 });
 
 export type CreateUserDto = z.infer<typeof createUserDtoSchema>;

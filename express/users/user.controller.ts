@@ -13,8 +13,6 @@ export class UserController extends BaseController {
   }
 
   protected get controllerMiddlewares(): Handler[] {
-    console.log("called from user Controller");
-
     return [];
   }
 
@@ -24,8 +22,8 @@ export class UserController extends BaseController {
         path: "/",
         method: "get",
         handler: async (_req, res) => {
-          const users = await this.userService.find();
-          res.send(users);
+          const data = await this.userService.findAll();
+          res.custom({ code: 200, success: true, data });
         },
       },
       {
@@ -35,8 +33,13 @@ export class UserController extends BaseController {
           console.log(req.body);
 
           const dto = createUserDtoSchema.parse(req.body);
-          const users = await this.userService.create(dto);
-          res.send(users);
+          const data = await this.userService.create(dto);
+          res.custom({
+            code: 201,
+            success: true,
+            data,
+            message: "User Created",
+          });
         },
       },
       {
@@ -44,8 +47,8 @@ export class UserController extends BaseController {
         method: "get",
         handler: async (req, res) => {
           const id = req.params.id;
-          const users = await this.userService.findOne(id);
-          res.send(users);
+          const data = await this.userService.findOne(+id);
+          res.custom({ code: 200, success: true, data });
         },
       },
 
@@ -55,8 +58,13 @@ export class UserController extends BaseController {
         handler: async (req, res) => {
           const id = req.params.id;
           const dto = updateUserDtoSchema.parse(req.body);
-          const users = await this.userService.update(id, dto);
-          res.send(users);
+          const data = await this.userService.update(+id, dto);
+          res.custom({
+            code: 200,
+            success: true,
+            data,
+            message: "User Updated",
+          });
         },
       },
 
@@ -65,8 +73,13 @@ export class UserController extends BaseController {
         method: "delete",
         handler: async (req, res) => {
           const id = req.params.id;
-          const users = await this.userService.delete(id);
-          res.send(users);
+          const data = await this.userService.delete(+id);
+          res.custom({
+            code: 200,
+            success: true,
+            data,
+            message: "User deleted",
+          });
         },
       },
     ];
